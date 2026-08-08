@@ -166,8 +166,8 @@
         .btn-action:hover { background: var(--md-surface-container-highest); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
         .btn-action:active { background: var(--md-surface-container-high); }
 
-        .btn-action.btn-calc { border-radius: 8px; background: var(--success); color: var(--md-surface-container-highest); }
-        .btn-action.btn-calc:hover { background: var(--success); filter: brightness(1.08); }
+        .btn-action.btn-calc { border-radius: 8px; background: var(--md-primary-container); color: var(--md-gotem); }
+        .btn-action.btn-calc:hover { background: var(--md-primary-container); filter: brightness(1.08); }
         .btn-action.btn-clear { background: var(--md-error-container); color: var(--md-on-error-container); }
         .btn-action.btn-clear:hover { background: var(--md-error-container); filter: brightness(1.15); }
 
@@ -621,12 +621,101 @@
         .res-value { font-weight: 700; font-family: 'Roboto Mono', monospace; }
         .highlight { font-size: 1.05rem; color: var(--md-primary); }
         .warning { color: var(--md-error); font-size: 0.8rem; margin-top: 10px; text-align: center; }
+
+        /* ===== Экран входа ===== */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--md-surface);
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 380px;
+            background: var(--md-surface-container-low);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-sizing: border-box;
+        }
+        .login-title {
+            font-size: 1.4rem;
+            margin: 0 0 4px 0;
+            justify-content: center;
+        }
+        .login-title .icon { color: #8fdb92; }
+        .login-subtitle {
+            color: var(--md-on-surface-variant);
+            font-size: 0.85rem;
+            text-align: center;
+            margin: 0 0 20px 0;
+        }
+        .login-error {
+            background: var(--md-error-container);
+            color: var(--md-on-error-container);
+            font-size: 0.8rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* ===== Экран загрузки ===== */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--md-surface);
+            z-index: 1100;
+        }
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .loading-icon {
+            color: #8fdb92;
+            font-size: 44px;
+            opacity: 0.9;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid var(--md-outline-variant);
+            border-top-color: var(--md-primary);
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-screen.fade-out {
+            animation: fadeOut 0.25s ease forwards;
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
     </style>
 <script type="module">
     // ===================== Firebase (Firestore) =====================
     // Вставьте сюда конфиг вашего проекта Firebase (см. гайд).
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import {
+        getAuth,
+        setPersistence,
+        browserLocalPersistence,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAk5TEr5nv_aTNj4xf32mCC5FeEYMD56DQ",
@@ -643,6 +732,23 @@
         window.__firestoreGetDoc = getDoc;
         window.__firestoreSetDoc = setDoc;
         window.__tradingDocRef = doc(window.__db, "tradingJournal", "data");
+
+        // ===== Firebase Auth =====
+        // browserLocalPersistence хранит сессию в этом браузере (через IndexedDB/localStorage),
+        // поэтому логин не будет спрашиваться при каждой перезагрузке страницы —
+        // только когда пользователь явно нажмёт "Выйти", либо сессия будет отозвана.
+        const auth = getAuth(firebaseApp);
+        window.__auth = auth;
+        window.__signIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
+        window.__signOut = () => signOut(auth);
+
+        setPersistence(auth, browserLocalPersistence)
+            .catch((e) => console.error('Auth persistence error:', e))
+            .finally(() => {
+                onAuthStateChanged(auth, (user) => {
+                    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user } }));
+                });
+            });
     } catch (e) {
         console.error('Firebase init error:', e);
     }
@@ -651,7 +757,33 @@
 </head>
 <body>
 
-<div class="container">
+<!-- Экран загрузки (показывается, пока не выяснено, авторизован ли пользователь) -->
+<div id="loadingScreen" class="loading-screen">
+    <div class="loading-box">
+        <span class="icon lg loading-icon">candlestick_chart</span>
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<!-- Экран входа -->
+<div id="loginScreen" class="login-screen" style="display:none;">
+    <form class="login-card" id="loginForm" onsubmit="handleLoginSubmit(event)">
+        <h1 class="login-title"><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
+        <p class="login-subtitle">Войдите, чтобы открыть дневник</p>
+        <div style="margin-bottom: 12px;">
+            <label>Email</label>
+            <input type="email" id="loginEmail" autocomplete="username" required>
+        </div>
+        <div style="margin-bottom: 4px;">
+            <label>Пароль</label>
+            <input type="password" id="loginPassword" autocomplete="current-password" required>
+        </div>
+        <div id="loginError" class="login-error" style="display:none;"></div>
+        <button type="submit" class="btn" id="loginSubmitBtn" style="width:100%; justify-content:center; margin-top: 16px;">Войти</button>
+    </form>
+</div>
+
+<div class="container" id="appRoot" style="display:none;">
 <div class="content-narrow">
     <div class="header-bar">
         <h1><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
@@ -667,6 +799,7 @@
                 <input type="file" id="csvFileInput" accept=".csv" onchange="importFromCSV(event)" style="display: none;">
             </label>
             <button type="button" class="btn-action btn-clear" onclick="clearAllTrades()"><span class="icon">delete_sweep</span>Clear All</button>
+            <button type="button" class="btn-action" onclick="handleLogout()" title="Выйти из аккаунта"><span class="icon">logout</span>Выйти</button>
         </div>
     </div>
     <div id="fileStatus" class="sync-status status-off"></div>
@@ -1640,18 +1773,98 @@
     }
 
     render();
-    // Ждём инициализации Firebase (модульный скрипт грузится асинхронно),
-    // но не дольше 2 секунд — если скрипт не загрузился, работаем офлайн
-    (function initSync() {
-        let started = false;
-        function start() {
-            if (started) return;
-            started = true;
+
+    /* ===================== Авторизация (Firebase Auth) ===================== */
+
+    let dataLoadStarted = false;
+
+    function hideLoadingScreen() {
+        const el = document.getElementById('loadingScreen');
+        if (!el || el.dataset.hidden) return;
+        el.dataset.hidden = '1';
+        el.classList.add('fade-out');
+        setTimeout(() => { el.style.display = 'none'; }, 250);
+    }
+
+    function showApp() {
+        hideLoadingScreen();
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appRoot').style.display = '';
+        if (!dataLoadStarted) {
+            dataLoadStarted = true;
             loadFromServer();
         }
-        window.addEventListener('firebaseReady', start);
-        setTimeout(start, 2000);
-    })();
+    }
+
+    function showLogin() {
+        hideLoadingScreen();
+        dataLoadStarted = false;
+        document.getElementById('appRoot').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        const btn = document.getElementById('loginSubmitBtn');
+        if (btn) { btn.disabled = false; btn.textContent = 'Войти'; }
+    }
+
+    function handleLoginSubmit(event) {
+        event.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const errorEl = document.getElementById('loginError');
+        const btn = document.getElementById('loginSubmitBtn');
+        errorEl.style.display = 'none';
+
+        if (!window.__signIn) {
+            errorEl.textContent = 'Firebase ещё не загрузился, подождите и попробуйте снова.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Вход...';
+
+        window.__signIn(email, password)
+            .catch((err) => {
+                console.error('Ошибка входа:', err);
+                const messages = {
+                    'auth/invalid-email': 'Некорректный email.',
+                    'auth/invalid-credential': 'Неверный email или пароль.',
+                    'auth/wrong-password': 'Неверный email или пароль.',
+                    'auth/user-not-found': 'Неверный email или пароль.',
+                    'auth/too-many-requests': 'Слишком много попыток. Попробуйте позже.'
+                };
+                errorEl.textContent = messages[err.code] || ('Ошибка входа: ' + err.message);
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Войти';
+            });
+    }
+
+    function handleLogout() {
+        if (confirm('Выйти из аккаунта?') && window.__signOut) {
+            window.__signOut();
+        }
+    }
+
+    window.addEventListener('authStateChanged', (e) => {
+        const user = e.detail.user;
+        if (user) {
+            showApp();
+        } else {
+            showLogin();
+        }
+    });
+
+    // Подстраховка: если Firebase не загрузился (например, нет сети),
+    // не оставляем пользователя навсегда на экране загрузки.
+    setTimeout(() => {
+        const loading = document.getElementById('loadingScreen');
+        if (loading && !loading.dataset.hidden) {
+            showLogin();
+            const errorEl = document.getElementById('loginError');
+            errorEl.textContent = 'Не удалось загрузить Firebase. Проверьте соединение и обновите страницу.';
+            errorEl.style.display = 'block';
+        }
+    }, 6000);
 </script>
 
 </body>
