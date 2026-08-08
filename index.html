@@ -103,7 +103,7 @@
 
         /* Всё, кроме таблицы сделок, ограничено по ширине для читаемости на широких экранах */
         .content-narrow {
-            max-width: 1500px;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             box-sizing: border-box;
@@ -194,9 +194,16 @@
         /* Карточки статистики */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-bottom: 24px;
+        }
+
+        @media (max-width: 700px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 420px) {
+            .stats-grid { grid-template-columns: 1fr; }
         }
 
         .stat-card {
@@ -221,6 +228,61 @@
             font-family: 'Roboto Mono', monospace;
             font-size: 1.4rem;
             font-weight: 500;
+        }
+
+        /* Дашборд: график PnL слева + карточки статистики справа */
+        .dashboard-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        .chart-card {
+            flex: 0 0 300px;
+            max-width: 340px;
+            background: var(--md-surface-container-low);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 900px) {
+            .chart-card { flex-basis: 100%; max-width: 100%; min-height: 180px; }
+        }
+
+        .chart-card-title {
+            font-size: 0.8rem;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .chart-card-title .icon { font-size: 16px; }
+
+        .pnl-chart {
+            width: 100%;
+            flex: 1;
+            min-height: 120px;
+            display: block;
+        }
+
+        .pnl-chart-empty {
+            color: var(--md-on-surface-variant);
+            font-size: 0.8rem;
+            text-align: center;
+            margin: auto 0;
+        }
+
+        .dashboard-row .stats-grid {
+            flex: 2 1 480px;
+            margin-bottom: 0;
         }
 
         /* Форма ввода */
@@ -805,7 +867,13 @@
     <div id="fileStatus" class="sync-status status-off"></div>
 
     <!-- Дашборд статистики -->
-    <div class="stats-grid">
+    <div class="dashboard-row">
+        <div class="chart-card">
+            <div class="chart-card-title"><span class="icon sm">show_chart</span>График PnL по сделкам</div>
+            <svg id="pnlChartSvg" class="pnl-chart" viewBox="0 0 300 140" preserveAspectRatio="none"></svg>
+            <div id="pnlChartEmpty" class="pnl-chart-empty" style="display:none;">Пока нет закрытых сделок</div>
+        </div>
+        <div class="stats-grid">
         <div class="stat-card">
             <div class="label">Текущий Депозит ($)</div>
             <div class="value" id="statCurrentBalance">$10,000.00</div>
@@ -833,6 +901,7 @@
                 <span id="statBe" style="color:var(--breakeven)">0</span> / 
                 <span id="statLosses" style="color:var(--danger)">0</span>
             </div>
+        </div>
         </div>
     </div>
 
@@ -1393,6 +1462,68 @@
         document.getElementById('statWins').innerText = wins;
         document.getElementById('statBe').innerText = breakEvens;
         document.getElementById('statLosses').innerText = losses;
+
+        renderPnlChart();
+    }
+
+    /* ===================== График PnL ===================== */
+
+    function renderPnlChart() {
+        const svg = document.getElementById('pnlChartSvg');
+        const emptyEl = document.getElementById('pnlChartEmpty');
+        if (!svg || !emptyEl) return;
+
+        const closed = trades
+            .filter(t => t.pnl !== null && t.pnl !== undefined && !isNaN(t.pnl))
+            .slice()
+            .sort((a, b) => {
+                const d = new Date(a.date) - new Date(b.date);
+                if (d !== 0) return d;
+                return (a.id || 0) - (b.id || 0);
+            });
+
+        if (closed.length === 0) {
+            svg.innerHTML = '';
+            svg.style.display = 'none';
+            emptyEl.style.display = 'block';
+            return;
+        }
+
+        svg.style.display = 'block';
+        emptyEl.style.display = 'none';
+
+        let cum = 0;
+        const points = [0];
+        closed.forEach(t => { cum += t.pnl; points.push(cum); });
+
+        const width = 300, height = 140, padding = 6;
+        const minV = Math.min(0, ...points);
+        const maxV = Math.max(0, ...points);
+        const range = (maxV - minV) || 1;
+
+        const stepX = points.length > 1 ? (width - padding * 2) / (points.length - 1) : 0;
+        const scaleY = (v) => {
+            const t = (v - minV) / range;
+            return height - padding - t * (height - padding * 2);
+        };
+
+        const coords = points.map((v, i) => [padding + i * stepX, scaleY(v)]);
+        const zeroY = scaleY(0);
+
+        const linePath = coords.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+        const lastX = coords[coords.length - 1][0].toFixed(1);
+        const firstX = coords[0][0].toFixed(1);
+        const areaPath = `${linePath} L${lastX},${zeroY.toFixed(1)} L${firstX},${zeroY.toFixed(1)} Z`;
+
+        const finalPositive = points[points.length - 1] >= 0;
+        const strokeColor = finalPositive ? 'var(--success)' : 'var(--danger)';
+        const fillColor = finalPositive ? 'rgba(143, 219, 146, 0.15)' : 'rgba(255, 180, 171, 0.15)';
+
+        svg.innerHTML = `
+            <line x1="${padding}" y1="${zeroY.toFixed(1)}" x2="${width - padding}" y2="${zeroY.toFixed(1)}" style="stroke: var(--md-outline-variant); stroke-width: 1; stroke-dasharray: 3,3;" />
+            <path d="${areaPath}" style="fill: ${fillColor}; stroke: none;" />
+            <path d="${linePath}" style="fill: none; stroke: ${strokeColor}; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" />
+        `;
     }
 
     function exportToCSV() {
