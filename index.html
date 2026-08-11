@@ -578,7 +578,9 @@
             min-width: 500px;
             white-space: normal;
             word-break: break-word;
-            font-family: var(--font-body);        
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            line-height: 1.4;        
         }
 
         /* Липкая колонка "Действия" */
@@ -1487,7 +1489,6 @@
         const text = notes || '-';
         const count = countPlusSigns(notes || '');
         const badge = renderConfirmBadgeHtml(count);
-        if (!badge) return text;
         return `<div class="notes-cell-wrap">${badge}<span class="notes-text">${text}</span></div>`;
     }
 
