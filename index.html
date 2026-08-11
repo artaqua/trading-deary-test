@@ -416,8 +416,13 @@
         textarea { font-family: var(--font-body); }
 
         input[type="date"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             height: 40px;
-            max-height: 40px; 
+            max-height: 40px;
+            width: 100%;
+            box-sizing: border-box;
             font-family: var(--font-body);
             color-scheme: var(--md-on-surface);
             cursor: pointer;
@@ -546,14 +551,6 @@
             font-size: 0.9rem;
         }
 
-        /* На узких экранах не даём таблице сжиматься — вместо этого появляется горизонтальный скролл */
-        @media (max-width: 1100px) {
-            table {
-                width: max-content;
-                min-width: 100%;
-            }
-        }
-
         th, td {
             padding: 12px 15px;
             border-bottom: 1px solid var(--md-outline-variant);
@@ -576,11 +573,12 @@
         tbody tr { transition: background-color 0.1s ease; }
 
         th.col-notes, td.col-notes {
-            width: 35%;
-            min-width: 450px;
+            position: relative;
+            display: flex;
+            min-width: 500px;
             white-space: normal;
             word-break: break-word;
-            font-family: var(--font-body);
+            font-family: var(--font-body);        
         }
 
         /* Липкая колонка "Действия" */
@@ -653,19 +651,49 @@
 
         /* Плавающий бейдж поверх ячейки заметок в таблице — не раздвигает текст */
         .notes-cell-wrap {
-            position: relative;
+            display: flex;
+            justify-content: safe center;
+            align-items: safe center;
+            min-height: 60px;
+            max-height: 60px;
+            overflow-y: auto;
         }
+        .notes-cell-wrap::-webkit-scrollbar {
+            width: 5px; /* Делаем тоненьким */
+        }
+
+        /* Фон дорожки (трека) */
+        .notes-cell-wrap::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03); /* Едва заметный темный фон */
+            border-radius: 4px;
+        }
+
+        /* Сам ползунок (бегунок) */
+        .notes-cell-wrap::-webkit-scrollbar-thumb {
+            background: #374151; /* Цвет в тон вашей темы */
+            border-radius: 4px;
+        }
+
+        /* Поведение при наведении на ползунок */
+        .notes-cell-wrap::-webkit-scrollbar-thumb:hover {
+        background: #4b5563; /* Слегка подсвечиваем при ховере */
+        }
+
+        /* 2. Стили для Firefox */
+        .notes-cell-wrap {
+        scrollbar-width: thin;
+        scrollbar-color: #374151 transparent;
+        }
+        
         .notes-cell-wrap .confirm-badge {
             position: absolute;
-            top: 28%;
-            left: -10px;
+            top: 50%;
+            left: 12px;
+            margin-top: -12px;
         }
         .notes-cell-wrap .notes-text {
             display: block;
-            display: flex;
-            align-items: center;
-            min-height: 60px;
-            margin-left: 25px;
+            margin-left: 32px;
             font-size: 0.85rem;
             line-height: 1.4;
         }
