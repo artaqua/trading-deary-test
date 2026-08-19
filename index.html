@@ -794,7 +794,81 @@
         }
 
         .calc-row { display: flex; gap: 10px; }
+        .leverage-stepper {
+            display: flex;
+            align-items: stretch;
+            border: 1px solid var(--md-outline);
+            border-radius: 9px;
+            overflow: hidden;
+            background: var(--md-surface-container-highest);
+            height: 40px;
+        }
+        .leverage-stepper input {
+            border: none;
+            border-radius: 0;
+            text-align: center;
+            font-weight: 700;
+            background: transparent;
+            padding: 0 4px;
+            -moz-appearance: textfield;
+        }
+        .leverage-stepper input:focus { box-shadow: none; }
+        .leverage-stepper input::-webkit-outer-spin-button,
+        .leverage-stepper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .lev-btn {
+            background: var(--md-surface-container-high);
+            border: none;
+            color: var(--md-on-surface-variant);
+            width: 36px;
+            flex: 0 0 36px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-family: var(--font-body);
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s ease, color 0.15s ease;
+            user-select: none;
+        }
+        .lev-btn:hover { background: var(--md-primary-container); color: var(--md-primary); }
+        .lev-btn:active { filter: brightness(0.95); }
         .results { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--md-outline-variant); }
+        .margin-highlight-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--md-primary-container);
+            border: 1px solid rgba(255,171,61,0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+        }
+        .margin-highlight-row .res-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--md-on-primary-container);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .margin-highlight-row .res-value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--md-primary);
+        }
+        .margin-highlight-row.margin-insufficient {
+            background: var(--danger-container);
+            border-color: rgba(255,107,107,0.35);
+        }
+        .margin-highlight-row.margin-insufficient .res-label { color: var(--md-on-error-container); }
+        .margin-highlight-row.margin-insufficient .res-value { color: var(--md-error); }
         .res-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.86rem; color: var(--md-on-surface-variant); }
         .res-value { font-weight: 700; font-family: var(--font-mono); color: var(--md-on-surface); }
         .highlight { font-size: 1.08rem; color: var(--md-primary); }
@@ -1136,8 +1210,12 @@
                 <input type="number" id="calcBalance" value="10000" oninput="calculate()">
             </div>
             <div style="flex: 1; margin-bottom: 12px;">
-                <label>Риск (%)</label>
-                <input type="number" id="calcRisk" value="1" step="0.1" oninput="calculate()">
+                <label>Плечо</label>
+                <div class="leverage-stepper">
+                    <button type="button" class="lev-btn" onclick="adjustLeverage(-1)" aria-label="Уменьшить плечо">−</button>
+                    <input type="number" id="calcLeverage" value="10" min="1" max="125" step="1" oninput="calculate()">
+                    <button type="button" class="lev-btn" onclick="adjustLeverage(1)" aria-label="Увеличить плечо">+</button>
+                </div>
             </div>
         </div>
 
@@ -1147,8 +1225,8 @@
                 <input type="number" id="calcEntry" value="100" oninput="calculate()">
             </div>
             <div style="flex: 1; margin-bottom: 12px;">
-                <label>Комиссия (%)</label>
-                <input type="number" id="calcFee" value="0.05" step="0.01" oninput="calculate()">
+                <label>Риск (%)</label>
+                <input type="number" id="calcRisk" value="1" step="0.1" oninput="calculate()">
             </div>
         </div>
 
@@ -1158,17 +1236,20 @@
                 <input type="number" id="calcStop" value="95" oninput="calculate()">
             </div>
             <div style="flex: 1; margin-bottom: 12px;">
-                <label>Take($)</label>
-                <input type="number" id="calcTarget" value="115" oninput="calculate()">
+                <label>Комиссия (%)</label>
+                <input type="number" id="calcFee" value="0.05" step="0.01" oninput="calculate()">
             </div>
         </div>
 
         <div class="calc-row">
             <div style="flex: 1; margin-bottom: 12px;">
+                <label>Take($)</label>
+                <input type="number" id="calcTarget" value="115" oninput="calculate()">
+            </div>
+            <div style="flex: 1; margin-bottom: 12px;">
                 <label>Exit($)</label>
                 <input type="number" id="calcExit" value="" placeholder="Факт. цена закрытия" oninput="calculate()">
             </div>
-            <div style="flex: 1; margin-bottom: 12px;"></div>
         </div>
 
         <div class="results">
@@ -1179,6 +1260,10 @@
             <div class="res-row">
                 <span>Объем позиции ($):</span>
                 <span class="res-value" id="positionSize">$0</span>
+            </div>
+            <div class="margin-highlight-row" id="marginRow">
+                <span class="res-label"><span class="icon sm">account_balance_wallet</span>Требуемая маржа ($)</span>
+                <span class="res-value" id="requiredMargin">$0</span>
             </div>
             <div class="res-row">
                 <span>Чистый риск по графику ($):</span>
@@ -1916,6 +2001,16 @@
         calculate();
     }
 
+    // Кнопки +/- в степпере плеча калькулятора: шаг 1x, ограничение 1..125
+    function adjustLeverage(delta) {
+        const input = document.getElementById('calcLeverage');
+        let val = parseInt(input.value, 10);
+        if (isNaN(val)) val = 1;
+        val = Math.min(125, Math.max(1, val + delta));
+        input.value = val;
+        calculate();
+    }
+
     function calculate() {
         const balance = parseFloat(document.getElementById('calcBalance').value) || 0;
         const riskPercent = parseFloat(document.getElementById('calcRisk').value) || 0;
@@ -1925,6 +2020,7 @@
         const target = parseFloat(document.getElementById('calcTarget').value) || 0;
         const exitValRaw = document.getElementById('calcExit').value;
         const exit = exitValRaw !== '' ? parseFloat(exitValRaw) : null;
+        const leverage = Math.min(125, Math.max(1, parseFloat(document.getElementById('calcLeverage').value) || 1));
         const warning = document.getElementById('warningMsg');
 
         warning.innerHTML = '';
@@ -1959,8 +2055,12 @@
 
         const rr = netProfit / totalRiskWithFee;
 
+        const requiredMargin = positionSizeUSD / leverage;
+
         document.getElementById('positionUnits').innerText = units.toFixed(4);
         document.getElementById('positionSize').innerText = '$' + positionSizeUSD.toFixed(2);
+        document.getElementById('requiredMargin').innerText = '$' + requiredMargin.toFixed(2);
+        document.getElementById('marginRow').classList.toggle('margin-insufficient', requiredMargin > balance);
         document.getElementById('pureRisk').innerText = '$' + riskAmount.toFixed(2);
         document.getElementById('totalFee').innerText = '$' + (entryFee + exitFeeSL).toFixed(2);
         document.getElementById('totalRisk').innerText = '$' + totalRiskWithFee.toFixed(2);
@@ -1986,6 +2086,10 @@
             netProfitLabel.innerText = 'Чистая прибыль по TP ($):';
             netProfitEl.innerText = '$' + (netProfit > 0 ? netProfit.toFixed(2) : '0.00');
             netProfitEl.style.color = 'var(--success)';
+        }
+
+        if (requiredMargin > balance) {
+            warning.innerHTML += (warning.innerHTML ? '<br>' : '') + '<span class="icon sm">warning</span> Требуемой маржи не хватает на балансе — увеличьте плечо или уменьшите риск';
         }
     }
 
