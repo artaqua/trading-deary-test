@@ -70,6 +70,10 @@
             --shadow-md: 0 6px 20px rgba(0,0,0,0.45);
             --shadow-lg: 0 16px 48px rgba(0,0,0,0.55);
             --shadow-glow: 0 0 0 1px rgba(255,171,61,0.18), 0 0 24px rgba(255,171,61,0.12);
+            
+            /* Цвета для подсветки */
+            --ps-highlight: #ffffff; 
+            --plus-highlight: #34dc8c;
         }
 
         * { box-sizing: border-box; }
@@ -700,6 +704,21 @@
             line-height: 1.4;
         }
 
+        /* Подсветка PS ошибки */
+        .highlight-ps {
+            color: var(--ps-highlight);
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* Подсветка плюсов в заметках */
+        .highlight-plus {
+            color: var(--plus-highlight);
+            font-weight: bold;
+        }
+
         /* Попап Калькулятора */
         .modal-overlay {
             position: fixed;
@@ -717,7 +736,9 @@
             box-sizing: border-box;
         }
 
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active {
+            display: flex;
+        }
 
         .calculator {
             background-color: var(--md-surface-container-high);
@@ -728,6 +749,7 @@
             max-width: 440px;
             box-shadow: var(--shadow-lg);
             position: relative;
+            overflow-y: auto;
         }
 
         .close-modal {
@@ -963,6 +985,33 @@
         }
         @keyframes fadeOut {
             to { opacity: 0; visibility: hidden; }
+        }
+
+        @media screen and (max-width: 600px), 
+               screen and (max-height: 800px) {
+                    .modal-overlay { 
+                        padding: 0;
+                        justify-content: start;
+                        align-items: start;
+                        overflow-y: auto;
+                    }
+                    .calculator {
+                        max-width: 100%;
+                        padding: 15px;
+                        border-radius: 0;
+                    }
+                    .margin-highlight-row .res-label {
+                        font-size: 0.4rem;
+                    }
+                    .margin-highlight-row .res-value {
+                        font-size: 0.6rem;
+                    }
+                    .res-row {
+                        font-size: 0.6rem;
+                    }
+                    .highlight {
+                        font-size: 0.7rem;
+                    }
         }
 </style>
 <script type="module">
@@ -1568,13 +1617,69 @@
         }
     }
 
+    // Функция для подсветки "PS" и всего текста после него
+    function highlightPsError(text) {
+        if (!text) return text;
+        // Ищем "ps" независимо от регистра (gi флаг)
+        // Заменяем найденное совпадение и весь текст после него на подсвеченную версию
+        return text.replace(/ps[\s\S]*/gi, (match) => {
+            return `<span class="highlight-ps">${match}</span>`;
+        });
+    }
+
+    // Функция для подсветки плюсов в начале строк или слов (причины входа)
+    function highlightPlusReasons(text) {
+        if (!text) return text;
+        // Заменяем символ "+" на span с классом highlight-plus
+        // Используем глобальный поиск
+        return text.replace(/\+/g, '<span class="highlight-plus">+</span>');
+    }
+
     // Рендерит содержимое ячейки "Заметки" в таблице сделок вместе с бейджем подтверждений.
     // Бейдж не занимает место в потоке текста — он "плавает" сверху справа от блока с заметками.
     function renderNotesCell(notes) {
-        const text = notes || '-';
-        const count = countPlusSigns(notes || '');
+        if (!notes) return `<div class="notes-cell-wrap"><span class="notes-text">-</span></div>`;
+        
+        const count = countPlusSigns(notes);
         const badge = renderConfirmBadgeHtml(count);
-        return `<div class="notes-cell-wrap">${badge}<span class="notes-text">${text}</span></div>`;
+        
+        // Сначала применяем подсветку PS (ошибки)
+        let processedText = highlightPsError(notes);
+        // Затем применяем подсветку плюсов (причины входа) к оставшемуся тексту
+        // Важно: нужно быть осторожным, чтобы не сломать HTML теги. 
+        // Простой replace может затронуть теги, поэтому лучше применять к текстовым узлам, 
+        // но для простоты здесь мы применим это к исходному тексту, а затем обернем.
+        // Однако, так как highlightPsError возвращает HTML, нам нужно быть аккуратными.
+        
+        // Более безопасный подход: разбить текст, обработать части.
+        // Но для простоты задачи:
+        // 1. Подсветим PS ошибки.
+        // 2. В оставшейся части (до PS) подсветим плюсы.
+        
+        // Давайте сделаем проще: сначала подсветим плюсы во всем тексте, потом PS.
+        // Но PS имеет приоритет (ошибка важнее).
+        
+        // Правильный порядок:
+        // 1. Найти индекс PS.
+        // 2. Часть до PS -> подсветить плюсы.
+        // 3. Часть с PS и далее -> подсветить как ошибку.
+        
+        const psMatch = notes.match(/ps[\s\S]*/i);
+        let partBeforePs = notes;
+        let partWithPs = '';
+        
+        if (psMatch) {
+            const index = notes.toLowerCase().indexOf('ps');
+            partBeforePs = notes.substring(0, index);
+            partWithPs = notes.substring(index);
+        }
+        
+        const highlightedBefore = highlightPlusReasons(partBeforePs);
+        const highlightedAfter = `<span class="highlight-ps">${partWithPs}</span>`;
+        
+        const finalHtml = highlightedBefore + (partWithPs ? highlightedAfter : '');
+
+        return `<div class="notes-cell-wrap">${badge}<span class="notes-text">${finalHtml}</span></div>`;
     }
 
     function deleteTrade(id) {
