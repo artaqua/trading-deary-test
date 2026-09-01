@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
     <style>
         :root {
-            /* ===== Trading Deary — "Phosphor Terminal" tokens ===== */
-            /* Neutral surfaces: cool near-black, slight blue-ink tint */
             --md-surface: #08090c;
             --md-surface-dim: #050608;
             --md-surface-bright: #2c313e;
@@ -26,26 +24,19 @@
             --md-on-surface-variant: #8a91a3;
             --md-outline: #363c4c;
             --md-outline-variant: #1e222c;
-
-            /* Signature accent: amber phosphor — a nod to classic trading terminals */
             --md-primary: #ffab3d;
             --md-on-primary: #201200;
             --md-primary-container: #3d2705;
             --md-on-primary-container: #ffd8a3;
-
             --md-secondary: #b9c2d6;
             --md-secondary-container: #1c212d;
             --md-on-secondary-container: #dfe4f0;
-
             --md-tertiary: #c9b3ff;
             --md-tertiary-container: #2a2246;
-
             --md-error: #ff6b6b;
             --md-on-error: #2c0705;
             --md-error-container: #3a1414;
             --md-on-error-container: #ffd2ce;
-
-            /* Финансовая семантика поверх токенов */
             --success: #34dc8c;
             --success-container: #0f3324;
             --danger: var(--md-error);
@@ -53,33 +44,25 @@
             --warning: #ffd166;
             --warning-container: #3a2c08;
             --breakeven: var(--md-on-surface-variant);
-
-            /* Совместимость со старыми именами переменных, использованных в разметке */
             --bg-color: var(--md-surface);
             --card-bg: var(--md-surface-container);
             --accent: var(--md-primary);
             --text-main: var(--md-on-surface);
             --text-muted: var(--md-on-surface-variant);
             --border: var(--md-outline-variant);
-
             --font-display: 'Space Grotesk', 'Inter', sans-serif;
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             --font-mono: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
-
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
             --shadow-md: 0 6px 20px rgba(0,0,0,0.45);
             --shadow-lg: 0 16px 48px rgba(0,0,0,0.55);
             --shadow-glow: 0 0 0 1px rgba(255,171,61,0.18), 0 0 24px rgba(255,171,61,0.12);
-            
-            /* Цвета для подсветки */
             --ps-highlight: #ffffff; 
             --plus-highlight: #34dc8c;
         }
 
         * { box-sizing: border-box; }
-
         ::selection { background: rgba(255,171,61,0.28); color: #fff; }
-
         html { color-scheme: dark; }
 
         body {
@@ -126,7 +109,6 @@
             box-sizing: border-box;
         }
 
-        /* Всё, кроме таблицы сделок, ограничено по ширине для читаемости на широких экранах */
         .content-narrow {
             max-width: 1200px;
             width: 100%;
@@ -171,7 +153,6 @@
             flex-wrap: wrap;
         }
 
-        /* ===== Buttons ===== */
         .btn-action {
             background: var(--md-surface-container-high);
             color: var(--md-on-surface-variant);
@@ -204,8 +185,13 @@
         .btn-action.btn-calc:hover { filter: brightness(1.08); box-shadow: var(--shadow-glow); }
         .btn-action.btn-clear { background: transparent; color: var(--md-error); border-color: var(--md-error-container); }
         .btn-action.btn-clear:hover { background: var(--md-error-container); color: var(--md-on-error-container); }
+        .btn-action.btn-login { background: var(--md-primary-container); color: var(--md-on-primary-container); border-color: rgba(255,171,61,0.3); }
+        .btn-action.btn-login:hover { background: var(--md-primary); color: var(--md-on-primary); }
+        .btn-action.btn-logout { background: transparent; color: var(--md-on-surface-variant); border-color: var(--md-outline-variant); }
+        .btn-action.btn-logout:hover { background: var(--md-surface-container-highest); color: var(--md-on-surface); }
+        .btn-action.btn-report { background: var(--md-tertiary-container); color: var(--md-tertiary); border-color: rgba(201,179,255,0.3); }
+        .btn-action.btn-report:hover { background: var(--md-tertiary); color: #1a1030; }
 
-        /* Статус синхронизации */
         .sync-status {
             display: inline-flex;
             align-items: center;
@@ -228,7 +214,6 @@
         .sync-status.status-off { background: var(--md-surface-container-high); color: var(--md-on-surface-variant); border-color: var(--md-outline-variant); }
         .sync-status.status-error { background: var(--danger-container); color: var(--md-on-error-container); border-color: rgba(255,107,107,0.3); }
 
-        /* Карточки статистики */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -285,7 +270,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* Дашборд: график PnL слева + карточки статистики справа */
         .dashboard-row {
             display: flex;
             gap: 10px;
@@ -353,7 +337,6 @@
             margin-bottom: 0;
         }
 
-        /* Форма ввода */
         .form-card {
             background: var(--md-surface-container-low);
             border: 1px solid var(--md-outline-variant);
@@ -433,7 +416,6 @@
         }
 
         input[type="date"]::-webkit-calendar-picker-indicator {
-            /* Заменяем иконку на собственную SVG c нужным fill (например, #ffffff) */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
             cursor: pointer;
         }
@@ -448,23 +430,15 @@
         select {
             font-family: var(--font-body);
             font-weight: 600;
-            /* 1. Убираем стандартную стрелочку браузера */
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-
-            /* 2. Добавляем свою белую/светлую стрелочку */
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%238a91a3" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
             background-repeat: no-repeat;
-
-            /* 3. Управляем положением икинки: по вертикали по центру, от правого края сдвиг (например, 12px) */
             background-position: right 12px center;
-
-            /* 4. Правый отступ для текста, чтобы он не заходил под стрелочку */
             padding-right: 32px;
         }
 
-        /* Filled button */
         .btn {
             background: var(--md-primary);
             color: var(--md-on-primary);
@@ -536,7 +510,6 @@
         }
         .btn-cancel:hover { background: var(--md-surface-container-high); border-color: var(--md-outline); color: var(--md-on-surface); }
 
-        /* Таблица сделок с прилипающей колонкой справа */
         .table-container {
             background: var(--md-surface-container-low);
             border: 1px solid var(--md-outline-variant);
@@ -587,7 +560,6 @@
             line-height: 1.4;        
         }
 
-        /* Липкая колонка "Действия" */
         .col-sticky {
             position: sticky;
             right: 0;
@@ -605,7 +577,6 @@
             background: var(--md-surface-container-low);
         }
 
-        /* Chips */
         .tag {
             padding: 3px 10px;
             border-radius: 6px;
@@ -626,7 +597,6 @@
         .pnl-negative { color: var(--danger); font-weight: 700; }
         .pnl-zero { color: var(--breakeven); font-weight: 700; }
 
-
         .tag-be {
             background: var(--md-surface-container-highest);
             color: var(--md-on-surface-variant);
@@ -637,7 +607,6 @@
             font-family: var(--font-body);
         }
 
-        /* Бейдж количества подтверждений входа (счётчик "+" в заметках) */
         .confirm-badge {
             display: inline-flex;
             justify-content: center;
@@ -655,7 +624,6 @@
         }
         label .confirm-badge { margin-left: 8px; }
 
-        /* Плавающий бейдж поверх ячейки заметок в таблице — не раздвигает текст */
         .notes-cell-wrap {
             display: flex;
             justify-content: safe center;
@@ -664,32 +632,11 @@
             max-height: 60px;
             overflow-y: auto;
         }
-        .notes-cell-wrap::-webkit-scrollbar {
-            width: 5px; /* Делаем тоненьким */
-        }
-
-        /* Фон дорожки (трека) */
-        .notes-cell-wrap::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.03); /* Едва заметный темный фон */
-            border-radius: 4px;
-        }
-
-        /* Сам ползунок (бегунок) */
-        .notes-cell-wrap::-webkit-scrollbar-thumb {
-            background: #374151; /* Цвет в тон вашей темы */
-            border-radius: 4px;
-        }
-
-        /* Поведение при наведении на ползунок */
-        .notes-cell-wrap::-webkit-scrollbar-thumb:hover {
-        background: #4b5563; /* Слегка подсвечиваем при ховере */
-        }
-
-        /* 2. Стили для Firefox */
-        .notes-cell-wrap {
-        scrollbar-width: thin;
-        scrollbar-color: #374151 transparent;
-        }
+        .notes-cell-wrap::-webkit-scrollbar { width: 5px; }
+        .notes-cell-wrap::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 4px; }
+        .notes-cell-wrap::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        .notes-cell-wrap::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        .notes-cell-wrap { scrollbar-width: thin; scrollbar-color: #374151 transparent; }
         
         .notes-cell-wrap .confirm-badge {
             position: absolute;
@@ -704,7 +651,6 @@
             line-height: 1.4;
         }
 
-        /* Подсветка PS ошибки */
         .highlight-ps {
             color: var(--ps-highlight);
             font-weight: 700;
@@ -713,13 +659,11 @@
             border-radius: 2px;
         }
 
-        /* Подсветка плюсов в заметках */
         .highlight-plus {
             color: var(--plus-highlight);
             font-weight: bold;
         }
 
-        /* Попап Калькулятора */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -736,9 +680,7 @@
             box-sizing: border-box;
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .calculator {
             background-color: var(--md-surface-container-high);
@@ -754,8 +696,8 @@
 
         .close-modal {
             position: absolute;
-            top: 14px;
-            right: 14px;
+            top: 5px;
+            right: 5px;
             background: transparent;
             border: none;
             color: var(--md-on-surface-variant);
@@ -896,20 +838,20 @@
         .highlight { font-size: 1.08rem; color: var(--md-primary); }
         .warning { color: var(--md-error); font-size: 0.8rem; margin-top: 10px; text-align: center; }
 
-        /* ===== Экран входа ===== */
-        .login-screen {
+        /* ===== Login Modal ===== */
+        .login-modal {
             position: fixed;
             inset: 0;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
-            background: var(--md-surface);
-            background-image:
-                radial-gradient(900px 500px at 50% 0%, rgba(255,171,61,0.08), transparent 60%);
+            background: rgba(3, 4, 6, 0.72);
+            backdrop-filter: blur(6px);
             z-index: 1000;
             padding: 20px;
             box-sizing: border-box;
         }
+        .login-modal.active { display: flex; }
         .login-card {
             width: 100%;
             max-width: 380px;
@@ -919,12 +861,16 @@
             padding: 32px 28px;
             box-sizing: border-box;
             box-shadow: var(--shadow-lg);
+            position: relative;
         }
         .login-title {
             font-size: 1.35rem;
             font-family: var(--font-display);
             margin: 0 0 6px 0;
             justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         .login-title .icon {
             color: var(--md-primary);
@@ -947,45 +893,225 @@
             margin-top: 10px;
         }
 
-        /* ===== Экран загрузки ===== */
-        .loading-screen {
+        /* ===== Report Modal ===== */
+        .report-modal {
             position: fixed;
             inset: 0;
-            display: flex;
-            align-items: center;
+            display: none;
+            align-items: flex-start;
             justify-content: center;
-            background: var(--md-surface);
-            z-index: 1100;
+            background: rgba(3, 4, 6, 0.72);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
-        .loading-box {
+        .report-modal.active { display: flex; }
+        .report-container {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--md-surface-container-low);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 18px;
+            padding: 28px;
+            box-sizing: border-box;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            margin: 20px 0;
+        }
+        .report-header {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 18px;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        .loading-icon {
+        .report-title {
+            font-size: 1.3rem;
+            font-family: var(--font-display);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .report-title .icon {
+            color: var(--md-tertiary);
+            background: var(--md-tertiary-container);
+            border-radius: 10px;
+            padding: 6px;
+        }
+        .report-controls {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .report-period-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .report-period-selector select {
+            min-width: 130px;
+            height: 38px;
+            font-size: 0.82rem;
+        }
+        .report-period-selector label {
+            margin-bottom: 0;
+            font-size: 0.72rem;
+        }
+        .report-export-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding-left: 6px;
+            border-left: 1px solid var(--md-outline-variant);
+            margin-left: 4px;
+        }
+        .report-export-buttons .btn-action {
+            height: 38px;
+            font-size: 0.7rem;
+            padding: 0 12px;
+        }
+        .report-export-buttons .btn-action.btn-export-json {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            border-color: rgba(255,171,61,0.3);
+        }
+        .report-export-buttons .btn-action.btn-export-json:hover {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+        }
+        .report-export-buttons .btn-action.btn-export-csv {
+            background: var(--success-container);
+            color: var(--success);
+            border-color: rgba(52,220,140,0.3);
+        }
+        .report-export-buttons .btn-action.btn-export-csv:hover {
+            background: var(--success);
+            color: #051a10;
+        }
+        @media (max-width: 900px) {
+            .report-export-buttons {
+                border-left: none;
+                padding-left: 0;
+                margin-left: 0;
+                padding-top: 6px;
+                border-top: 1px solid var(--md-outline-variant);
+                width: 100%;
+            }
+        }
+        .report-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 900px) {
+            .report-stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .report-stats-grid { grid-template-columns: 1fr; }
+        }
+        .report-stat-card {
+            background: linear-gradient(180deg, var(--md-surface-container), var(--md-surface-container-low));
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            padding: 14px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .report-stat-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--md-tertiary), transparent 75%);
+            opacity: 0.7;
+        }
+        .report-stat-card .label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 6px;
+        }
+        .report-stat-card .value {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .report-table-container {
+            position: relative;
+            display: flex;
+            width: 100%;
+            background: var(--md-surface-container);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+        .report-table-container table {
+            min-width: 1000px;
+            font-size: 0.85rem;
+        }
+        .report-table-container th,
+        .report-table-container td {
+            padding: 10px 12px;
+            font-size: 0.8rem;
+        }
+        .report-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--md-on-surface-variant);
+            font-size: 0.9rem;
+        }
+        .report-empty .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+        .report-summary-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .report-summary-item {
+            flex: 1;
+            min-width: 150px;
+            background: var(--md-surface-container);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+        .report-summary-item .label {
+            font-size: 0.68rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 4px;
+        }
+        .report-summary-item .value {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* RR column styling */
+        .rr-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
             color: var(--md-primary);
-            font-size: 44px;
-            opacity: 0.95;
-            filter: drop-shadow(0 0 14px rgba(255,171,61,0.35));
         }
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 3px solid var(--md-outline-variant);
-            border-top-color: var(--md-primary);
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .loading-screen.fade-out {
-            animation: fadeOut 0.25s ease forwards;
-        }
-        @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
-        }
+        .rr-value.low { color: var(--md-on-surface-variant); }
+        .rr-value.good { color: var(--success); }
 
         @media screen and (max-width: 600px), 
                screen and (max-height: 800px) {
@@ -1000,87 +1126,67 @@
                         padding: 15px;
                         border-radius: 0;
                     }
-                    .margin-highlight-row .res-label {
-                        font-size: 0.4rem;
-                    }
-                    .margin-highlight-row .res-value {
-                        font-size: 0.6rem;
-                    }
-                    .res-row {
-                        font-size: 0.6rem;
-                    }
-                    .highlight {
-                        font-size: 0.7rem;
-                    }
+                    .margin-highlight-row .res-label { font-size: 0.4rem; }
+                    .margin-highlight-row .res-value { font-size: 0.6rem; }
+                    .res-row { font-size: 0.6rem; }
+                    .highlight { font-size: 0.7rem; }
+                    .report-container { padding: 16px; }
         }
-</style>
-<script type="module">
-    // ===================== Firebase (Firestore) =====================
-    // Вставьте сюда конфиг вашего проекта Firebase (см. гайд).
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-    import {
-        getAuth,
-        setPersistence,
-        browserLocalPersistence,
-        onAuthStateChanged,
-        signInWithEmailAndPassword,
-        signOut
-    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+        import {
+            getAuth,
+            setPersistence,
+            browserLocalPersistence,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAk5TEr5nv_aTNj4xf32mCC5FeEYMD56DQ",
-        authDomain: "trading-deary.firebaseapp.com",
-        projectId: "trading-deary",
-        storageBucket: "trading-deary.firebasestorage.app",
-        messagingSenderId: "701231887613",
-        appId: "1:701231887613:web:3336efd244ed786babba94"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAk5TEr5nv_aTNj4xf32mCC5FeEYMD56DQ",
+            authDomain: "trading-deary.firebaseapp.com",
+            projectId: "trading-deary",
+            storageBucket: "trading-deary.firebasestorage.app",
+            messagingSenderId: "701231887613",
+            appId: "1:701231887613:web:3336efd244ed786babba94"
+        };
 
-    try {
-        const firebaseApp = initializeApp(firebaseConfig);
-        window.__db = getFirestore(firebaseApp);
-        window.__firestoreGetDoc = getDoc;
-        window.__firestoreSetDoc = setDoc;
-        window.__tradingDocRef = doc(window.__db, "tradingJournal", "data");
+        try {
+            const firebaseApp = initializeApp(firebaseConfig);
+            window.__db = getFirestore(firebaseApp);
+            window.__firestoreGetDoc = getDoc;
+            window.__firestoreSetDoc = setDoc;
+            window.__tradingDocRef = doc(window.__db, "tradingJournal", "data");
 
-        // ===== Firebase Auth =====
-        // browserLocalPersistence хранит сессию в этом браузере (через IndexedDB/localStorage),
-        // поэтому логин не будет спрашиваться при каждой перезагрузке страницы —
-        // только когда пользователь явно нажмёт "Выйти", либо сессия будет отозвана.
-        const auth = getAuth(firebaseApp);
-        window.__auth = auth;
-        window.__signIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
-        window.__signOut = () => signOut(auth);
+            const auth = getAuth(firebaseApp);
+            window.__auth = auth;
+            window.__signIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
+            window.__signOut = () => signOut(auth);
 
-        setPersistence(auth, browserLocalPersistence)
-            .catch((e) => console.error('Auth persistence error:', e))
-            .finally(() => {
-                onAuthStateChanged(auth, (user) => {
-                    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user } }));
+            setPersistence(auth, browserLocalPersistence)
+                .catch((e) => console.error('Auth persistence error:', e))
+                .finally(() => {
+                    onAuthStateChanged(auth, (user) => {
+                        window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user } }));
+                    });
                 });
-            });
-    } catch (e) {
-        console.error('Firebase init error:', e);
-    }
-    window.dispatchEvent(new CustomEvent('firebaseReady'));
-</script>
+        } catch (e) {
+            console.error('Firebase init error:', e);
+        }
+        window.dispatchEvent(new CustomEvent('firebaseReady'));
+    </script>
 </head>
 <body>
 
-<!-- Экран загрузки (показывается, пока не выяснено, авторизован ли пользователь) -->
-<div id="loadingScreen" class="loading-screen">
-    <div class="loading-box">
-        <span class="icon lg loading-icon">candlestick_chart</span>
-        <div class="spinner"></div>
-    </div>
-</div>
-
-<!-- Экран входа -->
-<div id="loginScreen" class="login-screen" style="display:none;">
+<!-- Login Modal -->
+<div class="login-modal" id="loginModal">
     <form class="login-card" id="loginForm" onsubmit="handleLoginSubmit(event)">
+        <button type="button" class="close-modal" onclick="closeLoginModal()"><span class="icon">close</span></button>
         <h1 class="login-title"><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
-        <p class="login-subtitle">Войдите, чтобы открыть дневник</p>
+        <p class="login-subtitle">Войдите, чтобы синхронизировать данные</p>
         <div style="margin-bottom: 12px;">
             <label>Email</label>
             <input type="email" id="loginEmail" autocomplete="username" required>
@@ -1094,11 +1200,52 @@
     </form>
 </div>
 
-<div class="container" id="appRoot" style="display:none;">
+<!-- Report Modal -->
+<div class="report-modal" id="reportModal" onclick="handleReportOverlayClick(event)">
+    <div class="report-container" id="reportContainer">
+        <button class="close-modal" onclick="closeReportModal()"><span class="icon">close</span></button>
+        <div class="report-header">
+            <h2 class="report-title"><span class="icon">analytics</span>Ежемесячный отчёт</h2>
+            <div class="report-controls">
+                <div class="report-period-selector">
+                    <div>
+                        <label>Месяц</label>
+                        <select id="reportMonth" onchange="renderReport()">
+                            <option value="0">Январь</option>
+                            <option value="1">Февраль</option>
+                            <option value="2">Март</option>
+                            <option value="3">Апрель</option>
+                            <option value="4">Май</option>
+                            <option value="5">Июнь</option>
+                            <option value="6">Июль</option>
+                            <option value="7">Август</option>
+                            <option value="8">Сентябрь</option>
+                            <option value="9">Октябрь</option>
+                            <option value="10">Ноябрь</option>
+                            <option value="11">Декабрь</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Год</label>
+                        <select id="reportYear" onchange="renderReport()"></select>
+                    </div>
+                </div>
+                <div class="report-export-buttons">
+                    <button type="button" class="btn-action btn-export-json" onclick="exportReportJSON()" title="Экспорт сделок за выбранный месяц в JSON"><span class="icon sm">download</span>JSON</button>
+                    <button type="button" class="btn-action btn-export-csv" onclick="exportReportCSV()" title="Экспорт сделок за выбранный месяц в CSV"><span class="icon sm">download</span>CSV</button>
+                </div>
+            </div>
+        </div>
+        <div id="reportContent"></div>
+    </div>
+</div>
+
+<div class="container" id="appRoot">
 <div class="content-narrow">
     <div class="header-bar">
         <h1><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
         <div class="action-buttons">
+            <button type="button" class="btn-action btn-report" onclick="openReportModal()"><span class="icon">analytics</span>Отчёт</button>
             <button type="button" class="btn-action" onclick="exportToJSON()"><span class="icon">download</span>Export JSON</button>
             <label class="btn-action btn-import">
                 <span class="icon">upload</span>Import JSON
@@ -1110,7 +1257,8 @@
                 <input type="file" id="csvFileInput" accept=".csv" onchange="importFromCSV(event)" style="display: none;">
             </label>
             <button type="button" class="btn-action btn-clear" onclick="clearAllTrades()"><span class="icon">delete_sweep</span>Clear All</button>
-            <button type="button" class="btn-action" onclick="handleLogout()" title="Выйти из аккаунта"><span class="icon">logout</span>Выйти</button>
+            <button type="button" class="btn-action btn-login" id="loginBtn" onclick="openLoginModal()"><span class="icon">login</span>Войти</button>
+            <button type="button" class="btn-action btn-logout" id="logoutBtn" onclick="handleLogout()" style="display:none;" title="Выйти из аккаунта"><span class="icon">logout</span>Выйти</button>
         </div>
     </div>
     <div id="fileStatus" class="sync-status status-off"></div>
@@ -1216,7 +1364,7 @@
     </div>
 </div>
 
-    <!-- Таблица сделок (без ограничения по ширине — ей нужно больше места под колонки) -->
+    <!-- Таблица сделок -->
     <div class="table-container">
         <table>
             <thead>
@@ -1228,13 +1376,13 @@
                     <th>Stop($)</th>
                     <th>Take($)</th>
                     <th>Exit($)</th>
+                    <th>RR</th>
                     <th class="col-profit">Profit($)</th>
                     <th class="col-notes">Заметки</th>
                     <th class="col-sticky">Действия</th>
                 </tr>
             </thead>
             <tbody id="tradesTableBody">
-                <!-- Сделки рендерятся из JS -->
             </tbody>
         </table>
     </div>
@@ -1346,9 +1494,10 @@
     let trades = normalizeTrades(JSON.parse(localStorage.getItem('trading_journal_trades')) || []);
     let initialBalance = parseFloat(localStorage.getItem('trading_journal_initial_balance')) || 10000;
     let positionType = 'LONG';
-    let serverAvailable = false; // общаемся ли мы с server.py
-    let calcState = { units: 0, entry: 0, feePercent: 0, positionType: 'LONG', exit: null, profit: null }; // последние посчитанные значения калькулятора
-    let currentBalanceValue = initialBalance; // актуальный текущий депозит (initialBalance + totalPnL), обновляется в renderTrades()
+    let serverAvailable = false;
+    let isLoggedIn = false;
+    let calcState = { units: 0, entry: 0, feePercent: 0, positionType: 'LONG', exit: null, profit: null };
+    let currentBalanceValue = initialBalance;
 
     document.getElementById('tradeDate').valueAsDate = new Date();
     document.getElementById('initialBalance').value = initialBalance;
@@ -1357,7 +1506,6 @@
 
     function normalizeTrade(trade) {
         const t = { ...trade };
-        // Старый формат: exit = цена выхода → stop
         if ((t.stop === null || t.stop === undefined) && t.exit !== null && t.exit !== undefined && typeof t.exit === 'number') {
             t.stop = t.exit;
         }
@@ -1372,7 +1520,6 @@
         return Array.isArray(list) ? list.map(normalizeTrade) : [];
     }
 
-    // Однократная миграция старых данных из localStorage
     (function migrateLocalStorage() {
         const raw = JSON.parse(localStorage.getItem('trading_journal_trades')) || [];
         if (raw.some(t => t.exit !== undefined)) {
@@ -1386,17 +1533,18 @@
         const el = document.getElementById('fileStatus');
         if (!el) return;
         const config = {
-            ok:    { icon: 'cloud_done',  cls: 'status-ok' },
-            off:   { icon: 'cloud_off',   cls: 'status-off' },
-            error: { icon: 'cloud_alert', cls: 'status-error' }
-        }[state] || { icon: 'cloud_off', cls: 'status-off' };
+            ok:    { icon: 'cloud_done',  cls: 'status-ok', text: 'SYNC' },
+            off:   { icon: 'cloud_off',   cls: 'status-off', text: 'LOCAL' },
+            error: { icon: 'cloud_alert', cls: 'status-error', text: 'SYNC ERROR' }
+        }[state] || { icon: 'cloud_off', cls: 'status-off', text: 'LOCAL' };
 
         el.className = 'sync-status ' + config.cls;
         el.title = detail || '';
-        el.innerHTML = `<span class="icon fill sm">${config.icon}</span>SYNC`;
+        el.innerHTML = `<span class="icon fill sm">${config.icon}</span>${config.text}`;
     }
 
-    // При загрузке страницы пытаемся получить данные из Firestore (общие для всех устройств)
+    setFileStatus('off', 'Данные сохраняются только в этом браузере. Войдите для синхронизации.');
+
     async function loadFromServer() {
         try {
             if (!window.__db) throw new Error('Firebase не настроен');
@@ -1412,7 +1560,7 @@
                     document.getElementById('initialBalance').value = initialBalance;
                 }
             }
-            setFileStatus('ok', 'Данные общие для всех устройств, где вы открываете этот сайт');
+            setFileStatus('ok', 'Данные синхронизированы через Firebase');
             render();
         } catch (err) {
             serverAvailable = false;
@@ -1420,14 +1568,13 @@
         }
     }
 
-    // Отправляем текущее состояние в Firestore
     async function saveToServer() {
-        if (!serverAvailable || !window.__db) return;
+        if (!serverAvailable || !isLoggedIn || !window.__db) return;
         try {
             await window.__firestoreSetDoc(window.__tradingDocRef, { initialBalance, trades });
         } catch (err) {
             console.error('Не удалось сохранить в Firebase:', err);
-            setFileStatus('error', 'Ошибка сохранения в Firebase — данные в этом браузере в безопасности, но не синхронизированы');
+            setFileStatus('error', 'Ошибка сохранения в Firebase');
         }
     }
 
@@ -1477,8 +1624,6 @@
         reader.readAsText(file, 'UTF-8');
     }
 
-    /* ===================== /Хранение на сервере ===================== */
-
     function updateInitialBalance() {
         const val = parseFloat(document.getElementById('initialBalance').value);
         initialBalance = isNaN(val) ? 0 : val;
@@ -1498,7 +1643,6 @@
             alert('Список сделок уже пуст!');
             return;
         }
-
         if (confirm('Вы уверены, что хотите удалить ВСЕ сделки из дневника? Это действие нельзя отменить.')) {
             trades = [];
             resetForm();
@@ -1587,8 +1731,6 @@
         render();
     }
 
-    // Рекурсивно считает количество символов "+" в строке заметок
-    // (каждый "+" — это одно подтверждение входа, которое трейдер отметил вручную)
     function countPlusSigns(str, index) {
         if (!str) return 0;
         index = index || 0;
@@ -1597,13 +1739,11 @@
         return current + countPlusSigns(str, index + 1);
     }
 
-    // Возвращает HTML бейджа "+N" для заданного количества подтверждений, либо пустую строку
     function renderConfirmBadgeHtml(count) {
         if (!count || count <= 0) return '';
         return `<span class="confirm-badge">+${count}</span>`;
     }
 
-    // Обновляет бейдж прямо над полем "Заметки" по мере ввода
     function updateNotesConfirmBadge() {
         const text = document.getElementById('notes').value;
         const count = countPlusSigns(text);
@@ -1617,52 +1757,23 @@
         }
     }
 
-    // Функция для подсветки "PS" и всего текста после него
     function highlightPsError(text) {
         if (!text) return text;
-        // Ищем "ps" независимо от регистра (gi флаг)
-        // Заменяем найденное совпадение и весь текст после него на подсвеченную версию
         return text.replace(/ps[\s\S]*/gi, (match) => {
             return `<span class="highlight-ps">${match}</span>`;
         });
     }
 
-    // Функция для подсветки плюсов в начале строк или слов (причины входа)
     function highlightPlusReasons(text) {
         if (!text) return text;
-        // Заменяем символ "+" на span с классом highlight-plus
-        // Используем глобальный поиск
         return text.replace(/\+/g, '<span class="highlight-plus">+</span>');
     }
 
-    // Рендерит содержимое ячейки "Заметки" в таблице сделок вместе с бейджем подтверждений.
-    // Бейдж не занимает место в потоке текста — он "плавает" сверху справа от блока с заметками.
     function renderNotesCell(notes) {
         if (!notes) return `<div class="notes-cell-wrap"><span class="notes-text">-</span></div>`;
         
         const count = countPlusSigns(notes);
         const badge = renderConfirmBadgeHtml(count);
-        
-        // Сначала применяем подсветку PS (ошибки)
-        let processedText = highlightPsError(notes);
-        // Затем применяем подсветку плюсов (причины входа) к оставшемуся тексту
-        // Важно: нужно быть осторожным, чтобы не сломать HTML теги. 
-        // Простой replace может затронуть теги, поэтому лучше применять к текстовым узлам, 
-        // но для простоты здесь мы применим это к исходному тексту, а затем обернем.
-        // Однако, так как highlightPsError возвращает HTML, нам нужно быть аккуратными.
-        
-        // Более безопасный подход: разбить текст, обработать части.
-        // Но для простоты задачи:
-        // 1. Подсветим PS ошибки.
-        // 2. В оставшейся части (до PS) подсветим плюсы.
-        
-        // Давайте сделаем проще: сначала подсветим плюсы во всем тексте, потом PS.
-        // Но PS имеет приоритет (ошибка важнее).
-        
-        // Правильный порядок:
-        // 1. Найти индекс PS.
-        // 2. Часть до PS -> подсветить плюсы.
-        // 3. Часть с PS и далее -> подсветить как ошибку.
         
         const psMatch = notes.match(/ps[\s\S]*/i);
         let partBeforePs = notes;
@@ -1680,6 +1791,36 @@
         const finalHtml = highlightedBefore + (partWithPs ? highlightedAfter : '');
 
         return `<div class="notes-cell-wrap">${badge}<span class="notes-text">${finalHtml}</span></div>`;
+    }
+
+    function calculateRR(trade) {
+        const entry = trade.entry;
+        const stop = trade.stop;
+        const take = trade.take;
+
+        if (entry === null || entry === undefined || isNaN(entry) ||
+            stop === null || stop === undefined || isNaN(stop) ||
+            take === null || take === undefined || isNaN(take)) {
+            return null;
+        }
+
+        const risk = Math.abs(entry - stop);
+        const reward = Math.abs(take - entry);
+
+        if (risk <= 0) return null;
+
+        return reward / risk;
+    }
+
+    function renderRRCell(trade) {
+        const rr = calculateRR(trade);
+        if (rr === null) {
+            return '<span style="color: var(--md-on-surface-variant);">—</span>';
+        }
+        let cls = 'rr-value';
+        if (rr < 1) cls += ' low';
+        else if (rr >= 2) cls += ' good';
+        return `<span class="${cls}">1:${rr.toFixed(2)}</span>`;
     }
 
     function deleteTrade(id) {
@@ -1745,6 +1886,7 @@
                 <td>${stopText}</td>
                 <td>${takeText}</td>
                 <td>${exitPriceText}</td>
+                <td>${renderRRCell(trade)}</td>
                 <td class="col-profit ${isOpen ? '' : pnlClass}">${pnlText}</td>
                 <td class="col-notes" style="color: var(--text-muted); font-size: 0.8rem;">${renderNotesCell(trade.notes)}</td>
                 <td class="col-sticky">
@@ -1849,13 +1991,15 @@
 
         let csvLines = [];
         csvLines.push(`#INITIAL_BALANCE=${initialBalance}`);
-        csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;Profit;Заметки");
+        csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Profit;Заметки");
 
         trades.forEach(t => {
             const entry = (t.entry !== null && t.entry !== undefined) ? t.entry : '';
             const stop = (t.stop !== null && t.stop !== undefined) ? t.stop : '';
             const take = (t.take !== null && t.take !== undefined) ? t.take : '';
             const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : '';
+            const rr = calculateRR(t);
+            const rrStr = rr !== null ? rr.toFixed(2) : '';
             const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : '';
             
             const cleanNotes = (t.notes || '').replace(/"/g, '""');
@@ -1868,6 +2012,7 @@
                 stop,
                 take,
                 exitPrice,
+                rrStr,
                 pnl,
                 `"${cleanNotes}"`
             ].join(";");
@@ -1898,12 +2043,14 @@
         for (const line of lines) {
             const lower = line.trim().toLowerCase();
             if (!isCsvHeaderLine(line)) continue;
-            if (lower.includes('profit')) {
-                csvFormat = 'new3'; // Enter;Stop;Take;Exit;Profit
+            if (lower.includes('rr') && lower.includes('profit')) {
+                csvFormat = 'with_rr';
+            } else if (lower.includes('profit')) {
+                csvFormat = 'new3';
             } else if (lower.includes('take') || (lower.includes('stop') && lower.includes('enter'))) {
-                csvFormat = 'new2'; // Enter;Stop;Take;Exit(=Profit)
+                csvFormat = 'new2';
             } else if (lower.includes('вход') || lower.includes('выход') || lower.includes('pnl')) {
-                csvFormat = 'old'; // Вход;Выход;PnL
+                csvFormat = 'old';
             }
             break;
         }
@@ -1911,10 +2058,19 @@
     }
 
     function parseCsvTradeColumns(cols, csvFormat) {
-        const format = csvFormat || (cols.length >= 9 ? 'new3' : (cols.length >= 8 ? 'new2' : 'old'));
+        const format = csvFormat || (cols.length >= 10 ? 'with_rr' : (cols.length >= 9 ? 'new3' : (cols.length >= 8 ? 'new2' : 'old')));
 
+        if (format === 'with_rr') {
+            return {
+                entry: parseCsvNumber(cols[3]),
+                stop: parseCsvNumber(cols[4]),
+                take: parseCsvNumber(cols[5]),
+                exitPrice: parseCsvNumber(cols[6]),
+                pnl: parseCsvNumber(cols[8]),
+                notes: cols[9] || ''
+            };
+        }
         if (format === 'new3') {
-            // Дата;Монета;Тип;Enter;Stop;Take;Exit;Profit;Заметки
             return {
                 entry: parseCsvNumber(cols[3]),
                 stop: parseCsvNumber(cols[4]),
@@ -1925,7 +2081,6 @@
             };
         }
         if (format === 'new2') {
-            // Дата;Монета;Тип;Enter;Stop;Take;Exit(=старый Profit);Заметки
             return {
                 entry: parseCsvNumber(cols[3]),
                 stop: parseCsvNumber(cols[4]),
@@ -1935,7 +2090,6 @@
                 notes: cols[7] || ''
             };
         }
-        // old: Дата;Монета;Тип;Вход;Выход;PnL;Заметки
         return {
             entry: parseCsvNumber(cols[3]),
             stop: parseCsvNumber(cols[4]),
@@ -2040,6 +2194,361 @@
         reader.readAsText(file, 'UTF-8');
     }
 
+    /* ===================== Ежемесячный отчёт ===================== */
+
+    const MONTH_NAMES = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+    function openReportModal() {
+        const now = new Date();
+        const monthSelect = document.getElementById('reportMonth');
+        const yearSelect = document.getElementById('reportYear');
+
+        monthSelect.value = now.getMonth();
+
+        const yearsSet = new Set();
+        yearsSet.add(now.getFullYear());
+        trades.forEach(t => {
+            if (t.date) {
+                const d = new Date(t.date);
+                if (!isNaN(d.getTime())) {
+                    yearsSet.add(d.getFullYear());
+                }
+            }
+        });
+        const years = Array.from(yearsSet).sort((a, b) => b - a);
+
+        yearSelect.innerHTML = '';
+        years.forEach(y => {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            if (y === now.getFullYear()) opt.selected = true;
+            yearSelect.appendChild(opt);
+        });
+
+        renderReport();
+        document.getElementById('reportModal').classList.add('active');
+    }
+
+    function closeReportModal() {
+        document.getElementById('reportModal').classList.remove('active');
+    }
+
+    function handleReportOverlayClick(e) {
+        if (e.target === document.getElementById('reportModal')) {
+            closeReportModal();
+        }
+    }
+
+    function getTradesForMonth(month, year) {
+        return trades.filter(t => {
+            if (!t.date) return false;
+            const d = new Date(t.date);
+            if (isNaN(d.getTime())) return false;
+            return d.getMonth() === month && d.getFullYear() === year;
+        });
+    }
+
+    function renderReport() {
+        const month = parseInt(document.getElementById('reportMonth').value);
+        const year = parseInt(document.getElementById('reportYear').value);
+        const content = document.getElementById('reportContent');
+
+        const monthTrades = getTradesForMonth(month, year);
+
+        if (monthTrades.length === 0) {
+            content.innerHTML = `
+                <div class="report-empty">
+                    <span class="icon">inbox</span>
+                    Нет сделок за ${MONTH_NAMES[month]} ${year}
+                </div>
+            `;
+            return;
+        }
+
+        let totalPnL = 0;
+        let wins = 0;
+        let losses = 0;
+        let breakEvens = 0;
+        let openCount = 0;
+        let longCount = 0;
+        let shortCount = 0;
+        let bestTrade = null;
+        let worstTrade = null;
+        let totalWinAmount = 0;
+        let totalLossAmount = 0;
+        let rrValues = [];
+
+        monthTrades.forEach(t => {
+            const isOpen = t.pnl === null || t.pnl === undefined || isNaN(t.pnl);
+            if (isOpen) {
+                openCount++;
+            } else {
+                totalPnL += t.pnl;
+                if (t.pnl > 0) {
+                    wins++;
+                    totalWinAmount += t.pnl;
+                } else if (t.pnl < 0) {
+                    losses++;
+                    totalLossAmount += Math.abs(t.pnl);
+                } else {
+                    breakEvens++;
+                }
+
+                if (bestTrade === null || t.pnl > bestTrade.pnl) bestTrade = t;
+                if (worstTrade === null || t.pnl < worstTrade.pnl) worstTrade = t;
+            }
+
+            if (t.direction === 'LONG') longCount++;
+            else shortCount++;
+
+            const rr = calculateRR(t);
+            if (rr !== null) rrValues.push(rr);
+        });
+
+        const closedCount = wins + losses + breakEvens;
+        const decisiveTrades = wins + losses;
+        const winRate = decisiveTrades > 0 ? ((wins / decisiveTrades) * 100).toFixed(1) : '0.0';
+        const avgWin = wins > 0 ? (totalWinAmount / wins) : 0;
+        const avgLoss = losses > 0 ? (totalLossAmount / losses) : 0;
+        const profitFactor = totalLossAmount > 0 ? (totalWinAmount / totalLossAmount) : (totalWinAmount > 0 ? Infinity : 0);
+        const avgRR = rrValues.length > 0 ? (rrValues.reduce((a, b) => a + b, 0) / rrValues.length) : 0;
+
+        const pnlClass = totalPnL > 0 ? 'pnl-positive' : (totalPnL < 0 ? 'pnl-negative' : 'pnl-zero');
+        const pnlPrefix = totalPnL > 0 ? '+' : '';
+
+        let html = `
+            <div class="report-stats-grid">
+                <div class="report-stat-card">
+                    <div class="label">Всего сделок</div>
+                    <div class="value">${monthTrades.length}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">PnL за месяц</div>
+                    <div class="value ${pnlClass}">${pnlPrefix}$${totalPnL.toFixed(2)}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Винрейт</div>
+                    <div class="value">${winRate}%</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Прибыль / БУ / Убыток</div>
+                    <div class="value">
+                        <span style="color:var(--success)">${wins}</span> / 
+                        <span style="color:var(--breakeven)">${breakEvens}</span> / 
+                        <span style="color:var(--danger)">${losses}</span>
+                    </div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Лучшая сделка</div>
+                    <div class="value pnl-positive">${bestTrade ? '+$' + bestTrade.pnl.toFixed(2) : '—'}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Худшая сделка</div>
+                    <div class="value pnl-negative">${worstTrade ? '-$' + Math.abs(worstTrade.pnl).toFixed(2) : '—'}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Средний выигрыш</div>
+                    <div class="value pnl-positive">$${avgWin.toFixed(2)}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Средний убыток</div>
+                    <div class="value pnl-negative">$${avgLoss.toFixed(2)}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Profit Factor</div>
+                    <div class="value" style="color: ${profitFactor >= 1.5 ? 'var(--success)' : profitFactor >= 1 ? 'var(--warning)' : 'var(--danger)'}">${profitFactor === Infinity ? '∞' : profitFactor.toFixed(2)}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Средний RR</div>
+                    <div class="value" style="color: var(--md-primary)">1:${avgRR.toFixed(2)}</div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">Long / Short</div>
+                    <div class="value">
+                        <span style="color:var(--success)">${longCount}</span> / 
+                        <span style="color:var(--danger)">${shortCount}</span>
+                    </div>
+                </div>
+                <div class="report-stat-card">
+                    <div class="label">В работе</div>
+                    <div class="value" style="color: var(--warning)">${openCount}</div>
+                </div>
+            </div>
+
+            <div class="report-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Актив</th>
+                            <th>Тип</th>
+                            <th>Enter($)</th>
+                            <th>Stop($)</th>
+                            <th>Take($)</th>
+                            <th>Exit($)</th>
+                            <th>RR</th>
+                            <th>Profit($)</th>
+                            <th>Заметки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        const sorted = monthTrades.slice().sort((a, b) => {
+            const d = new Date(a.date) - new Date(b.date);
+            if (d !== 0) return d;
+            return (a.id || 0) - (b.id || 0);
+        });
+
+        sorted.forEach(trade => {
+            let pnlClass = 'pnl-zero';
+            let pnlText = '-';
+            const isOpen = trade.pnl === null || trade.pnl === undefined || isNaN(trade.pnl);
+
+            if (isOpen) {
+                pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>';
+            } else {
+                if (trade.pnl > 0) {
+                    pnlClass = 'pnl-positive';
+                    pnlText = '+$' + trade.pnl.toFixed(2);
+                } else if (trade.pnl < 0) {
+                    pnlClass = 'pnl-negative';
+                    pnlText = '-$' + Math.abs(trade.pnl).toFixed(2);
+                } else {
+                    pnlText = '$0.00 <span class="tag-be">БУ</span>';
+                }
+            }
+
+            const entryText = (trade.entry !== null && trade.entry !== undefined && !isNaN(trade.entry)) ? '$' + trade.entry : '-';
+            const stopText = (trade.stop !== null && trade.stop !== undefined && !isNaN(trade.stop)) ? '$' + trade.stop : '-';
+            const takeText = (trade.take !== null && trade.take !== undefined && !isNaN(trade.take)) ? '$' + trade.take : '-';
+            const exitPriceText = (trade.exitPrice !== null && trade.exitPrice !== undefined && !isNaN(trade.exitPrice)) ? '$' + trade.exitPrice : '-';
+
+            const notesText = trade.notes ? trade.notes.substring(0, 60) + (trade.notes.length > 60 ? '...' : '') : '-';
+
+            html += `
+                <tr>
+                    <td>${trade.date}</td>
+                    <td><b>${trade.asset}</b></td>
+                    <td><span class="tag ${trade.direction.toLowerCase()}">${trade.direction}</span></td>
+                    <td>${entryText}</td>
+                    <td>${stopText}</td>
+                    <td>${takeText}</td>
+                    <td>${exitPriceText}</td>
+                    <td>${renderRRCell(trade)}</td>
+                    <td class="${isOpen ? '' : pnlClass}">${pnlText}</td>
+                    <td style="color: var(--text-muted); font-size: 0.78rem; max-width: 200px; white-space: normal; word-break: break-word;">${notesText}</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        content.innerHTML = html;
+    }
+
+    /* ===================== Экспорт отчёта за выбранный месяц ===================== */
+
+    function exportReportJSON() {
+        const month = parseInt(document.getElementById('reportMonth').value);
+        const year = parseInt(document.getElementById('reportYear').value);
+        const monthTrades = getTradesForMonth(month, year);
+
+        if (monthTrades.length === 0) {
+            alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`);
+            return;
+        }
+
+        const payload = {
+            reportPeriod: {
+                month: month,
+                monthName: MONTH_NAMES[month],
+                year: year
+            },
+            initialBalance: initialBalance,
+            tradesCount: monthTrades.length,
+            exportedAt: new Date().toISOString(),
+            trades: normalizeTrades(monthTrades)
+        };
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const monthStr = String(month + 1).padStart(2, '0');
+        link.download = `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    function exportReportCSV() {
+        const month = parseInt(document.getElementById('reportMonth').value);
+        const year = parseInt(document.getElementById('reportYear').value);
+        const monthTrades = getTradesForMonth(month, year);
+
+        if (monthTrades.length === 0) {
+            alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`);
+            return;
+        }
+
+        // Сортируем по дате
+        const sorted = monthTrades.slice().sort((a, b) => {
+            const d = new Date(a.date) - new Date(b.date);
+            if (d !== 0) return d;
+            return (a.id || 0) - (b.id || 0);
+        });
+
+        let csvLines = [];
+        csvLines.push(`#REPORT_PERIOD=${MONTH_NAMES[month]} ${year}`);
+        csvLines.push(`#INITIAL_BALANCE=${initialBalance}`);
+        csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Profit;Заметки");
+
+        sorted.forEach(t => {
+            const entry = (t.entry !== null && t.entry !== undefined) ? t.entry : '';
+            const stop = (t.stop !== null && t.stop !== undefined) ? t.stop : '';
+            const take = (t.take !== null && t.take !== undefined) ? t.take : '';
+            const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : '';
+            const rr = calculateRR(t);
+            const rrStr = rr !== null ? rr.toFixed(2) : '';
+            const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : '';
+            const cleanNotes = (t.notes || '').replace(/"/g, '""');
+
+            const row = [
+                t.date,
+                t.asset,
+                t.direction,
+                entry,
+                stop,
+                take,
+                exitPrice,
+                rrStr,
+                pnl,
+                `"${cleanNotes}"`
+            ].join(";");
+
+            csvLines.push(row);
+        });
+
+        const csvString = "\uFEFF" + csvLines.join("\r\n");
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        const monthStr = String(month + 1).padStart(2, '0');
+        link.setAttribute("download", `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     /* Модальное окно и Калькулятор */
     function toggleCalculator(show) {
         const modal = document.getElementById('calcModal');
@@ -2052,7 +2561,6 @@
         }
     }
 
-    // Подставляет в калькулятор данные текущей (редактируемой или новой) сделки из формы
     function syncCalculatorFromForm() {
         const direction = document.getElementById('direction').value;
         const entryVal = document.getElementById('entryPrice').value;
@@ -2061,16 +2569,13 @@
         const exitVal = document.getElementById('exitPrice').value;
         const isEditing = document.getElementById('editingTradeId').value !== '';
 
-        // Вкладка LONG/SHORT — как в форме сделки
         setType(direction === 'SHORT' ? 'SHORT' : 'LONG');
 
         if (entryVal !== '') document.getElementById('calcEntry').value = entryVal;
         if (stopVal !== '') document.getElementById('calcStop').value = stopVal;
         if (takeVal !== '') document.getElementById('calcTarget').value = takeVal;
-        // Exit($) подставляется из сделки только при редактировании — для новой сделки поле остаётся пустым
         document.getElementById('calcExit').value = (isEditing && exitVal !== '') ? exitVal : '';
 
-        // Индикация режима редактирования сделки + подстановка актуального текущего депозита
         document.getElementById('calculatorBox').classList.toggle('editing', isEditing);
         document.getElementById('calcEditBanner').style.display = isEditing ? 'flex' : 'none';
         document.getElementById('addProfitBtn').style.display = isEditing ? 'flex' : 'none';
@@ -2084,8 +2589,6 @@
         }
     }
 
-    // Закрывать калькулятор только если клик реально начался (mousedown) и закончился (click) на подложке,
-    // а не когда клик по полю ввода (например, выделение текста в поле) случайно "дотягивает" курсор до подложки.
     let overlayMouseDownOnBackdrop = false;
 
     function handleOverlayMouseDown(e) {
@@ -2106,7 +2609,6 @@
         calculate();
     }
 
-    // Кнопки +/- в степпере плеча калькулятора: шаг 1x, ограничение 1..125
     function adjustLeverage(delta) {
         const input = document.getElementById('calcLeverage');
         let val = parseInt(input.value, 10);
@@ -2171,8 +2673,6 @@
         document.getElementById('totalRisk').innerText = '$' + totalRiskWithFee.toFixed(2);
         document.getElementById('rrRatio').innerText = rr > 0 ? `1 : ${rr.toFixed(2)}` : 'N/A';
 
-        // Если указан Exit($) — считаем фактический Profit/Loss по реальной цене выхода
-        // вместо теоретической прибыли по Take($)
         const netProfitLabel = document.getElementById('netProfitLabel');
         const netProfitEl = document.getElementById('netProfit');
         if (exit !== null && !isNaN(exit) && exit > 0) {
@@ -2198,9 +2698,6 @@
         }
     }
 
-    // Считает реальный Profit/Loss по фактической цене выхода (поле Exit($) в самом калькуляторе)
-    // и подставляет его в поле Profit($) формы сделки, используя объём позиции из калькулятора.
-    // Также синхронизирует Exit($) обратно в форму сделки.
     function addProfitFromCalculator() {
         const exitVal = document.getElementById('calcExit').value;
 
@@ -2220,7 +2717,6 @@
             return;
         }
 
-        // На этот момент calculate() уже посчитал calcState.profit по Exit($), но пересчитаем на всякий случай
         const { units, entry, feePercent, positionType: calcDirection } = calcState;
 
         const entryFee = units * entry * feePercent;
@@ -2241,33 +2737,20 @@
 
     /* ===================== Авторизация (Firebase Auth) ===================== */
 
-    let dataLoadStarted = false;
-
-    function hideLoadingScreen() {
-        const el = document.getElementById('loadingScreen');
-        if (!el || el.dataset.hidden) return;
-        el.dataset.hidden = '1';
-        el.classList.add('fade-out');
-        setTimeout(() => { el.style.display = 'none'; }, 250);
-    }
-
     function showApp() {
-        hideLoadingScreen();
-        document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appRoot').style.display = '';
-        if (!dataLoadStarted) {
-            dataLoadStarted = true;
-            loadFromServer();
-        }
     }
 
-    function showLogin() {
-        hideLoadingScreen();
-        dataLoadStarted = false;
-        document.getElementById('appRoot').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'flex';
+    function openLoginModal() {
+        document.getElementById('loginModal').classList.add('active');
+        const errorEl = document.getElementById('loginError');
+        errorEl.style.display = 'none';
         const btn = document.getElementById('loginSubmitBtn');
         if (btn) { btn.disabled = false; btn.textContent = 'Войти'; }
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModal').classList.remove('active');
     }
 
     function handleLoginSubmit(event) {
@@ -2288,6 +2771,9 @@
         btn.textContent = 'Вход...';
 
         window.__signIn(email, password)
+            .then(() => {
+                closeLoginModal();
+            })
             .catch((err) => {
                 console.error('Ошибка входа:', err);
                 const messages = {
@@ -2305,7 +2791,7 @@
     }
 
     function handleLogout() {
-        if (confirm('Выйти из аккаунта?') && window.__signOut) {
+        if (confirm('Выйти из аккаунта? Синхронизация будет отключена.') && window.__signOut) {
             window.__signOut();
         }
     }
@@ -2313,23 +2799,21 @@
     window.addEventListener('authStateChanged', (e) => {
         const user = e.detail.user;
         if (user) {
-            showApp();
+            isLoggedIn = true;
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = '';
+            serverAvailable = true;
+            loadFromServer();
         } else {
-            showLogin();
+            isLoggedIn = false;
+            serverAvailable = false;
+            document.getElementById('loginBtn').style.display = '';
+            document.getElementById('logoutBtn').style.display = 'none';
+            setFileStatus('off', 'Данные сохраняются только в этом браузере. Войдите для синхронизации.');
         }
     });
 
-    // Подстраховка: если Firebase не загрузился (например, нет сети),
-    // не оставляем пользователя навсегда на экране загрузки.
-    setTimeout(() => {
-        const loading = document.getElementById('loadingScreen');
-        if (loading && !loading.dataset.hidden) {
-            showLogin();
-            const errorEl = document.getElementById('loginError');
-            errorEl.textContent = 'Не удалось загрузить Firebase. Проверьте соединение и обновите страницу.';
-            errorEl.style.display = 'block';
-        }
-    }, 6000);
+    showApp();
 </script>
 
 </body>
