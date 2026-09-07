@@ -68,6 +68,28 @@ html::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-ra
 html::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
 html::-webkit-scrollbar-thumb:hover { background: #4b5563; }
 html { scrollbar-width: thin; scrollbar-color: #374151 transparent; }
+#pageLoader {
+position: fixed;
+top: 0; left: 0;
+width: 100%; height: 100%;
+background: var(--md-surface);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+z-index: 9999;
+transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+#pageLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-spinner {
+width: 48px; height: 48px;
+border: 3px solid var(--md-outline-variant);
+border-top-color: var(--md-primary);
+border-radius: 50%;
+animation: loaderSpin 0.8s linear infinite;
+}
+@keyframes loaderSpin { to { transform: rotate(360deg); } }
+.loader-text { margin-top: 16px; font-family: var(--font-body); font-size: 0.85rem; color: var(--md-on-surface-variant); letter-spacing: 0.05em; }
 body {
 font-family: var(--font-body);
 background-color: var(--md-surface);
@@ -84,9 +106,7 @@ font-variant-numeric: tabular-nums;
 letter-spacing: 0.005em;
 transition: overflow 0.2s ease;
 }
-body.scroll-locked {
-overflow: hidden;
-}
+body.scroll-locked { overflow: hidden; }
 .icon {
 font-family: 'Material Symbols Outlined';
 font-weight: 400;
@@ -106,51 +126,12 @@ vertical-align: middle;
 .icon.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
 .icon.sm { font-size: 16px; }
 .icon.lg { font-size: 28px; }
-.container {
-max-width: 2560px;
-width: 100%;
-margin: 0 auto;
-box-sizing: border-box;
-}
-.content-narrow {
-max-width: 1200px;
-width: 100%;
-margin: 0 auto;
-box-sizing: border-box;
-}
-.header-bar {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 22px;
-flex-wrap: wrap;
-gap: 10px;
-}
-h1 {
-color: var(--md-on-surface);
-margin: 0;
-font-family: var(--font-display);
-font-size: 1.55rem;
-font-weight: 600;
-display: flex;
-align-items: center;
-gap: 12px;
-letter-spacing: -0.01em;
-}
-h1 .icon {
-color: var(--md-primary);
-font-size: 26px;
-background: var(--md-primary-container);
-border-radius: 10px;
-padding: 7px;
-box-shadow: var(--shadow-glow);
-}
-.action-buttons {
-display: flex;
-align-items: center;
-gap: 8px;
-flex-wrap: wrap;
-}
+.container { max-width: 2560px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+.content-narrow { max-width: 1200px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+.header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 10px; }
+h1 { color: var(--md-on-surface); margin: 0; font-family: var(--font-display); font-size: 1.55rem; font-weight: 600; display: flex; align-items: center; gap: 12px; letter-spacing: -0.01em; }
+h1 .icon { color: var(--md-primary); font-size: 26px; background: var(--md-primary-container); border-radius: 10px; padding: 7px; box-shadow: var(--shadow-glow); }
+.action-buttons { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .btn-action {
 background: var(--md-surface-container-high);
 color: var(--md-on-surface-variant);
@@ -207,18 +188,9 @@ border: 1px solid transparent;
 .sync-status.status-ok { background: var(--success-container); color: var(--success); border-color: rgba(52,220,140,0.25); }
 .sync-status.status-off { background: var(--md-surface-container-high); color: var(--md-on-surface-variant); border-color: var(--md-outline-variant); }
 .sync-status.status-error { background: var(--danger-container); color: var(--md-on-error-container); border-color: rgba(255,107,107,0.3); }
-.stats-grid {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 10px;
-margin-bottom: 24px;
-}
-@media (max-width: 700px) {
-.stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 420px) {
-.stats-grid { grid-template-columns: 1fr; }
-}
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+@media (max-width: 700px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 420px) { .stats-grid { grid-template-columns: 1fr; } }
 .stat-card {
 background: linear-gradient(180deg, var(--md-surface-container-low), var(--md-surface-container-lowest));
 border: 1px solid var(--md-outline-variant);
@@ -228,40 +200,12 @@ position: relative;
 overflow: hidden;
 transition: border-color 0.15s ease, transform 0.15s ease;
 }
-.stat-card::before {
-content: "";
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 2px;
-background: linear-gradient(90deg, var(--md-primary), transparent 75%);
-opacity: 0.7;
-}
+.stat-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--md-primary), transparent 75%); opacity: 0.7; }
 .stat-card:hover { border-color: var(--md-outline); transform: translateY(-1px); }
-.stat-card .label {
-font-size: 0.72rem;
-font-weight: 500;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-color: var(--md-on-surface-variant);
-margin-bottom: 8px;
-display: flex;
-align-items: center;
-gap: 6px;
-}
+.stat-card .label { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--md-on-surface-variant); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 .stat-card .label .icon { font-size: 15px; }
-.stat-card .value {
-font-family: var(--font-mono);
-font-size: 1.35rem;
-font-weight: 600;
-letter-spacing: -0.01em;
-}
-.dashboard-row {
-display: flex;
-gap: 10px;
-margin-bottom: 24px;
-align-items: stretch;
-flex-wrap: wrap;
-}
+.stat-card .value { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 600; letter-spacing: -0.01em; }
+.dashboard-row { display: flex; gap: 10px; margin-bottom: 24px; align-items: stretch; flex-wrap: wrap; }
 .chart-card {
 flex: 0 0 300px;
 max-width: 340px;
@@ -274,45 +218,13 @@ flex-direction: column;
 position: relative;
 overflow: hidden;
 }
-.chart-card::before {
-content: "";
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 2px;
-background: linear-gradient(90deg, var(--success), transparent 75%);
-opacity: 0.7;
-}
-@media (max-width: 900px) {
-.chart-card { flex-basis: 100%; max-width: 100%; min-height: 180px; }
-}
-.chart-card-title {
-font-size: 0.72rem;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-color: var(--md-on-surface-variant);
-margin-bottom: 10px;
-display: flex;
-align-items: center;
-gap: 6px;
-font-weight: 500;
-}
+.chart-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--success), transparent 75%); opacity: 0.7; }
+@media (max-width: 900px) { .chart-card { flex-basis: 100%; max-width: 100%; min-height: 180px; } }
+.chart-card-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--md-on-surface-variant); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; font-weight: 500; }
 .chart-card-title .icon { font-size: 16px; }
-.pnl-chart {
-width: 100%;
-flex: 1;
-min-height: 120px;
-display: block;
-}
-.pnl-chart-empty {
-color: var(--md-on-surface-variant);
-font-size: 0.8rem;
-text-align: center;
-margin: auto 0;
-}
-.dashboard-row .stats-grid {
-flex: 2 1 480px;
-margin-bottom: 0;
-}
+.pnl-chart { width: 100%; flex: 1; min-height: 120px; display: block; }
+.pnl-chart-empty { color: var(--md-on-surface-variant); font-size: 0.8rem; text-align: center; margin: auto 0; }
+.dashboard-row .stats-grid { flex: 2 1 480px; margin-bottom: 0; }
 .form-card {
 background: var(--md-surface-container-low);
 border: 1px solid var(--md-outline-variant);
@@ -322,24 +234,14 @@ margin-bottom: 24px;
 box-shadow: var(--shadow-sm);
 transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-/* ===== Подсветка формы при редактировании ===== */
 .form-card.editing {
 border-color: var(--md-primary);
 box-shadow: 0 0 0 3px rgba(255,171,61,0.14), 0 0 0 1px rgba(255,171,61,0.25), var(--shadow-md);
 }
 .form-card { position: relative; }
-.form-grid {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 14px 16px;
-margin-bottom: 16px;
-}
-@media (max-width: 900px) {
-.form-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-.form-grid { grid-template-columns: 1fr; }
-}
+.form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 16px; margin-bottom: 16px; }
+@media (max-width: 900px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
 .form-grid > div { display: flex; flex-direction: column; }
 label {
 display: flex;
@@ -355,14 +257,7 @@ white-space: nowrap;
 overflow: hidden;
 text-overflow: ellipsis;
 }
-label small {
-color: var(--md-on-surface-variant);
-opacity: 0.75;
-font-weight: 400;
-text-transform: none;
-letter-spacing: normal;
-margin-left: 3px;
-}
+label small { color: var(--md-on-surface-variant); opacity: 0.75; font-weight: 400; text-transform: none; letter-spacing: normal; margin-left: 3px; }
 input, select, textarea {
 width: 100%;
 padding: 10px 12px;
@@ -394,10 +289,7 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 cursor: pointer;
 }
 input::placeholder, textarea::placeholder { color: var(--md-on-surface-variant); opacity: 0.55; }
-input:focus, select:focus, textarea:focus {
-border-color: var(--md-primary);
-box-shadow: 0 0 0 3px rgba(0, 92, 77, 0.14);
-}
+input:focus, select:focus, textarea:focus { border-color: var(--md-primary); box-shadow: 0 0 0 3px rgba(255,171,61,0.14); }
 select {
 font-family: var(--font-body);
 font-weight: 600;
@@ -484,29 +376,11 @@ width: 100%;
 position: relative;
 box-shadow: var(--shadow-sm);
 }
-table {
-width: 100%;
-border-collapse: separate;
-border-spacing: 0;
-text-align: left;
-font-size: 0.9rem;
-}
-th, td {
-padding: 12px 15px;
-border-bottom: 1px solid var(--md-outline-variant);
-white-space: nowrap;
-}
+table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.9rem; }
+th, td { padding: 12px 15px; border-bottom: 1px solid var(--md-outline-variant); white-space: nowrap; }
 td { font-family: var(--font-mono); font-size: 0.83rem; }
 td b { font-family: var(--font-body); }
-th {
-background: var(--md-surface-container);
-color: var(--md-on-surface-variant);
-font-weight: 600;
-font-size: 0.7rem;
-text-transform: uppercase;
-letter-spacing: 0.06em;
-font-family: var(--font-body);
-}
+th { background: var(--md-surface-container); color: var(--md-on-surface-variant); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-body); }
 tbody tr { transition: background-color 0.1s ease; }
 th.col-notes, td.col-notes {
 position: relative;
@@ -518,93 +392,24 @@ font-family: var(--font-body);
 font-size: 0.85rem;
 line-height: 1.4;
 }
-.col-sticky {
-position: sticky;
-right: 0;
-z-index: 5;
-width: 5%;
-box-shadow: -8px 0 12px -6px rgba(0, 0, 0, 0.45);
-text-align: center;
-}
-th.col-sticky {
-background: var(--md-surface-container);
-}
-td.col-sticky {
-background: var(--md-surface-container-low);
-}
-.tag {
-padding: 3px 10px;
-border-radius: 6px;
-font-size: 0.7rem;
-font-weight: 700;
-letter-spacing: 0.04em;
-font-family: var(--font-body);
-display: inline-flex;
-align-items: center;
-gap: 4px;
-}
+.col-sticky { position: sticky; right: 0; z-index: 5; width: 5%; box-shadow: -8px 0 12px -6px rgba(0, 0, 0, 0.45); text-align: center; }
+th.col-sticky { background: var(--md-surface-container); }
+td.col-sticky { background: var(--md-surface-container-low); }
+.tag { padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; font-family: var(--font-body); display: inline-flex; align-items: center; gap: 4px; }
 .tag.long { background: var(--success-container); color: var(--success); }
 .tag.short { background: var(--danger-container); color: var(--md-on-error-container); }
 .tag.open { background: var(--warning-container); color: var(--warning); }
 .pnl-positive { color: var(--success); font-weight: 700; }
 .pnl-negative { color: var(--danger); font-weight: 700; }
 .pnl-zero { color: var(--breakeven); font-weight: 700; }
-.tag-be {
-background: var(--md-surface-container-highest);
-color: var(--md-on-surface-variant);
-padding: 2px 8px;
-border-radius: 6px;
-font-size: 0.68rem;
-margin-left: 6px;
-font-family: var(--font-body);
-}
-.confirm-badge {
-display: inline-flex;
-justify-content: center;
-align-items: center;
-text-align: center;
-width: 24px;
-height: 24px;
-border-radius: 7px;
-font-size: 0.7rem;
-font-weight: 700;
-font-family: var(--font-mono);
-background: var(--success-container);
-color: var(--success);
-vertical-align: middle;
-}
+.tag-be { background: var(--md-surface-container-highest); color: var(--md-on-surface-variant); padding: 2px 8px; border-radius: 6px; font-size: 0.68rem; margin-left: 6px; font-family: var(--font-body); }
+.confirm-badge { display: inline-flex; justify-content: center; align-items: center; text-align: center; width: 24px; height: 24px; border-radius: 7px; font-size: 0.7rem; font-weight: 700; font-family: var(--font-mono); background: var(--success-container); color: var(--success); vertical-align: middle; }
 label .confirm-badge { margin-left: 8px; }
-.notes-cell-wrap {
-display: flex;
-justify-content: safe center;
-align-items: safe center;
-min-height: 60px;
-max-height: 60px;
-overflow-y: auto;
-}
-.notes-cell-wrap .confirm-badge {
-position: absolute;
-top: 50%;
-left: 12px;
-margin-top: -12px;
-}
-.notes-cell-wrap .notes-text {
-display: block;
-margin-left: 32px;
-font-size: 0.85rem;
-line-height: 1.4;
-}
-.highlight-ps {
-color: var(--ps-highlight);
-font-weight: 700;
-background: rgba(255, 255, 255, 0.1);
-padding: 0 2px;
-border-radius: 2px;
-}
-.highlight-plus {
-color: var(--plus-highlight);
-font-weight: bold;
-}
+.notes-cell-wrap { display: flex; justify-content: safe center; align-items: safe center; min-height: 60px; max-height: 60px; overflow-y: auto; }
+.notes-cell-wrap .confirm-badge { position: absolute; top: 50%; left: 12px; margin-top: -12px; }
+.notes-cell-wrap .notes-text { display: block; margin-left: 32px; margin-right:5px; font-size: 0.85rem; line-height: 1.4; }
+.highlight-ps { color: var(--ps-highlight); font-weight: 700; background: rgba(255, 255, 255, 0.1); padding: 0 2px; border-radius: 2px; }
+.highlight-plus { color: var(--plus-highlight); font-weight: bold; }
 .modal-overlay {
 position: fixed;
 top: 0;
@@ -671,66 +476,16 @@ gap: 6px;
 .type-btn.active.long { background: var(--success-container); color: var(--success); border-color: rgba(52,220,140,0.3); }
 .type-btn.active.short { background: var(--danger-container); color: var(--md-on-error-container); border-color: rgba(255,107,107,0.3); }
 .calculator.editing { border: 1px solid var(--md-primary); box-shadow: 0 0 0 3px rgba(255,171,61,0.14), var(--shadow-lg); }
-.calc-edit-banner {
-display: flex;
-align-items: center;
-gap: 8px;
-background: var(--md-primary-container);
-color: var(--md-on-primary-container);
-font-size: 0.8rem;
-font-weight: 600;
-padding: 8px 12px;
-border-radius: 9px;
-margin-bottom: 16px;
-}
-.row-editing {
-outline: 1px solid var(--md-primary);
-outline-offset: -2px;
-background: rgba(255,171,61,0.06) !important;
-}
-.calc-grid-4 {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 12px;
-margin-bottom: 12px;
-}
-.calc-grid-2 {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-margin-bottom: 12px;
-}
-@media (max-width: 760px) {
-.calc-grid-4 { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-.calc-grid-4 { grid-template-columns: 1fr; }
-.calc-grid-2 { grid-template-columns: 1fr; }
-}
-.leverage-stepper {
-display: flex;
-align-items: stretch;
-border: 1px solid var(--md-outline);
-border-radius: 9px;
-overflow: hidden;
-background: var(--md-surface-container-highest);
-height: 40px;
-}
-.leverage-stepper input {
-border: none;
-border-radius: 0;
-text-align: center;
-font-weight: 700;
-background: transparent;
-padding: 0 4px;
--moz-appearance: textfield;
-}
+.calc-edit-banner { display: flex; align-items: center; gap: 8px; background: var(--md-primary-container); color: var(--md-on-primary-container); font-size: 0.8rem; font-weight: 600; padding: 8px 12px; border-radius: 9px; margin-bottom: 16px; }
+.row-editing { outline: 1px solid var(--md-primary); outline-offset: -2px; background: rgba(255,171,61,0.06) !important; }
+.calc-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+.calc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+@media (max-width: 760px) { .calc-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .calc-grid-4 { grid-template-columns: 1fr; } .calc-grid-2 { grid-template-columns: 1fr; } }
+.leverage-stepper { display: flex; align-items: stretch; border: 1px solid var(--md-outline); border-radius: 9px; overflow: hidden; background: var(--md-surface-container-highest); height: 40px; }
+.leverage-stepper input { border: none; border-radius: 0; text-align: center; font-weight: 700; background: transparent; padding: 0 4px; -moz-appearance: textfield; }
 .leverage-stepper input:focus { box-shadow: none; }
-.leverage-stepper input::-webkit-outer-spin-button,
-.leverage-stepper input::-webkit-inner-spin-button {
--webkit-appearance: none;
-margin: 0;
-}
+.leverage-stepper input::-webkit-outer-spin-button, .leverage-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .lev-btn {
 background: var(--md-surface-container-high);
 border: none;
@@ -751,35 +506,10 @@ user-select: none;
 .lev-btn:hover { background: var(--md-primary-container); color: var(--md-primary); }
 .lev-btn:active { filter: brightness(0.95); }
 .results { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--md-outline-variant); }
-.margin-highlight-row {
-display: flex;
-justify-content: space-between;
-align-items: center;
-background: var(--md-primary-container);
-border: 1px solid rgba(255,171,61,0.3);
-border-radius: 10px;
-padding: 10px 14px;
-margin-bottom: 14px;
-}
-.margin-highlight-row .res-label {
-font-size: 0.78rem;
-font-weight: 600;
-color: var(--md-on-primary-container);
-text-transform: uppercase;
-letter-spacing: 0.03em;
-display: flex;
-align-items: center;
-gap: 6px;
-}
-.margin-highlight-row .res-value {
-font-size: 1.05rem;
-font-weight: 700;
-color: var(--md-primary);
-}
-.margin-highlight-row.margin-insufficient {
-background: var(--danger-container);
-border-color: rgba(255,107,107,0.35);
-}
+.margin-highlight-row { display: flex; justify-content: space-between; align-items: center; background: var(--md-primary-container); border: 1px solid rgba(255,171,61,0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; }
+.margin-highlight-row .res-label { font-size: 0.78rem; font-weight: 600; color: var(--md-on-primary-container); text-transform: uppercase; letter-spacing: 0.03em; display: flex; align-items: center; gap: 6px; }
+.margin-highlight-row .res-value { font-size: 1.05rem; font-weight: 700; color: var(--md-primary); }
+.margin-highlight-row.margin-insufficient { background: var(--danger-container); border-color: rgba(255,107,107,0.35); }
 .margin-highlight-row.margin-insufficient .res-label { color: var(--md-on-error-container); }
 .margin-highlight-row.margin-insufficient .res-value { color: var(--md-error); }
 .res-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.86rem; color: var(--md-on-surface-variant); }
@@ -788,7 +518,7 @@ border-color: rgba(255,107,107,0.35);
 .warning { color: var(--md-error); font-size: 0.8rem; margin-top: 10px; text-align: center; }
 .partial-breakdown {
 display: grid;
-grid-template-columns: 1fr 1fr 1fr;
+grid-template-columns: repeat(4, 1fr);
 gap: 10px;
 margin: 14px 0 16px;
 padding: 14px;
@@ -796,6 +526,8 @@ background: var(--md-surface-container);
 border: 1px solid var(--md-outline-variant);
 border-radius: 12px;
 }
+@media (max-width: 900px) { .partial-breakdown { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .partial-breakdown { grid-template-columns: 1fr; } }
 .partial-card {
 background: var(--md-surface-container-high);
 border: 1px solid var(--md-outline-variant);
@@ -803,20 +535,15 @@ border-radius: 9px;
 padding: 10px 12px;
 text-align: center;
 }
-.partial-card.full-pos {
-background: linear-gradient(180deg, var(--md-surface-container-high), var(--md-surface-container));
-}
-.partial-card.fixed {
-border-color: rgba(52, 220, 140, 0.3);
-}
-.partial-card.remaining {
-border-color: rgba(255, 171, 61, 0.3);
-}
+.partial-card.total-card { background: linear-gradient(180deg, var(--md-surface-container-high), var(--md-surface-container)); }
+.partial-card.already-fixed { border-color: rgba(201, 179, 255, 0.35); background: linear-gradient(135deg, rgba(201,179,255,0.08), rgba(201,179,255,0.02)); }
+.partial-card.remaining-card { border-color: rgba(255, 171, 61, 0.3); }
+.partial-card.now-fixing { border-color: rgba(52, 220, 140, 0.4); background: linear-gradient(135deg, rgba(52,220,140,0.08), rgba(52,220,140,0.02)); }
 .partial-label {
-font-size: 0.68rem;
+font-size: 0.65rem;
 font-weight: 500;
 text-transform: uppercase;
-letter-spacing: 0.05em;
+letter-spacing: 0.04em;
 color: var(--md-on-surface-variant);
 margin-bottom: 4px;
 display: flex;
@@ -827,37 +554,144 @@ gap: 4px;
 .partial-label .icon { font-size: 13px; }
 .partial-percent {
 font-family: var(--font-mono);
-font-size: 1.3rem;
+font-size: 1.2rem;
 font-weight: 700;
 color: var(--md-on-surface);
 line-height: 1.2;
 }
-.partial-card.fixed .partial-percent { color: var(--success); }
-.partial-card.remaining .partial-percent { color: var(--md-primary); }
-.partial-card.full-pos .partial-percent { color: var(--md-on-surface); }
+.partial-card.already-fixed .partial-percent { color: var(--md-tertiary); }
+.partial-card.remaining-card .partial-percent { color: var(--md-primary); }
+.partial-card.now-fixing .partial-percent { color: var(--success); }
+.partial-card.total-card .partial-percent { color: var(--md-on-surface); }
 .partial-detail {
 font-family: var(--font-mono);
-font-size: 0.72rem;
+font-size: 0.7rem;
 color: var(--md-on-surface-variant);
 margin-top: 3px;
 line-height: 1.35;
 }
-.partial-detail strong {
-color: var(--md-on-surface);
-font-weight: 600;
-}
-@media (max-width: 600px) {
-.partial-breakdown { grid-template-columns: 1fr; }
-}
-.close-type-toggle {
-display: flex;
-gap: 0;
-margin: 14px 0 16px;
-border: 1px solid var(--md-outline-variant);
-border-radius: 10px;
-overflow: hidden;
+.partial-detail strong { color: var(--md-on-surface); font-weight: 600; }
+.position-journal {
+margin-top: 16px;
+padding: 14px;
 background: var(--md-surface-container);
+border: 1px solid var(--md-outline-variant);
+border-radius: 12px;
 }
+.position-journal-title {
+font-size: 0.78rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--md-on-surface-variant);
+margin-bottom: 12px;
+display: flex;
+align-items: center;
+gap: 6px;
+flex-shrink: 0;
+}
+.position-journal-title .icon { font-size: 16px; color: var(--md-tertiary); }
+.position-journal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+padding-bottom: 10px;
+border-bottom: 1px solid var(--md-outline-variant);
+}
+.position-journal-header .total-fixed {
+font-family: var(--font-mono);
+font-size: 0.85rem;
+font-weight: 700;
+color: var(--md-tertiary);
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.position-journal-header .total-fixed .icon { font-size: 15px; }
+.position-journal-list {
+display: flex;
+flex-direction: column;
+gap: 8px;
+max-height: 220px;
+overflow-y: auto;
+padding: 4px 0;
+}
+.position-journal-list::-webkit-scrollbar { width: 6px; }
+.position-journal-list::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 4px; }
+.position-journal-list::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+.position-journal-list::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+.position-journal-list { scrollbar-width: thin; scrollbar-color: #374151 transparent; }
+.position-journal-item {
+display: grid;
+grid-template-columns: auto 1fr auto auto auto auto;
+gap: 12px;
+align-items: center;
+padding: 10px 12px;
+background: var(--md-surface-container-high);
+border: 1px solid var(--md-outline-variant);
+border-radius: 8px;
+font-size: 0.8rem;
+position: relative;
+}
+.position-journal-item.full-close {
+background: linear-gradient(135deg, rgba(255,171,61,0.08), rgba(255,171,61,0.03));
+border-color: rgba(255,171,61,0.35);
+border-left: 3px solid var(--md-primary);
+}
+.position-journal-item.partial-close {
+background: linear-gradient(135deg, rgba(52,220,140,0.06), rgba(52,220,140,0.02));
+border-color: rgba(52,220,140,0.25);
+border-left: 3px solid var(--success);
+}
+.position-journal-item .close-badge {
+position: absolute;
+top: -6px;
+left: 10px;
+font-size: 0.6rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+padding: 2px 8px;
+border-radius: 4px;
+font-family: var(--font-body);
+}
+.position-journal-item.full-close .close-badge { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+.position-journal-item.partial-close .close-badge { background: var(--success-container); color: var(--success); }
+.position-journal-item .time { font-family: var(--font-mono); color: var(--md-on-surface-variant); font-size: 0.72rem; }
+.position-journal-item .percent { font-family: var(--font-mono); font-weight: 700; }
+.position-journal-item.full-close .percent { color: var(--md-primary); }
+.position-journal-item.partial-close .percent { color: var(--success); }
+.position-journal-item .price { font-family: var(--font-mono); color: var(--md-on-surface); }
+.position-journal-item .size-amount { font-family: var(--font-mono); color: var(--md-on-surface-variant); font-size: 0.72rem; }
+.position-journal-item .pnl { font-family: var(--font-mono); font-weight: 700; }
+.position-journal-item .pnl.positive { color: var(--success); }
+.position-journal-item .pnl.negative { color: var(--danger); }
+.btn-delete-close {
+background: transparent;
+border: none;
+color: var(--md-on-surface-variant);
+cursor: pointer;
+padding: 4px;
+width: 26px;
+height: 26px;
+border-radius: 6px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+transition: all 0.15s ease;
+opacity: 0.5;
+}
+.btn-delete-close:hover { background: var(--danger-container); color: var(--md-error); opacity: 1; }
+.btn-delete-close:active { transform: scale(0.92); }
+.btn-delete-close .icon { font-size: 16px; }
+.position-journal-empty { text-align: center; color: var(--md-on-surface-variant); font-size: 0.8rem; padding: 12px; }
+@media (max-width: 600px) {
+.position-journal-item { grid-template-columns: 1fr auto auto; gap: 8px; }
+.position-journal-item .price,
+.position-journal-item .size-amount { display: none; }
+}
+.close-type-toggle { display: flex; gap: 0; margin: 14px 0 16px; border: 1px solid var(--md-outline-variant); border-radius: 10px; overflow: hidden; background: var(--md-surface-container); }
 .close-type-btn {
 flex: 1;
 padding: 10px 16px;
@@ -876,414 +710,52 @@ gap: 6px;
 text-transform: uppercase;
 letter-spacing: 0.03em;
 }
-.close-type-btn.active.partial {
-background: var(--success-container);
-color: var(--success);
-}
-.close-type-btn.active.full {
-background: var(--md-primary-container);
-color: var(--md-primary);
-}
-.close-type-btn:not(.active):hover {
-background: var(--md-surface-container-high);
-color: var(--md-on-surface);
-}
-.close-type-btn .icon {
-font-size: 16px;
-}
-.close-journal {
-margin-top: 20px;
-padding: 16px;
-background: var(--md-surface-container);
-border: 1px solid var(--md-outline-variant);
-border-radius: 12px;
-}
-.close-journal-title {
-font-size: 0.82rem;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-color: var(--md-on-surface-variant);
-margin-bottom: 10px;
-display: flex;
-align-items: center;
-gap: 6px;
-}
-.close-journal-title .icon {
-font-size: 18px;
-color: var(--md-tertiary);
-}
-.close-journal-list {
-display: flex;
-flex-direction: column;
-gap: 8px;
-max-height: 240px;
-overflow-y: auto;
-padding: 10px 0;
-}
-.close-journal-item {
-display: grid;
-grid-template-columns: auto 1fr auto auto auto auto;
-gap: 12px;
-align-items: center;
-padding: 10px 12px;
-background: var(--md-surface-container-high);
-border: 1px solid var(--md-outline-variant);
-border-radius: 8px;
-font-size: 0.8rem;
-position: relative;
-}
-.close-journal-item.full-close {
-background: linear-gradient(135deg, rgba(255,171,61,0.08), rgba(255,171,61,0.03));
-border-color: rgba(255,171,61,0.35);
-border-left: 3px solid var(--md-primary);
-}
-.close-journal-item.partial-close {
-background: linear-gradient(135deg, rgba(52,220,140,0.06), rgba(52,220,140,0.02));
-border-color: rgba(52,220,140,0.25);
-border-left: 3px solid var(--success);
-}
-.close-journal-item .close-badge {
-position: absolute;
-top: -6px;
-left: 10px;
-font-size: 0.6rem;
-font-weight: 700;
-text-transform: uppercase;
-letter-spacing: 0.06em;
-padding: 2px 8px;
-border-radius: 4px;
-font-family: var(--font-body);
-}
-.close-journal-item.full-close .close-badge {
-background: var(--md-primary-container);
-color: var(--md-on-primary-container);
-}
-.close-journal-item.partial-close .close-badge {
-background: var(--success-container);
-color: var(--success);
-}
-.close-journal-item .time {
-font-family: var(--font-mono);
-color: var(--md-on-surface-variant);
-font-size: 0.72rem;
-}
-.close-journal-item .percent {
-font-family: var(--font-mono);
-font-weight: 700;
-}
-.close-journal-item.full-close .percent {
-color: var(--md-primary);
-}
-.close-journal-item.partial-close .percent {
-color: var(--success);
-}
-.close-journal-item .price {
-font-family: var(--font-mono);
-color: var(--md-on-surface);
-}
-.close-journal-item .pnl {
-font-family: var(--font-mono);
-font-weight: 700;
-}
-.close-journal-item .pnl.positive { color: var(--success); }
-.close-journal-item .pnl.negative { color: var(--danger); }
-.btn-delete-close {
-background: transparent;
-border: none;
-color: var(--md-on-surface-variant);
-cursor: pointer;
-padding: 4px;
-width: 26px;
-height: 26px;
-border-radius: 6px;
-display: inline-flex;
-align-items: center;
-justify-content: center;
-transition: all 0.15s ease;
-opacity: 0.5;
-}
-.btn-delete-close:hover {
-background: var(--danger-container);
-color: var(--md-error);
-opacity: 1;
-}
-.btn-delete-close:active {
-transform: scale(0.92);
-}
-.btn-delete-close .icon {
-font-size: 16px;
-}
-.close-journal-empty {
-text-align: center;
-color: var(--md-on-surface-variant);
-font-size: 0.8rem;
-padding: 16px;
-}
-@media (max-width: 600px) {
-.close-journal-item {
-grid-template-columns: 1fr auto auto;
-gap: 8px;
-}
-.close-journal-item .price {
-display: none;
-}
-}
-.login-modal {
-position: fixed;
-inset: 0;
-display: none;
-align-items: center;
-justify-content: center;
-background: rgba(3, 4, 6, 0.72);
-backdrop-filter: blur(6px);
-z-index: 1000;
-padding: 20px;
-box-sizing: border-box;
-}
+.close-type-btn.active.partial { background: var(--success-container); color: var(--success); }
+.close-type-btn.active.full { background: var(--md-primary-container); color: var(--md-primary); }
+.close-type-btn:not(.active):hover { background: var(--md-surface-container-high); color: var(--md-on-surface); }
+.close-type-btn .icon { font-size: 16px; }
+.login-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(3, 4, 6, 0.72); backdrop-filter: blur(6px); z-index: 1000; padding: 20px; box-sizing: border-box; }
 .login-modal.active { display: flex; }
-.login-card {
-width: 100%;
-max-width: 380px;
-background: var(--md-surface-container-low);
-border: 1px solid var(--md-outline-variant);
-border-radius: 18px;
-padding: 32px 28px;
-box-sizing: border-box;
-box-shadow: var(--shadow-lg);
-position: relative;
-}
-.login-title {
-font-size: 1.35rem;
-font-family: var(--font-display);
-margin: 0 0 6px 0;
-justify-content: center;
-display: flex;
-align-items: center;
-gap: 12px;
-}
-.login-title .icon {
-color: var(--md-primary);
-background: var(--md-primary-container);
-border-radius: 10px;
-padding: 7px;
-}
-.login-subtitle {
-color: var(--md-on-surface-variant);
-font-size: 0.85rem;
-text-align: center;
-margin: 0 0 22px 0;
-}
-.login-error {
-background: var(--danger-container);
-color: var(--md-on-error-container);
-font-size: 0.8rem;
-padding: 8px 12px;
-border-radius: 8px;
-margin-top: 10px;
-}
-.report-modal {
-position: fixed;
-inset: 0;
-display: none;
-align-items: flex-start;
-justify-content: center;
-background: rgba(3, 4, 6, 0.72);
-backdrop-filter: blur(6px);
-z-index: 1000;
-padding: 20px;
-box-sizing: border-box;
-overflow-y: auto;
-}
+.login-card { width: 100%; max-width: 380px; background: var(--md-surface-container-low); border: 1px solid var(--md-outline-variant); border-radius: 18px; padding: 32px 28px; box-sizing: border-box; box-shadow: var(--shadow-lg); position: relative; }
+.login-title { font-size: 1.35rem; font-family: var(--font-display); margin: 0 0 6px 0; justify-content: center; display: flex; align-items: center; gap: 12px; }
+.login-title .icon { color: var(--md-primary); background: var(--md-primary-container); border-radius: 10px; padding: 7px; }
+.login-subtitle { color: var(--md-on-surface-variant); font-size: 0.85rem; text-align: center; margin: 0 0 22px 0; }
+.login-error { background: var(--danger-container); color: var(--md-on-error-container); font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; margin-top: 10px; }
+.report-modal { position: fixed; inset: 0; display: none; align-items: flex-start; justify-content: center; background: rgba(3, 4, 6, 0.72); backdrop-filter: blur(6px); z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
 .report-modal.active { display: flex; }
-.report-container {
-width: 100%;
-max-width: 1100px;
-background: var(--md-surface-container-low);
-border: 1px solid var(--md-outline-variant);
-border-radius: 18px;
-padding: 28px;
-box-sizing: border-box;
-box-shadow: var(--shadow-lg);
-position: relative;
-margin: 20px 0;
-}
-.report-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 20px;
-flex-wrap: wrap;
-gap: 12px;
-}
-.report-title {
-font-size: 1.3rem;
-font-family: var(--font-display);
-font-weight: 600;
-margin: 0;
-display: flex;
-align-items: center;
-gap: 10px;
-}
-.report-title .icon {
-color: var(--md-tertiary);
-background: var(--md-tertiary-container);
-border-radius: 10px;
-padding: 6px;
-}
-.report-controls {
-display: flex;
-align-items: flex-end;
-gap: 10px;
-flex-wrap: wrap;
-}
-.report-period-selector {
-display: flex;
-align-items: center;
-gap: 10px;
-flex-wrap: wrap;
-}
-.report-period-selector select {
-min-width: 130px;
-height: 38px;
-font-size: 0.82rem;
-}
-.report-period-selector label {
-margin-bottom: 0;
-font-size: 0.72rem;
-}
-.report-export-buttons {
-display: flex;
-gap: 6px;
-align-items: center;
-padding-left: 6px;
-border-left: 1px solid var(--md-outline-variant);
-margin-left: 4px;
-}
-.report-export-buttons .btn-action {
-height: 38px;
-font-size: 0.7rem;
-padding: 0 12px;
-}
-.report-export-buttons .btn-action.btn-export-json {
-background: var(--md-primary-container);
-color: var(--md-on-primary-container);
-border-color: rgba(255,171,61,0.3);
-}
-.report-export-buttons .btn-action.btn-export-json:hover {
-background: var(--md-primary);
-color: var(--md-on-primary);
-}
-.report-export-buttons .btn-action.btn-export-csv {
-background: var(--success-container);
-color: var(--success);
-border-color: rgba(52,220,140,0.3);
-}
-.report-export-buttons .btn-action.btn-export-csv:hover {
-background: var(--success);
-color: #051a10;
-}
-@media (max-width: 900px) {
-.report-export-buttons {
-border-left: none;
-padding-left: 0;
-margin-left: 0;
-padding-top: 6px;
-border-top: 1px solid var(--md-outline-variant);
-width: 100%;
-}
-}
-.report-stats-grid {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 10px;
-margin-bottom: 20px;
-}
-@media (max-width: 900px) {
-.report-stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 500px) {
-.report-stats-grid { grid-template-columns: 1fr; }
-}
-.report-stat-card {
-background: linear-gradient(180deg, var(--md-surface-container), var(--md-surface-container-low));
-border: 1px solid var(--md-outline-variant);
-border-radius: 12px;
-padding: 14px 16px;
-position: relative;
-overflow: hidden;
-}
-.report-stat-card::before {
-content: "";
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 2px;
-background: linear-gradient(90deg, var(--md-tertiary), transparent 75%);
-opacity: 0.7;
-}
-.report-stat-card .label {
-font-size: 0.7rem;
-font-weight: 500;
-text-transform: uppercase;
-letter-spacing: 0.05em;
-color: var(--md-on-surface-variant);
-margin-bottom: 6px;
-}
-.report-stat-card .value {
-font-family: var(--font-mono);
-font-size: 1.2rem;
-font-weight: 600;
-}
-.report-table-container {
-position: relative;
-display: flex;
-width: 100%;
-background: var(--md-surface-container);
-border: 1px solid var(--md-outline-variant);
-border-radius: 12px;
-overflow: auto;
-}
-.report-table-container table {
-min-width: 800px;
-font-size: 0.85rem;
-}
-.report-table-container th,
-.report-table-container td {
-padding: 10px 12px;
-font-size: 0.8rem;
-}
-.report-empty {
-text-align: center;
-padding: 40px 20px;
-color: var(--md-on-surface-variant);
-font-size: 0.9rem;
-}
-.report-empty .icon {
-font-size: 40px;
-display: block;
-margin-bottom: 10px;
-opacity: 0.5;
-}
-.rr-value {
-font-family: var(--font-mono);
-font-weight: 600;
-color: var(--md-primary);
-}
+.report-container { width: 100%; max-width: 1100px; background: var(--md-surface-container-low); border: 1px solid var(--md-outline-variant); border-radius: 18px; padding: 28px; box-sizing: border-box; box-shadow: var(--shadow-lg); position: relative; margin: 20px 0; }
+.report-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.report-title { font-size: 1.3rem; font-family: var(--font-display); font-weight: 600; margin: 0; display: flex; align-items: center; gap: 10px; }
+.report-title .icon { color: var(--md-tertiary); background: var(--md-tertiary-container); border-radius: 10px; padding: 6px; }
+.report-controls { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+.report-period-selector { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.report-period-selector select { min-width: 130px; height: 38px; font-size: 0.82rem; }
+.report-period-selector label { margin-bottom: 0; font-size: 0.72rem; }
+.report-export-buttons { display: flex; gap: 6px; align-items: center; padding-left: 6px; border-left: 1px solid var(--md-outline-variant); margin-left: 4px; }
+.report-export-buttons .btn-action { height: 38px; font-size: 0.7rem; padding: 0 12px; }
+.report-export-buttons .btn-action.btn-export-json { background: var(--md-primary-container); color: var(--md-on-primary-container); border-color: rgba(255,171,61,0.3); }
+.report-export-buttons .btn-action.btn-export-json:hover { background: var(--md-primary); color: var(--md-on-primary); }
+.report-export-buttons .btn-action.btn-export-csv { background: var(--success-container); color: var(--success); border-color: rgba(52,220,140,0.3); }
+.report-export-buttons .btn-action.btn-export-csv:hover { background: var(--success); color: #051a10; }
+@media (max-width: 900px) { .report-export-buttons { border-left: none; padding-left: 0; margin-left: 0; padding-top: 6px; border-top: 1px solid var(--md-outline-variant); width: 100%; } }
+.report-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+@media (max-width: 900px) { .report-stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .report-stats-grid { grid-template-columns: 1fr; } }
+.report-stat-card { background: linear-gradient(180deg, var(--md-surface-container), var(--md-surface-container-low)); border: 1px solid var(--md-outline-variant); border-radius: 12px; padding: 14px 16px; position: relative; overflow: hidden; }
+.report-stat-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--md-tertiary), transparent 75%); opacity: 0.7; }
+.report-stat-card .label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--md-on-surface-variant); margin-bottom: 6px; }
+.report-stat-card .value { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 600; }
+.report-table-container { position: relative; display: flex; width: 100%; background: var(--md-surface-container); border: 1px solid var(--md-outline-variant); border-radius: 12px; overflow: auto; }
+.report-table-container table { min-width: 800px; font-size: 0.85rem; }
+.report-table-container th, .report-table-container td { padding: 10px 12px; font-size: 0.8rem; }
+.report-empty { text-align: center; padding: 40px 20px; color: var(--md-on-surface-variant); font-size: 0.9rem; }
+.report-empty .icon { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.5; }
+.rr-value { font-family: var(--font-mono); font-weight: 600; color: var(--md-primary); }
 .rr-value.low { color: var(--md-on-surface-variant); }
 .rr-value.good { color: var(--success); }
-@media screen and (max-width: 600px),
-screen and (max-height: 800px) {
-.modal-overlay {
-padding: 0;
-justify-content: start;
-align-items: start;
-overflow-y: auto;
-}
-.calculator {
-max-width: 100%;
-padding: 15px;
-border-radius: 0;
-}
+@media screen and (max-width: 600px), screen and (max-height: 800px) {
+.modal-overlay { padding: 0; justify-content: start; align-items: start; overflow-y: auto; }
+.calculator { max-width: 100%; padding: 15px; border-radius: 0; }
 .margin-highlight-row .res-label { font-size: 0.4rem; }
 .margin-highlight-row .res-value { font-size: 0.6rem; }
 .res-row { font-size: 0.6rem; }
@@ -1294,22 +766,8 @@ border-radius: 0;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-import {
-getAuth,
-setPersistence,
-browserLocalPersistence,
-onAuthStateChanged,
-signInWithEmailAndPassword,
-signOut
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-const firebaseConfig = {
-apiKey: "AIzaSyAk5TEr5nv_aTNj4xf32mCC5FeEYMD56DQ",
-authDomain: "trading-deary.firebaseapp.com",
-projectId: "trading-deary",
-storageBucket: "trading-deary.firebasestorage.app",
-messagingSenderId: "701231887613",
-appId: "1:701231887613:web:3336efd244ed786babba94"
-};
+import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+const firebaseConfig = { apiKey: "AIzaSyAk5TEr5nv_aTNj4xf32mCC5FeEYMD56DQ", authDomain: "trading-deary.firebaseapp.com", projectId: "trading-deary", storageBucket: "trading-deary.firebasestorage.app", messagingSenderId: "701231887613", appId: "1:701231887613:web:3336efd244ed786babba94" };
 try {
 const firebaseApp = initializeApp(firebaseConfig);
 window.__db = getFirestore(firebaseApp);
@@ -1320,33 +778,20 @@ const auth = getAuth(firebaseApp);
 window.__auth = auth;
 window.__signIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
 window.__signOut = () => signOut(auth);
-setPersistence(auth, browserLocalPersistence)
-.catch((e) => console.error('Auth persistence error:', e))
-.finally(() => {
-onAuthStateChanged(auth, (user) => {
-window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user } }));
-});
-});
-} catch (e) {
-console.error('Firebase init error:', e);
-}
+setPersistence(auth, browserLocalPersistence).catch((e) => console.error('Auth persistence error:', e)).finally(() => { onAuthStateChanged(auth, (user) => { window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { user } })); }); });
+} catch (e) { console.error('Firebase init error:', e); }
 window.dispatchEvent(new CustomEvent('firebaseReady'));
 </script>
 </head>
 <body>
+<div id="pageLoader"><div class="loader-spinner"></div><div class="loader-text">Загрузка Trading Deary...</div></div>
 <div class="login-modal" id="loginModal">
 <form class="login-card" id="loginForm" onsubmit="handleLoginSubmit(event)">
 <button type="button" class="close-modal" onclick="closeLoginModal()"><span class="icon">close</span></button>
 <h1 class="login-title"><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
 <p class="login-subtitle">Войдите, чтобы синхронизировать данные</p>
-<div style="margin-bottom: 12px;">
-<label>Email</label>
-<input type="email" id="loginEmail" autocomplete="username" required>
-</div>
-<div style="margin-bottom: 4px;">
-<label>Пароль</label>
-<input type="password" id="loginPassword" autocomplete="current-password" required>
-</div>
+<div style="margin-bottom: 12px;"><label>Email</label><input type="email" id="loginEmail" autocomplete="username" required></div>
+<div style="margin-bottom: 4px;"><label>Пароль</label><input type="password" id="loginPassword" autocomplete="current-password" required></div>
 <div id="loginError" class="login-error" style="display:none;"></div>
 <button type="submit" class="btn" id="loginSubmitBtn" style="width:100%; justify-content:center; margin-top: 16px;">Войти</button>
 </form>
@@ -1358,27 +803,8 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <h2 class="report-title"><span class="icon">analytics</span>Ежемесячный отчёт</h2>
 <div class="report-controls">
 <div class="report-period-selector">
-<div>
-<label>Месяц</label>
-<select id="reportMonth" onchange="renderReport()">
-<option value="0">Январь</option>
-<option value="1">Февраль</option>
-<option value="2">Март</option>
-<option value="3">Апрель</option>
-<option value="4">Май</option>
-<option value="5">Июнь</option>
-<option value="6">Июль</option>
-<option value="7">Август</option>
-<option value="8">Сентябрь</option>
-<option value="9">Октябрь</option>
-<option value="10">Ноябрь</option>
-<option value="11">Декабрь</option>
-</select>
-</div>
-<div>
-<label>Год</label>
-<select id="reportYear" onchange="renderReport()"></select>
-</div>
+<div><label>Месяц</label><select id="reportMonth" onchange="renderReport()"><option value="0">Январь</option><option value="1">Февраль</option><option value="2">Март</option><option value="3">Апрель</option><option value="4">Май</option><option value="5">Июнь</option><option value="6">Июль</option><option value="7">Август</option><option value="8">Сентябрь</option><option value="9">Октябрь</option><option value="10">Ноябрь</option><option value="11">Декабрь</option></select></div>
+<div><label>Год</label><select id="reportYear" onchange="renderReport()"></select></div>
 </div>
 <div class="report-export-buttons">
 <button type="button" class="btn-action btn-export-json" onclick="exportReportJSON()" title="Экспорт сделок за выбранный месяц в JSON"><span class="icon sm">download</span>JSON</button>
@@ -1389,22 +815,16 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div id="reportContent"></div>
 </div>
 </div>
-<div class="container" id="appRoot">
+<div class="container" id="appRoot" style="display:none;">
 <div class="content-narrow">
 <div class="header-bar">
 <h1><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
 <div class="action-buttons">
 <button type="button" class="btn-action btn-report" onclick="openReportModal()"><span class="icon">analytics</span>Отчёт</button>
 <button type="button" class="btn-action" onclick="exportToJSON()"><span class="icon">download</span>Export JSON</button>
-<label class="btn-action btn-import">
-<span class="icon">upload</span>Import JSON
-<input type="file" id="jsonFileInput" accept=".json" onchange="importFromJSON(event)" style="display: none;">
-</label>
+<label class="btn-action btn-import"><span class="icon">upload</span>Import JSON<input type="file" id="jsonFileInput" accept=".json" onchange="importFromJSON(event)" style="display: none;"></label>
 <button type="button" class="btn-action" onclick="exportToCSV()"><span class="icon">download</span>Export CSV</button>
-<label class="btn-action btn-import">
-<span class="icon">upload</span>Import CSV
-<input type="file" id="csvFileInput" accept=".csv" onchange="importFromCSV(event)" style="display: none;">
-</label>
+<label class="btn-action btn-import"><span class="icon">upload</span>Import CSV<input type="file" id="csvFileInput" accept=".csv" onchange="importFromCSV(event)" style="display: none;"></label>
 <button type="button" class="btn-action btn-clear" onclick="clearAllTrades()"><span class="icon">delete_sweep</span>Clear All</button>
 <button type="button" class="btn-action btn-login" id="loginBtn" onclick="openLoginModal()"><span class="icon">login</span>Войти</button>
 <button type="button" class="btn-action btn-logout" id="logoutBtn" onclick="handleLogout()" style="display:none;" title="Выйти из аккаунта"><span class="icon">logout</span>Выйти</button>
@@ -1418,34 +838,12 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div id="pnlChartEmpty" class="pnl-chart-empty" style="display:none;">Пока нет закрытых сделок</div>
 </div>
 <div class="stats-grid">
-<div class="stat-card">
-<div class="label">Текущий Депозит ($)</div>
-<div class="value" id="statCurrentBalance">$10,000.00</div>
-</div>
-<div class="stat-card">
-<div class="label">Общий PnL ($)</div>
-<div class="value" id="statTotalPnL">$0.00</div>
-</div>
-<div class="stat-card">
-<div class="label">Винрейт (Win Rate)</div>
-<div class="value" id="statWinRate">0%</div>
-</div>
-<div class="stat-card">
-<div class="label"><span class="icon sm">hourglass_top</span>В работе</div>
-<div class="value" id="statOpenTrades" style="color: var(--warning);">0</div>
-</div>
-<div class="stat-card">
-<div class="label">Всего закрыто</div>
-<div class="value" id="statTotalTrades">0</div>
-</div>
-<div class="stat-card">
-<div class="label">Прибыль / БУ / Убыток</div>
-<div class="value">
-<span id="statWins" style="color:var(--success)">0</span> /
-<span id="statBe" style="color:var(--breakeven)">0</span> /
-<span id="statLosses" style="color:var(--danger)">0</span>
-</div>
-</div>
+<div class="stat-card"><div class="label">Текущий Депозит ($)</div><div class="value" id="statCurrentBalance">$10,000.00</div></div>
+<div class="stat-card"><div class="label">Общий PnL ($)</div><div class="value" id="statTotalPnL">$0.00</div></div>
+<div class="stat-card"><div class="label">Винрейт (Win Rate)</div><div class="value" id="statWinRate">0%</div></div>
+<div class="stat-card"><div class="label"><span class="icon sm">hourglass_top</span>В работе</div><div class="value" id="statOpenTrades" style="color: var(--warning);">0</div></div>
+<div class="stat-card"><div class="label">Всего закрыто</div><div class="value" id="statTotalTrades">0</div></div>
+<div class="stat-card"><div class="label">Прибыль / БУ / Убыток</div><div class="value"><span id="statWins" style="color:var(--success)">0</span> / <span id="statBe" style="color:var(--breakeven)">0</span> / <span id="statLosses" style="color:var(--danger)">0</span></div></div>
 </div>
 </div>
 <div class="form-card" id="formCard">
@@ -1453,61 +851,26 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <form id="tradeForm" onsubmit="handleFormSubmit(event)">
 <input type="hidden" id="editingTradeId" value="">
 <div class="form-grid">
-<div>
-<label>Начальный депозит ($)</label>
-<input type="number" id="initialBalance" value="10000" step="any" oninput="updateInitialBalance()">
+<div><label>Начальный депозит ($)</label><input type="number" id="initialBalance" value="10000" step="any" oninput="updateInitialBalance()"></div>
+<div><label>Дата</label><input type="date" id="tradeDate" required></div>
+<div><label>Монета / Актив</label><input type="text" id="asset" placeholder="BTCUSDT" required style="text-transform:uppercase"></div>
+<div><label>Направление</label><select id="direction"><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+<div><label>Enter($) <small>(опция)</small></label><input type="number" id="entryPrice" step="any" placeholder="Открыта"></div>
+<div><label>Stop($) <small>(опция)</small></label><input type="number" id="stopPrice" step="any" placeholder="Стоп-лосс"></div>
+<div><label>Take($) <small>(опция)</small></label><input type="number" id="takePrice" step="any" placeholder="Тейк-профит"></div>
+<div><label>Exit($) <small>(опция)</small></label><input type="number" id="exitPrice" step="any" placeholder="Цена закрытия"></div>
+<div class="field-profit-wrap"><label title="Оставьте пустым, если сделка ещё открыта">Profit($)</label><input type="number" id="pnl" step="any" placeholder="PnL при закрытии, 0 => Б/У"></div>
+<div><label>Сайз позиции ($) <small>(опция)</small></label><input type="number" id="positionSize" step="any" placeholder="Начальный сайз"></div>
+<div><label>&nbsp;</label><button type="button" class="btn-action btn-calc" style="width:100%; justify-content:center; height:40px;" onclick="toggleCalculator(true)"><span class="icon">calculate</span>Calculator</button></div>
 </div>
-<div>
-<label>Дата</label>
-<input type="date" id="tradeDate" required>
+<div style="margin-bottom: 15px;"><label>Причина входа / Заметки <span id="notesConfirmBadge" class="confirm-badge" style="display:none;"></span></label><textarea id="notes" rows="2" placeholder="Пробой уровня сопротивления, открыл позицию..." oninput="updateNotesConfirmBadge()"></textarea></div>
+<div id="formPositionJournal" style="display: none;">
+<div class="position-journal">
+<div class="position-journal-header">
+<div class="position-journal-title" style="margin-bottom: 0;"><span class="icon sm">history_edu</span>Журнал фиксации по позиции</div>
+<div class="total-fixed" id="formTotalFixedBadge"><span class="icon sm">pie_chart</span>Зафиксировано: <span id="formTotalFixedPercent">0%</span></div>
 </div>
-<div>
-<label>Монета / Актив</label>
-<input type="text" id="asset" placeholder="BTCUSDT" required style="text-transform:uppercase">
-</div>
-<div>
-<label>Направление</label>
-<select id="direction">
-<option value="LONG">LONG</option>
-<option value="SHORT">SHORT</option>
-</select>
-</div>
-<div>
-<label>Enter($) <small>(опция)</small></label>
-<input type="number" id="entryPrice" step="any" placeholder="Открыта">
-</div>
-<div>
-<label>Stop($) <small>(опция)</small></label>
-<input type="number" id="stopPrice" step="any" placeholder="Стоп-лосс">
-</div>
-<div>
-<label>Take($) <small>(опция)</small></label>
-<input type="number" id="takePrice" step="any" placeholder="Тейк-профит">
-</div>
-<div>
-<label>Exit($) <small>(опция)</small></label>
-<input type="number" id="exitPrice" step="any" placeholder="Цена закрытия">
-</div>
-<div class="field-profit-wrap">
-<label title="Оставьте пустым, если сделка ещё открыта">Profit($)</label>
-<input type="number" id="pnl" step="any" placeholder="PnL при закрытии, 0 => Б/У">
-</div>
-<div>
-<label>&nbsp;</label>
-<button type="button" class="btn-action btn-calc" style="width:100%; justify-content:center; height:40px;" onclick="toggleCalculator(true)"><span class="icon">calculate</span>Calculator</button>
-</div>
-</div>
-<div style="margin-bottom: 15px;">
-<label>Причина входа / Заметки <span id="notesConfirmBadge" class="confirm-badge" style="display:none;"></span></label>
-<textarea id="notes" rows="2" placeholder="Пробой уровня сопротивления, открыл позицию..." oninput="updateNotesConfirmBadge()"></textarea>
-</div>
-<div id="closeJournalSection" style="display: none;">
-<div class="close-journal">
-<div class="close-journal-title">
-<span class="icon sm">history_edu</span>
-Журнал закрытия сделок
-</div>
-<div class="close-journal-list" id="closeJournalList"></div>
+<div class="position-journal-list" id="formPositionJournalList"></div>
 </div>
 </div>
 <div style="display: flex; align-items: center; margin-top: 15px;">
@@ -1521,18 +884,7 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <table>
 <thead>
 <tr>
-<th>Дата</th>
-<th>Актив</th>
-<th>Тип</th>
-<th>Enter($)</th>
-<th>Stop($)</th>
-<th>Take($)</th>
-<th>Exit($)</th>
-<th>RR</th>
-<th>Фикс.</th>
-<th class="col-profit">Profit($)</th>
-<th class="col-notes">Заметки</th>
-<th class="col-sticky">Действия</th>
+<th>Дата</th><th>Актив</th><th>Тип</th><th>Enter($)</th><th>Stop($)</th><th>Take($)</th><th>Exit($)</th><th>RR</th><th>Фикс.</th><th class="col-profit">Profit($)</th><th class="col-notes">Заметки</th><th class="col-sticky">Действия</th>
 </tr>
 </thead>
 <tbody id="tradesTableBody"></tbody>
@@ -1549,120 +901,76 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <button class="type-btn short" id="btnShort" onclick="setType('SHORT')"><span class="icon sm">trending_down</span>SHORT</button>
 </div>
 <div class="calc-grid-4">
-<div>
-<label id="calcBalanceLabel">Депозит ($)</label>
-<input type="number" id="calcBalance" value="10000" oninput="calculate()">
-</div>
-<div>
-<label>Плечо</label>
-<div class="leverage-stepper">
-<button type="button" class="lev-btn" onclick="adjustLeverage(-1)" aria-label="Уменьшить плечо">−</button>
-<input type="number" id="calcLeverage" value="10" min="1" max="125" step="1" oninput="calculate()">
-<button type="button" class="lev-btn" onclick="adjustLeverage(1)" aria-label="Увеличить плечо">+</button>
-</div>
-</div>
-<div>
-<label>Риск (%)</label>
-<input type="number" id="calcRisk" value="1" step="0.1" oninput="calculate()">
-</div>
-<div>
-<label>Комиссия (%)</label>
-<input type="number" id="calcFee" value="0.05" step="0.01" oninput="calculate()">
-</div>
+<div><label id="calcBalanceLabel">Депозит ($)</label><input type="number" id="calcBalance" value="10000" oninput="calculate()"></div>
+<div><label>Плечо</label><div class="leverage-stepper"><button type="button" class="lev-btn" onclick="adjustLeverage(-1)" aria-label="Уменьшить плечо">−</button><input type="number" id="calcLeverage" value="10" min="1" max="125" step="1" oninput="calculate()"><button type="button" class="lev-btn" onclick="adjustLeverage(1)" aria-label="Увеличить плечо">+</button></div></div>
+<div><label>Риск (%)</label><input type="number" id="calcRisk" value="1" step="0.1" oninput="calculate()"></div>
+<div><label>Комиссия (%)</label><input type="number" id="calcFee" value="0.05" step="0.01" oninput="calculate()"></div>
 </div>
 <div class="calc-grid-4">
-<div>
-<label>Enter($)</label>
-<input type="number" id="calcEntry" value="100" oninput="calculate()">
-</div>
-<div>
-<label>Stop($)</label>
-<input type="number" id="calcStop" value="95" oninput="calculate()">
-</div>
-<div>
-<label>Take($)</label>
-<input type="number" id="calcTarget" value="115" oninput="calculate()">
-</div>
-<div>
-<label>Exit($)</label>
-<input type="number" id="calcExit" value="" placeholder="Факт. закрытие" oninput="calculate()">
-</div>
+<div><label>Enter($)</label><input type="number" id="calcEntry" value="100" oninput="calculate()"></div>
+<div><label>Stop($)</label><input type="number" id="calcStop" value="95" oninput="calculate()"></div>
+<div><label>Take($)</label><input type="number" id="calcTarget" value="115" oninput="calculate()"></div>
+<div><label>Текущий сайз ($) <small>(редактируемый)</small></label><input type="number" id="calcRemainingSize" value="0" step="any" oninput="onRemainingSizeChange()"></div>
 </div>
 <div class="close-type-toggle">
-<button type="button" class="close-type-btn partial active" id="btnPartialClose" onclick="setCloseType('partial')">
-<span class="icon sm">pie_chart</span>
-Частичная фиксация
-</button>
-<button type="button" class="close-type-btn full" id="btnFullClose" onclick="setCloseType('full')">
-<span class="icon sm">check_circle</span>
-Полное закрытие
-</button>
+<button type="button" class="close-type-btn partial active" id="btnPartialClose" onclick="setCloseType('partial')"><span class="icon sm">pie_chart</span>Частичная фиксация</button>
+<button type="button" class="close-type-btn full" id="btnFullClose" onclick="setCloseType('full')"><span class="icon sm">check_circle</span>Полная фиксация</button>
 </div>
 <div class="calc-grid-2" id="partialFields">
 <div>
-<label>Фиксация части (%)</label>
+<label>Фиксация части (%) <small>(от общего сайза)</small></label>
 <input type="range" id="calcPartialPercent" min="0" max="100" value="0" oninput="updateCalcPartialDisplay(); calculate();" style="width: 100%; accent-color: var(--plus-highlight); cursor: pointer;">
-<div id="calcPartialDisplay" style="font-size: 0.72rem; color: var(--md-on-surface-variant); margin-top: 4px; font-family: var(--font-mono);">
-<span style="color: var(--success); font-weight: 600;">0%</span> фикс | <span style="color: var(--md-primary); font-weight: 600;">100%</span> осталось
+<div id="calcPartialDisplay" style="font-size: 0.72rem; color: var(--md-on-surface-variant); margin-top: 4px; font-family: var(--font-mono);"><span style="color: var(--success); font-weight: 600;">0%</span> фикс | <span style="color: var(--md-primary); font-weight: 600;">100%</span> осталось</div>
 </div>
+<div><label>Цена фиксации ($)</label><input type="number" id="calcPartialPrice" value="" placeholder="По какой цене фикс" oninput="calculate()"></div>
 </div>
-<div>
-<label>Цена фиксации ($)</label>
-<input type="number" id="calcPartialPrice" value="" placeholder="По какой цене фикс" oninput="calculate()">
-</div>
+<div class="calc-grid-2" id="exitField" style="display: none;">
+<div style="grid-column: 1 / -1;"><label>Exit($) <small>(цена полного закрытия)</small></label><input type="number" id="calcExit" value="" placeholder="Факт. цена закрытия" oninput="calculate()"></div>
 </div>
 <div class="partial-breakdown" id="partialBreakdown" style="display: none;">
-<div class="partial-card full-pos">
-<div class="partial-label"><span class="icon sm">inventory_2</span>Всего</div>
-<div class="partial-percent" id="pbTotalUnits">0.0000</div>
-<div class="partial-detail">монет</div>
+<div class="partial-card total-card">
+<div class="partial-label"><span class="icon sm">inventory_2</span>Общий</div>
+<div class="partial-percent" id="pbTotalPercent">100%</div>
+<div class="partial-detail">сайз</div>
 <div class="partial-detail"><strong id="pbTotalUSD">$0.00</strong></div>
 </div>
-<div class="partial-card fixed">
+<div class="partial-card already-fixed">
 <div class="partial-label"><span class="icon sm">check_circle</span>Зафиксировано</div>
-<div class="partial-percent" id="pbFixedPercent">0%</div>
-<div class="partial-detail"><span id="pbFixedUnits">0.0000</span> монет</div>
-<div class="partial-detail"><strong id="pbFixedUSD">$0.00</strong></div>
+<div class="partial-percent" id="pbAlreadyFixedPercent">0%</div>
+<div class="partial-detail">сайз</div>
+<div class="partial-detail"><strong id="pbAlreadyFixedUSD">$0.00</strong></div>
 </div>
-<div class="partial-card remaining">
-<div class="partial-label"><span class="icon sm">hourglass_bottom</span>Осталось</div>
+<div class="partial-card remaining-card">
+<div class="partial-label"><span class="icon sm">hourglass_bottom</span>Останется</div>
 <div class="partial-percent" id="pbRemainPercent">100%</div>
-<div class="partial-detail"><span id="pbRemainUnits">0.0000</span> монет</div>
+<div class="partial-detail">сайз</div>
 <div class="partial-detail"><strong id="pbRemainUSD">$0.00</strong></div>
 </div>
+<div class="partial-card now-fixing">
+<div class="partial-label"><span class="icon sm">add_circle</span>Фиксируется</div>
+<div class="partial-percent" id="pbNowFixingPercent">0%</div>
+<div class="partial-detail">сайз</div>
+<div class="partial-detail"><strong id="pbNowFixingUSD">$0.00</strong></div>
+</div>
+</div>
+<button type="button" class="btn" id="addProfitBtn" style="width:100%; justify-content:center; margin-top: 16px; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Добавить Profit/Loss в сделку</button>
+<div class="position-journal" id="calcPositionJournal" style="display: none;">
+<div class="position-journal-header">
+<div class="position-journal-title" style="margin-bottom: 0;"><span class="icon sm">history_edu</span>Журнал фиксации по позиции</div>
+<div class="total-fixed" id="calcTotalFixedBadge"><span class="icon sm">pie_chart</span>Зафиксировано: <span id="calcTotalFixedPercent">0%</span></div>
+</div>
+<div class="position-journal-list" id="calcPositionJournalList"></div>
 </div>
 <div class="results">
-<div class="margin-highlight-row" id="marginRow">
-<span class="res-label"><span class="icon sm">account_balance_wallet</span>Требуемая маржа ($)</span>
-<span class="res-value" id="requiredMargin">$0</span>
-</div>
-<div class="res-row">
-<span>Чистый риск по графику ($):</span>
-<span class="res-value" id="pureRisk">$0</span>
-</div>
-<div class="res-row">
-<span>Комиссия (вход + выход) ($):</span>
-<span class="res-value" id="totalFee" style="color: var(--danger)">$0</span>
-</div>
-<div class="res-row">
-<span>Итоговый риск с комиссией ($):</span>
-<span class="res-value" id="totalRisk" style="color: var(--danger)">$0</span>
-</div>
-<div class="res-row" id="partialProfitRow" style="display:none;">
-<span>Прибыль с фиксации ($):</span>
-<span class="res-value" id="partialProfit" style="color: var(--success)">$0</span>
-</div>
-<div class="res-row">
-<span id="netProfitLabel">Чистая прибыль по TP ($):</span>
-<span class="res-value" id="netProfit" style="color: var(--success)">$0</span>
-</div>
-<div class="res-row" style="margin-top: 10px; font-weight: bold;">
-<span>Соотношение Risk / Reward:</span>
-<span class="res-value highlight" id="rrRatio">0 : 1</span>
-</div>
+<div class="margin-highlight-row" id="marginRow"><span class="res-label"><span class="icon sm">account_balance_wallet</span>Требуемая маржа ($)</span><span class="res-value" id="requiredMargin">$0</span></div>
+<div class="res-row"><span>Чистый риск по графику ($):</span><span class="res-value" id="pureRisk">$0</span></div>
+<div class="res-row"><span>Комиссия (вход + выход) ($):</span><span class="res-value" id="totalFee" style="color: var(--danger)">$0</span></div>
+<div class="res-row"><span>Итоговый риск с комиссией ($):</span><span class="res-value" id="totalRisk" style="color: var(--danger)">$0</span></div>
+<div class="res-row" id="partialProfitRow" style="display:none;"><span>Прибыль с фиксации ($):</span><span class="res-value" id="partialProfit" style="color: var(--success)">$0</span></div>
+<div class="res-row"><span id="netProfitLabel">Чистая прибыль по TP ($):</span><span class="res-value" id="netProfit" style="color: var(--success)">$0</span></div>
+<div class="res-row" style="margin-top: 10px; font-weight: bold;"><span>Соотношение Risk / Reward:</span><span class="res-value highlight" id="rrRatio">0 : 1</span></div>
 </div>
 <div id="warningMsg" class="warning"></div>
-<button type="button" class="btn" id="addProfitBtn" style="width:100%; justify-content:center; margin-top: 16px; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Добавить Profit/Loss в сделку</button>
 </div>
 </div>
 <script>
@@ -1671,53 +979,41 @@ let initialBalance = parseFloat(localStorage.getItem('trading_journal_initial_ba
 let positionType = 'LONG';
 let serverAvailable = false;
 let isLoggedIn = false;
-let calcState = { units: 0, entry: 0, feePercent: 0, positionType: 'LONG', exit: null, profit: null, partialPrice: null, partialPercent: 0 };
+let calcState = { units: 0, entry: 0, feePercent: 0, positionType: 'LONG', exit: null, profit: null, partialPrice: null, partialPercent: 0, remainingSize: 0, positionSize: 0 };
 let currentBalanceValue = initialBalance;
 let closeType = 'partial';
+let userModifiedSize = false;
 document.getElementById('tradeDate').valueAsDate = new Date();
 document.getElementById('initialBalance').value = initialBalance;
-function lockScroll(lock) {
-if (lock) {
-document.body.classList.add('scroll-locked');
-} else {
-document.body.classList.remove('scroll-locked');
-}
-}
+
+function lockScroll(lock) { if (lock) { document.body.classList.add('scroll-locked'); } else { document.body.classList.remove('scroll-locked'); } }
+
 function normalizeTrade(trade) {
 const t = { ...trade };
-if ((t.stop === null || t.stop === undefined) && t.exit !== null && t.exit !== undefined && typeof t.exit === 'number') {
-t.stop = t.exit;
-}
+if ((t.stop === null || t.stop === undefined) && t.exit !== null && t.exit !== undefined && typeof t.exit === 'number') { t.stop = t.exit; }
 if (t.take === undefined) t.take = null;
 if (t.stop === undefined) t.stop = null;
 if (t.exitPrice === undefined) t.exitPrice = null;
 if (t.partialClose === undefined) t.partialClose = 0;
 if (t.partialCloses === undefined) t.partialCloses = [];
+if (t.positionSize === undefined) t.positionSize = 0;
+if (t.remainingSize === undefined) t.remainingSize = t.positionSize || 0;
 delete t.exit;
 return t;
 }
-function normalizeTrades(list) {
-return Array.isArray(list) ? list.map(normalizeTrade) : [];
-}
-(function migrateLocalStorage() {
-const raw = JSON.parse(localStorage.getItem('trading_journal_trades')) || [];
-if (raw.some(t => t.exit !== undefined)) {
-localStorage.setItem('trading_journal_trades', JSON.stringify(trades));
-}
-})();
+function normalizeTrades(list) { return Array.isArray(list) ? list.map(normalizeTrade) : []; }
+(function migrateLocalStorage() { const raw = JSON.parse(localStorage.getItem('trading_journal_trades')) || []; if (raw.some(t => t.exit !== undefined)) { localStorage.setItem('trading_journal_trades', JSON.stringify(trades)); } })();
+
 function setFileStatus(state, detail) {
 const el = document.getElementById('fileStatus');
 if (!el) return;
-const config = {
-ok:    { icon: 'cloud_done',  cls: 'status-ok', text: 'SYNC' },
-off:   { icon: 'cloud_off',   cls: 'status-off', text: 'LOCAL' },
-error: { icon: 'cloud_alert', cls: 'status-error', text: 'SYNC ERROR' }
-}[state] || { icon: 'cloud_off', cls: 'status-off', text: 'LOCAL' };
+const config = { ok: { icon: 'cloud_done', cls: 'status-ok', text: 'SYNC' }, off: { icon: 'cloud_off', cls: 'status-off', text: 'LOCAL' }, error: { icon: 'cloud_alert', cls: 'status-error', text: 'SYNC ERROR' } }[state] || { icon: 'cloud_off', cls: 'status-off', text: 'LOCAL' };
 el.className = 'sync-status ' + config.cls;
 el.title = detail || '';
 el.innerHTML = `<span class="icon fill sm">${config.icon}</span>${config.text}`;
 }
 setFileStatus('off', 'Данные сохраняются только в этом браузере. Войдите для синхронизации.');
+
 async function loadFromServer() {
 try {
 if (!window.__db) throw new Error('Firebase не настроен');
@@ -1725,33 +1021,16 @@ const snap = await window.__firestoreGetDoc(window.__tradingDocRef);
 serverAvailable = true;
 if (snap.exists()) {
 const data = snap.data();
-if (Array.isArray(data.trades)) {
-trades = normalizeTrades(data.trades);
-}
-if (typeof data.initialBalance === 'number') {
-initialBalance = data.initialBalance;
-document.getElementById('initialBalance').value = initialBalance;
-}
+if (Array.isArray(data.trades)) { trades = normalizeTrades(data.trades); }
+if (typeof data.initialBalance === 'number') { initialBalance = data.initialBalance; document.getElementById('initialBalance').value = initialBalance; }
 }
 setFileStatus('ok', 'Данные синхронизированы через Firebase');
 render();
-} catch (err) {
-serverAvailable = false;
-setFileStatus('off', 'Не удалось связаться с Firebase — данные сохраняются только в этом браузере');
+} catch (err) { serverAvailable = false; setFileStatus('off', 'Не удалось связаться с Firebase'); }
 }
-}
-async function saveToServer() {
-if (!serverAvailable || !isLoggedIn || !window.__db) return;
-try {
-await window.__firestoreSetDoc(window.__tradingDocRef, { initialBalance, trades });
-} catch (err) {
-console.error('Не удалось сохранить в Firebase:', err);
-setFileStatus('error', 'Ошибка сохранения в Firebase');
-}
-}
-function saveInitialBalance() {
-localStorage.setItem('trading_journal_initial_balance', initialBalance);
-}
+async function saveToServer() { if (!serverAvailable || !isLoggedIn || !window.__db) return; try { await window.__firestoreSetDoc(window.__tradingDocRef, { initialBalance, trades }); } catch (err) { console.error('Не удалось сохранить в Firebase:', err); setFileStatus('error', 'Ошибка сохранения в Firebase'); } }
+function saveInitialBalance() { localStorage.setItem('trading_journal_initial_balance', initialBalance); }
+
 function exportToJSON() {
 const payload = { initialBalance, trades: normalizeTrades(trades) };
 const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -1764,6 +1043,7 @@ link.click();
 document.body.removeChild(link);
 URL.revokeObjectURL(url);
 }
+
 function importFromJSON(event) {
 const file = event.target.files[0];
 if (!file) return;
@@ -1771,50 +1051,23 @@ const reader = new FileReader();
 reader.onload = function(e) {
 try {
 const data = JSON.parse(e.target.result);
-if (!Array.isArray(data.trades)) {
-alert('Файл не похож на экспорт этого дневника (нет массива trades).');
-return;
-}
+if (!Array.isArray(data.trades)) { alert('Файл не похож на экспорт этого дневника (нет массива trades).'); return; }
 if (confirm('Заменить текущие сделки данными из файла? (Отмена — оставить текущие)')) {
 trades = normalizeTrades(data.trades);
-if (typeof data.initialBalance === 'number') {
-initialBalance = data.initialBalance;
-document.getElementById('initialBalance').value = initialBalance;
-saveInitialBalance();
-}
+if (typeof data.initialBalance === 'number') { initialBalance = data.initialBalance; document.getElementById('initialBalance').value = initialBalance; saveInitialBalance(); }
 saveTrades();
 alert('Импорт завершён.');
 }
-} catch (err) {
-alert('Не удалось прочитать JSON-файл: ' + err.message);
-}
+} catch (err) { alert('Не удалось прочитать JSON-файл: ' + err.message); }
 event.target.value = '';
 };
 reader.readAsText(file, 'UTF-8');
 }
-function updateInitialBalance() {
-const val = parseFloat(document.getElementById('initialBalance').value);
-initialBalance = isNaN(val) ? 0 : val;
-saveInitialBalance();
-saveToServer();
-render();
-}
-function saveTrades() {
-localStorage.setItem('trading_journal_trades', JSON.stringify(trades));
-saveToServer();
-render();
-}
-function clearAllTrades() {
-if (trades.length === 0) {
-alert('Список сделок уже пуст!');
-return;
-}
-if (confirm('Вы уверены, что хотите удалить ВСЕ сделки из дневника? Это действие нельзя отменить.')) {
-trades = [];
-resetForm();
-saveTrades();
-}
-}
+
+function updateInitialBalance() { const val = parseFloat(document.getElementById('initialBalance').value); initialBalance = isNaN(val) ? 0 : val; saveInitialBalance(); saveToServer(); render(); }
+function saveTrades() { localStorage.setItem('trading_journal_trades', JSON.stringify(trades)); saveToServer(); render(); }
+function clearAllTrades() { if (trades.length === 0) { alert('Список сделок уже пуст!'); return; } if (confirm('Вы уверены, что хотите удалить ВСЕ сделки из дневника? Это действие нельзя отменить.')) { trades = []; resetForm(); saveTrades(); } }
+
 function handleFormSubmit(e) {
 e.preventDefault();
 const editingId = document.getElementById('editingTradeId').value;
@@ -1823,6 +1076,7 @@ const stopVal = document.getElementById('stopPrice').value;
 const takeVal = document.getElementById('takePrice').value;
 const exitPriceVal = document.getElementById('exitPrice').value;
 const pnlVal = document.getElementById('pnl').value;
+const posSizeVal = document.getElementById('positionSize').value;
 const tradeData = {
 date: document.getElementById('tradeDate').value,
 asset: document.getElementById('asset').value.toUpperCase(),
@@ -1832,26 +1086,24 @@ stop: stopVal !== '' ? parseFloat(stopVal) : null,
 take: takeVal !== '' ? parseFloat(takeVal) : null,
 exitPrice: exitPriceVal !== '' ? parseFloat(exitPriceVal) : null,
 pnl: pnlVal !== '' ? parseFloat(pnlVal) : null,
-notes: document.getElementById('notes').value
+notes: document.getElementById('notes').value,
+positionSize: posSizeVal !== '' ? parseFloat(posSizeVal) : 0
 };
 if (editingId) {
 const index = trades.findIndex(t => t.id == editingId);
 if (index !== -1) {
 const existingCloses = trades[index].partialCloses || [];
 trades[index] = { ...trades[index], ...tradeData };
-if (trades[index].partialCloses === undefined) trades[index].partialCloses = existingCloses;
+trades[index].partialCloses = existingCloses;
+recalculateTradeState(trades[index]);
 }
 } else {
-trades.unshift({
-id: Date.now(),
-partialClose: 0,
-partialCloses: [],
-...tradeData
-});
+trades.unshift({ id: Date.now(), partialClose: 0, partialCloses: [], remainingSize: tradeData.positionSize || 0, ...tradeData });
 }
 saveTrades();
 resetForm();
 }
+
 function editTrade(id) {
 const trade = trades.find(t => t.id == id);
 if (!trade) return;
@@ -1865,18 +1117,22 @@ document.getElementById('takePrice').value = trade.take !== null && trade.take !
 document.getElementById('exitPrice').value = trade.exitPrice !== null && trade.exitPrice !== undefined ? trade.exitPrice : '';
 document.getElementById('pnl').value = trade.pnl !== null && trade.pnl !== undefined ? trade.pnl : '';
 document.getElementById('notes').value = trade.notes || '';
+document.getElementById('positionSize').value = trade.positionSize || '';
 updateNotesConfirmBadge();
 document.getElementById('formTitle').innerText = 'Редактировать сделку';
 document.getElementById('submitBtn').innerText = 'Сохранить изменения';
 document.getElementById('cancelBtn').style.display = 'inline-block';
-// Подсвечиваем форму жёлтой рамкой
 document.getElementById('formCard').classList.add('editing');
-// Показываем журнал закрытия сделок
-renderCloseJournal(trade.partialCloses || []);
-document.getElementById('closeJournalSection').style.display = 'block';
+// ВСЕГДА рендерим журнал при редактировании
+const posSize = trade.positionSize || 0;
+recalculateTradeState(trade);
+renderPositionJournal(trade.partialCloses || [], 'formPositionJournalList', posSize);
+updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
+document.getElementById('formPositionJournal').style.display = 'block';
 render();
 window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 function resetForm() {
 document.getElementById('editingTradeId').value = '';
 document.getElementById('asset').value = '';
@@ -1886,17 +1142,17 @@ document.getElementById('takePrice').value = '';
 document.getElementById('exitPrice').value = '';
 document.getElementById('pnl').value = '';
 document.getElementById('notes').value = '';
+document.getElementById('positionSize').value = '';
 updateNotesConfirmBadge();
 document.getElementById('tradeDate').valueAsDate = new Date();
 document.getElementById('formTitle').innerText = 'Записать новую сделку';
 document.getElementById('submitBtn').innerText = 'Добавить сделку';
 document.getElementById('cancelBtn').style.display = 'none';
-// Убираем подсветку формы
 document.getElementById('formCard').classList.remove('editing');
-// Скрываем журнал закрытия
-document.getElementById('closeJournalSection').style.display = 'none';
+document.getElementById('formPositionJournal').style.display = 'none';
 render();
 }
+
 function updateCalcPartialDisplay() {
 const rangeInput = document.getElementById('calcPartialPercent');
 const display = document.getElementById('calcPartialDisplay');
@@ -1904,115 +1160,106 @@ const fixed = parseInt(rangeInput.value, 10) || 0;
 const left = 100 - fixed;
 display.innerHTML = `<span style="color: var(--success); font-weight: 600;">${fixed}%</span> фикс | <span style="color: var(--md-primary); font-weight: 600;">${left}%</span> осталось`;
 }
+
 function setCloseType(type) {
 closeType = type;
 const btnPartial = document.getElementById('btnPartialClose');
 const btnFull = document.getElementById('btnFullClose');
 const partialFields = document.getElementById('partialFields');
+const exitField = document.getElementById('exitField');
 if (type === 'partial') {
 btnPartial.classList.add('active');
 btnFull.classList.remove('active');
 partialFields.style.display = 'grid';
+exitField.style.display = 'none';
 } else {
 btnPartial.classList.remove('active');
 btnFull.classList.add('active');
 partialFields.style.display = 'none';
+exitField.style.display = 'grid';
 }
 calculate();
 }
-function renderCloseJournal(closes) {
-const listEl = document.getElementById('closeJournalList');
-if (!closes || closes.length === 0) {
-listEl.innerHTML = '<div class="close-journal-empty">Нет записей о закрытиях</div>';
-return;
+
+function updateTotalFixedBadge(elementId, percent) {
+const el = document.getElementById(elementId);
+if (!el) return;
+el.innerText = percent.toFixed(1) + '%';
+if (percent >= 100) {
+el.style.color = 'var(--md-primary)';
+} else if (percent > 0) {
+el.style.color = 'var(--md-tertiary)';
+} else {
+el.style.color = 'var(--md-on-surface-variant)';
 }
+}
+
+function renderPositionJournal(closes, listElId, positionSize) {
+const listEl = document.getElementById(listElId);
+if (!listEl) return;
+if (!closes || closes.length === 0) { listEl.innerHTML = '<div class="position-journal-empty">Нет записей в журнале</div>'; return; }
+const posSize = positionSize || 0;
 listEl.innerHTML = closes.map((close, index) => {
-const timeStr = close.time ? new Date(close.time).toLocaleString('ru-RU', {
-day: '2-digit',
-month: '2-digit',
-hour: '2-digit',
-minute: '2-digit'
-}) : `#${index + 1}`;
+const timeStr = close.time ? new Date(close.time).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : `#${index + 1}`;
 const pnlClass = close.pnl >= 0 ? 'positive' : 'negative';
 const pnlSign = close.pnl >= 0 ? '+' : '';
 const isFullClose = close.fullClose === true;
 const itemClass = isFullClose ? 'full-close' : 'partial-close';
-const badgeText = isFullClose ? '100% ПОЛНОЕ' : `${close.percent}% ЧАСТИЧНО`;
-return `
-<div class="close-journal-item ${itemClass}">
-<span class="close-badge">${badgeText}</span>
-<div class="time">${timeStr}</div>
-<div class="percent">${close.percent}%</div>
-<div class="price">$${close.price.toFixed(2)}</div>
-<div class="pnl ${pnlClass}">${pnlSign}$${close.pnl.toFixed(2)}</div>
-<button type="button" class="btn-delete-close" onclick="deleteCloseJournal(${index})" title="Удалить запись">
-<span class="icon sm">close</span>
-</button>
-</div>
-`;
+const badgeText = isFullClose ? '100% ПОЛНАЯ' : `${close.percent}% ЧАСТИЧНО`;
+const fixedSizeAmount = posSize > 0 ? (close.percent / 100) * posSize : 0;
+const fixedSizeText = posSize > 0 ? `$${fixedSizeAmount.toFixed(2)}` : '—';
+const priceText = close.price !== undefined && close.price !== null ? `$${close.price}` : '—';
+return `<div class="position-journal-item ${itemClass}"><span class="close-badge">${badgeText}</span><div class="time">${timeStr}</div><div class="price">${priceText}</div><div class="size-amount">${fixedSizeText}</div><div class="pnl ${pnlClass}">${pnlSign}$${close.pnl.toFixed(2)}</div><button type="button" class="btn-delete-close" onclick="deletePositionJournalEntry(${index})" title="Удалить запись"><span class="icon sm">close</span></button></div>`;
 }).join('');
 }
-function deleteCloseJournal(index) {
+
+function deletePositionJournalEntry(index) {
 const editingId = document.getElementById('editingTradeId').value;
-if (!editingId) {
-alert('Сначала выберите сделку для редактирования');
-return;
-}
+if (!editingId) { alert('Сначала выберите сделку для редактирования'); return; }
 const tradeIndex = trades.findIndex(t => t.id == editingId);
-if (tradeIndex === -1) {
-alert('Сделка не найдена');
-return;
-}
+if (tradeIndex === -1) { alert('Сделка не найдена'); return; }
 const trade = trades[tradeIndex];
-if (!trade.partialCloses || !trade.partialCloses[index]) {
-alert('Запись не найдена');
-return;
-}
-if (confirm('Удалить эту запись из журнала закрытия?')) {
+if (!trade.partialCloses || !trade.partialCloses[index]) { alert('Запись не найдена'); return; }
+if (confirm('Удалить эту запись из журнала?')) {
 trade.partialCloses.splice(index, 1);
-if (trade.partialCloses.length > 0) {
-const lastClose = trade.partialCloses[trade.partialCloses.length - 1];
-trade.partialClose = lastClose.percent;
-} else {
-trade.partialClose = 0;
-}
+recalculateTradeState(trade);
 saveTrades();
-renderCloseJournal(trade.partialCloses);
+const posSize = trade.positionSize || 0;
+renderPositionJournal(trade.partialCloses, 'formPositionJournalList', posSize);
+updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
+renderPositionJournal(trade.partialCloses, 'calcPositionJournalList', posSize);
+updateTotalFixedBadge('calcTotalFixedPercent', trade.partialClose || 0);
+calculate();
 }
 }
-function countPlusSigns(str, index) {
-if (!str) return 0;
-index = index || 0;
-if (index >= str.length) return 0;
-const current = str[index] === '+' ? 1 : 0;
-return current + countPlusSigns(str, index + 1);
+
+function recalculateTradeState(trade) {
+// ИСПРАВЛЕНИЕ: вычисляем процент фиксации независимо от positionSize
+let totalFixedPercent = 0;
+if (trade.partialCloses && trade.partialCloses.length > 0) {
+for (const close of trade.partialCloses) {
+if (close.fullClose) { 
+totalFixedPercent = 100; 
+break; 
 }
-function renderConfirmBadgeHtml(count) {
-if (!count || count <= 0) return '';
-return `<span class="confirm-badge">+${count}</span>`;
+totalFixedPercent += close.percent;
 }
-function updateNotesConfirmBadge() {
-const text = document.getElementById('notes').value;
-const count = countPlusSigns(text);
-const badge = document.getElementById('notesConfirmBadge');
-if (count > 0) {
-badge.style.display = 'inline-flex';
-badge.innerHTML = `+${count}`;
+}
+trade.partialClose = totalFixedPercent;
+
+// remainingSize вычисляем только если есть positionSize
+if (trade.positionSize && trade.positionSize > 0) {
+trade.remainingSize = trade.positionSize * (1 - totalFixedPercent / 100);
 } else {
-badge.style.display = 'none';
-badge.innerHTML = '';
+trade.remainingSize = 0;
 }
 }
-function highlightPsError(text) {
-if (!text) return text;
-return text.replace(/ps[\s\S]*/gi, (match) => {
-return `<span class="highlight-ps">${match}</span>`;
-});
-}
-function highlightPlusReasons(text) {
-if (!text) return text;
-return text.replace(/\+/g, '<span class="highlight-plus">+</span>');
-}
+
+function countPlusSigns(str, index) { if (!str) return 0; index = index || 0; if (index >= str.length) return 0; const current = str[index] === '+' ? 1 : 0; return current + countPlusSigns(str, index + 1); }
+function renderConfirmBadgeHtml(count) { if (!count || count <= 0) return ''; return `<span class="confirm-badge">+${count}</span>`; }
+function updateNotesConfirmBadge() { const text = document.getElementById('notes').value; const count = countPlusSigns(text); const badge = document.getElementById('notesConfirmBadge'); if (count > 0) { badge.style.display = 'inline-flex'; badge.innerHTML = `+${count}`; } else { badge.style.display = 'none'; badge.innerHTML = ''; } }
+function highlightPsError(text) { if (!text) return text; return text.replace(/ps[\s\S]*/gi, (match) => { return `<span class="highlight-ps">${match}</span>`; }); }
+function highlightPlusReasons(text) { if (!text) return text; return text.replace(/\+/g, '<span class="highlight-plus">+</span>'); }
 function renderNotesCell(notes) {
 if (!notes) return `<div class="notes-cell-wrap"><span class="notes-text">-</span></div>`;
 const count = countPlusSigns(notes);
@@ -2020,49 +1267,16 @@ const badge = renderConfirmBadgeHtml(count);
 const psMatch = notes.match(/ps[\s\S]*/i);
 let partBeforePs = notes;
 let partWithPs = '';
-if (psMatch) {
-const index = notes.toLowerCase().indexOf('ps');
-partBeforePs = notes.substring(0, index);
-partWithPs = notes.substring(index);
-}
+if (psMatch) { const index = notes.toLowerCase().indexOf('ps'); partBeforePs = notes.substring(0, index); partWithPs = notes.substring(index); }
 const highlightedBefore = highlightPlusReasons(partBeforePs);
 const highlightedAfter = `<span class="highlight-ps">${partWithPs}</span>`;
 const finalHtml = highlightedBefore + (partWithPs ? highlightedAfter : '');
 return `<div class="notes-cell-wrap">${badge}<span class="notes-text">${finalHtml}</span></div>`;
 }
-function calculateRR(trade) {
-const entry = trade.entry;
-const stop = trade.stop;
-const take = trade.take;
-if (entry === null || entry === undefined || isNaN(entry) ||
-stop === null || stop === undefined || isNaN(stop) ||
-take === null || take === undefined || isNaN(take)) {
-return null;
-}
-const risk = Math.abs(entry - stop);
-const reward = Math.abs(take - entry);
-if (risk <= 0) return null;
-return reward / risk;
-}
-function renderRRCell(trade) {
-const rr = calculateRR(trade);
-if (rr === null) {
-return '<span style="color: var(--md-on-surface-variant);">—</span>';
-}
-let cls = 'rr-value';
-if (rr < 1) cls += ' low';
-else if (rr >= 2) cls += ' good';
-return `<span class="${cls}">1:${rr.toFixed(2)}</span>`;
-}
-function deleteTrade(id) {
-if (confirm('Удалить эту запись?')) {
-trades = trades.filter(t => t.id !== id);
-if (document.getElementById('editingTradeId').value == id) {
-resetForm();
-}
-saveTrades();
-}
-}
+function calculateRR(trade) { const entry = trade.entry; const stop = trade.stop; const take = trade.take; if (entry === null || entry === undefined || isNaN(entry) || stop === null || stop === undefined || isNaN(stop) || take === null || take === undefined || isNaN(take)) { return null; } const risk = Math.abs(entry - stop); const reward = Math.abs(take - entry); if (risk <= 0) return null; return reward / risk; }
+function renderRRCell(trade) { const rr = calculateRR(trade); if (rr === null) { return '<span style="color: var(--md-on-surface-variant);">—</span>'; } let cls = 'rr-value'; if (rr < 1) cls += ' low'; else if (rr >= 2) cls += ' good'; return `<span class="${cls}">1:${rr.toFixed(2)}</span>`; }
+function deleteTrade(id) { if (confirm('Удалить эту запись?')) { trades = trades.filter(t => t.id !== id); if (document.getElementById('editingTradeId').value == id) { resetForm(); } saveTrades(); } }
+
 function render() {
 const tbody = document.getElementById('tradesTableBody');
 tbody.innerHTML = '';
@@ -2073,56 +1287,31 @@ let breakEvens = 0;
 let openTrades = 0;
 const editingIdVal = document.getElementById('editingTradeId').value;
 trades.forEach(trade => {
+// УБЕДИМСЯ ЧТО partialClose ПЕРЕСЧИТАН
+recalculateTradeState(trade);
+
 let pnlClass = 'pnl-zero';
 let pnlText = '-';
 const isOpen = trade.pnl === null || trade.pnl === undefined || isNaN(trade.pnl);
-if (isOpen) {
-openTrades++;
-pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>';
-} else {
+if (isOpen) { openTrades++; pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>'; }
+else {
 totalPnL += trade.pnl;
-if (trade.pnl > 0) {
-wins++;
-pnlClass = 'pnl-positive';
-pnlText = '+' + '$' + trade.pnl.toFixed(2);
-} else if (trade.pnl < 0) {
-losses++;
-pnlClass = 'pnl-negative';
-pnlText = '-$' + Math.abs(trade.pnl).toFixed(2);
-} else {
-breakEvens++;
-pnlText = '$0.00 <span class="tag-be">БУ</span>';
-}
+if (trade.pnl > 0) { wins++; pnlClass = 'pnl-positive'; pnlText = '+' + '$' + trade.pnl.toFixed(2); }
+else if (trade.pnl < 0) { losses++; pnlClass = 'pnl-negative'; pnlText = '-$' + Math.abs(trade.pnl).toFixed(2); }
+else { breakEvens++; pnlText = '$0.00 <span class="tag-be">БУ</span>'; }
 }
 const entryText = (trade.entry !== null && trade.entry !== undefined && !isNaN(trade.entry)) ? '$' + trade.entry : '-';
 const stopText = (trade.stop !== null && trade.stop !== undefined && !isNaN(trade.stop)) ? '$' + trade.stop : '-';
 const takeText = (trade.take !== null && trade.take !== undefined && !isNaN(trade.take)) ? '$' + trade.take : '-';
 const exitPriceText = (trade.exitPrice !== null && trade.exitPrice !== undefined && !isNaN(trade.exitPrice)) ? '$' + trade.exitPrice : '-';
+// ИСПРАВЛЕНИЕ: используем trade.partialClose напрямую
 const partialCloseText = (trade.partialClose > 0)
-? `<span class="tag" style="background: var(--md-tertiary-container); color: var(--md-tertiary); font-size: 0.7rem;">${trade.partialClose}%</span>`
+? `<span class="tag" style="background: var(--md-tertiary-container); color: var(--md-tertiary); font-size: 0.7rem;">${trade.partialClose.toFixed(1)}%</span>`
 : '<span style="color: var(--md-on-surface-variant);">—</span>';
 const row = document.createElement('tr');
 row.id = 'trade-row-' + trade.id;
-if (editingIdVal !== '' && editingIdVal == trade.id) {
-row.className = 'row-editing';
-}
-row.innerHTML = `
-<td>${trade.date}</td>
-<td><b>${trade.asset}</b></td>
-<td><span class="tag ${trade.direction.toLowerCase()}">${trade.direction}</span></td>
-<td>${entryText}</td>
-<td>${stopText}</td>
-<td>${takeText}</td>
-<td>${exitPriceText}</td>
-<td>${renderRRCell(trade)}</td>
-<td>${partialCloseText}</td>
-<td class="col-profit ${isOpen ? '' : pnlClass}">${pnlText}</td>
-<td class="col-notes" style="color: var(--text-muted); font-size: 0.8rem;">${renderNotesCell(trade.notes)}</td>
-<td class="col-sticky">
-<button class="btn-edit" onclick="editTrade(${trade.id})" title="Редактировать / Закрыть"><span class="icon sm">edit</span></button>
-<button class="btn btn-danger" onclick="deleteTrade(${trade.id})" title="Удалить"><span class="icon sm">delete</span></button>
-</td>
-`;
+if (editingIdVal !== '' && editingIdVal == trade.id) { row.className = 'row-editing'; }
+row.innerHTML = `<td>${trade.date}</td><td><b>${trade.asset}</b></td><td><span class="tag ${trade.direction.toLowerCase()}">${trade.direction}</span></td><td>${entryText}</td><td>${stopText}</td><td>${takeText}</td><td>${exitPriceText}</td><td>${renderRRCell(trade)}</td><td>${partialCloseText}</td><td class="col-profit ${isOpen ? '' : pnlClass}">${pnlText}</td><td class="col-notes" style="color: var(--text-muted); font-size: 0.8rem;">${renderNotesCell(trade.notes)}</td><td class="col-sticky"><button class="btn-edit" onclick="editTrade(${trade.id})" title="Редактировать / Закрыть"><span class="icon sm">edit</span></button><button class="btn btn-danger" onclick="deleteTrade(${trade.id})" title="Удалить"><span class="icon sm">delete</span></button></td>`;
 tbody.appendChild(row);
 });
 const decisiveTrades = wins + losses;
@@ -2145,24 +1334,13 @@ document.getElementById('statBe').innerText = breakEvens;
 document.getElementById('statLosses').innerText = losses;
 renderPnlChart();
 }
+
 function renderPnlChart() {
 const svg = document.getElementById('pnlChartSvg');
 const emptyEl = document.getElementById('pnlChartEmpty');
 if (!svg || !emptyEl) return;
-const closed = trades
-.filter(t => t.pnl !== null && t.pnl !== undefined && !isNaN(t.pnl))
-.slice()
-.sort((a, b) => {
-const d = new Date(a.date) - new Date(b.date);
-if (d !== 0) return d;
-return (a.id || 0) - (b.id || 0);
-});
-if (closed.length === 0) {
-svg.innerHTML = '';
-svg.style.display = 'none';
-emptyEl.style.display = 'block';
-return;
-}
+const closed = trades.filter(t => t.pnl !== null && t.pnl !== undefined && !isNaN(t.pnl)).slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); });
+if (closed.length === 0) { svg.innerHTML = ''; svg.style.display = 'none'; emptyEl.style.display = 'block'; return; }
 svg.style.display = 'block';
 emptyEl.style.display = 'none';
 let cum = 0;
@@ -2173,10 +1351,7 @@ const minV = Math.min(0, ...points);
 const maxV = Math.max(0, ...points);
 const range = (maxV - minV) || 1;
 const stepX = points.length > 1 ? (width - padding * 2) / (points.length - 1) : 0;
-const scaleY = (v) => {
-const t = (v - minV) / range;
-return height - padding - t * (height - padding * 2);
-};
+const scaleY = (v) => { const t = (v - minV) / range; return height - padding - t * (height - padding * 2); };
 const coords = points.map((v, i) => [padding + i * stepX, scaleY(v)]);
 const zeroY = scaleY(0);
 const linePath = coords.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
@@ -2186,17 +1361,11 @@ const areaPath = `${linePath} L${lastX},${zeroY.toFixed(1)} L${firstX},${zeroY.t
 const finalPositive = points[points.length - 1] >= 0;
 const strokeColor = finalPositive ? 'var(--success)' : 'var(--danger)';
 const fillColor = finalPositive ? 'rgba(143, 219, 146, 0.15)' : 'rgba(255, 180, 171, 0.15)';
-svg.innerHTML = `
-<line x1="${padding}" y1="${zeroY.toFixed(1)}" x2="${width - padding}" y2="${zeroY.toFixed(1)}" style="stroke: var(--md-outline-variant); stroke-width: 1; stroke-dasharray: 3,3;" />
-<path d="${areaPath}" style="fill: ${fillColor}; stroke: none;" />
-<path d="${linePath}" style="fill: none; stroke: ${strokeColor}; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" />
-`;
+svg.innerHTML = `<line x1="${padding}" y1="${zeroY.toFixed(1)}" x2="${width - padding}" y2="${zeroY.toFixed(1)}" style="stroke: var(--md-outline-variant); stroke-width: 1; stroke-dasharray: 3,3;" /><path d="${areaPath}" style="fill: ${fillColor}; stroke: none;" /><path d="${linePath}" style="fill: none; stroke: ${strokeColor}; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" />`;
 }
+
 function exportToCSV() {
-if (trades.length === 0 && initialBalance === 10000) {
-alert('Нет данных для экспорта!');
-return;
-}
+if (trades.length === 0 && initialBalance === 10000) { alert('Нет данных для экспорта!'); return; }
 let csvLines = [];
 csvLines.push(`#INITIAL_BALANCE=${initialBalance}`);
 csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Фиксация(%);Profit;Заметки");
@@ -2208,21 +1377,9 @@ const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPr
 const rr = calculateRR(t);
 const rrStr = rr !== null ? rr.toFixed(2) : '';
 const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : '';
-const partialClose = (t.partialClose !== null && t.partialClose !== undefined) ? t.partialClose : 0;
+const partialClose = t.partialClose > 0 ? t.partialClose.toFixed(1) : 0;
 const cleanNotes = (t.notes || '').replace(/"/g, '""');
-const row = [
-t.date,
-t.asset,
-t.direction,
-entry,
-stop,
-take,
-exitPrice,
-rrStr,
-partialClose,
-pnl,
-`"${cleanNotes}"`
-].join(";");
+const row = [t.date, t.asset, t.direction, entry, stop, take, exitPrice, rrStr, partialClose, pnl, `"${cleanNotes}"`].join(";");
 csvLines.push(row);
 });
 const csvString = "\uFEFF" + csvLines.join("\r\n");
@@ -2236,91 +1393,18 @@ link.click();
 document.body.removeChild(link);
 URL.revokeObjectURL(url);
 }
-function isCsvHeaderLine(line) {
-const lower = line.trim().toLowerCase();
-return lower.startsWith('дата') || lower.startsWith('date');
-}
-function detectCsvFormat(lines) {
-for (const line of lines) {
-const lower = line.trim().toLowerCase();
-if (!isCsvHeaderLine(line)) continue;
-if (lower.includes('фиксация') || lower.includes('фикс')) {
-return 'with_partial';
-}
-if (lower.includes('rr') && lower.includes('profit')) {
-return 'with_rr';
-} else if (lower.includes('profit')) {
-return 'new3';
-} else if (lower.includes('take') || (lower.includes('stop') && lower.includes('enter'))) {
-return 'new2';
-} else if (lower.includes('вход') || lower.includes('выход') || lower.includes('pnl')) {
-return 'old';
-}
-break;
-}
-return null;
-}
+
+function isCsvHeaderLine(line) { const lower = line.trim().toLowerCase(); return lower.startsWith('дата') || lower.startsWith('date'); }
+function detectCsvFormat(lines) { for (const line of lines) { const lower = line.trim().toLowerCase(); if (!isCsvHeaderLine(line)) continue; if (lower.includes('фиксация') || lower.includes('фикс')) { return 'with_partial'; } if (lower.includes('rr') && lower.includes('profit')) { return 'with_rr'; } else if (lower.includes('profit')) { return 'new3'; } else if (lower.includes('take') || (lower.includes('stop') && lower.includes('enter'))) { return 'new2'; } else if (lower.includes('вход') || lower.includes('выход') || lower.includes('pnl')) { return 'old'; } break; } return null; }
 function parseCsvTradeColumns(cols, csvFormat) {
-if (csvFormat === 'with_partial' && cols.length >= 11) {
-return {
-entry: parseCsvNumber(cols[3]),
-stop: parseCsvNumber(cols[4]),
-take: parseCsvNumber(cols[5]),
-exitPrice: parseCsvNumber(cols[6]),
-partialClose: parseCsvNumber(cols[8]) || 0,
-pnl: parseCsvNumber(cols[9]),
-notes: cols[10] || ''
-};
+if (csvFormat === 'with_partial' && cols.length >= 11) { return { entry: parseCsvNumber(cols[3]), stop: parseCsvNumber(cols[4]), take: parseCsvNumber(cols[5]), exitPrice: parseCsvNumber(cols[6]), partialClose: parseCsvNumber(cols[8]) || 0, pnl: parseCsvNumber(cols[9]), notes: cols[10] || '' }; }
+if (csvFormat === 'with_rr' && cols.length >= 10) { return { entry: parseCsvNumber(cols[3]), stop: parseCsvNumber(cols[4]), take: parseCsvNumber(cols[5]), exitPrice: parseCsvNumber(cols[6]), partialClose: 0, pnl: parseCsvNumber(cols[8]), notes: cols[9] || '' }; }
+if (csvFormat === 'new3' && cols.length >= 9) { return { entry: parseCsvNumber(cols[3]), stop: parseCsvNumber(cols[4]), take: parseCsvNumber(cols[5]), exitPrice: parseCsvNumber(cols[6]), partialClose: 0, pnl: parseCsvNumber(cols[7]), notes: cols[8] || '' }; }
+if (csvFormat === 'new2' && cols.length >= 8) { return { entry: parseCsvNumber(cols[3]), stop: parseCsvNumber(cols[4]), take: parseCsvNumber(cols[5]), exitPrice: null, partialClose: 0, pnl: parseCsvNumber(cols[6]), notes: cols[7] || '' }; }
+return { entry: parseCsvNumber(cols[3]), stop: parseCsvNumber(cols[4]), take: null, exitPrice: null, partialClose: 0, pnl: parseCsvNumber(cols[5]), notes: cols[6] || '' };
 }
-if (csvFormat === 'with_rr' && cols.length >= 10) {
-return {
-entry: parseCsvNumber(cols[3]),
-stop: parseCsvNumber(cols[4]),
-take: parseCsvNumber(cols[5]),
-exitPrice: parseCsvNumber(cols[6]),
-partialClose: 0,
-pnl: parseCsvNumber(cols[8]),
-notes: cols[9] || ''
-};
-}
-if (csvFormat === 'new3' && cols.length >= 9) {
-return {
-entry: parseCsvNumber(cols[3]),
-stop: parseCsvNumber(cols[4]),
-take: parseCsvNumber(cols[5]),
-exitPrice: parseCsvNumber(cols[6]),
-partialClose: 0,
-pnl: parseCsvNumber(cols[7]),
-notes: cols[8] || ''
-};
-}
-if (csvFormat === 'new2' && cols.length >= 8) {
-return {
-entry: parseCsvNumber(cols[3]),
-stop: parseCsvNumber(cols[4]),
-take: parseCsvNumber(cols[5]),
-exitPrice: null,
-partialClose: 0,
-pnl: parseCsvNumber(cols[6]),
-notes: cols[7] || ''
-};
-}
-return {
-entry: parseCsvNumber(cols[3]),
-stop: parseCsvNumber(cols[4]),
-take: null,
-exitPrice: null,
-partialClose: 0,
-pnl: parseCsvNumber(cols[5]),
-notes: cols[6] || ''
-};
-}
-function parseCsvNumber(val) {
-if (!val) return null;
-const cleaned = val.trim().replace(',', '.');
-const num = parseFloat(cleaned);
-return isNaN(num) ? null : num;
-}
+function parseCsvNumber(val) { if (!val) return null; const cleaned = val.trim().replace(',', '.'); const num = parseFloat(cleaned); return isNaN(num) ? null : num; }
+
 function importFromCSV(event) {
 const file = event.target.files[0];
 if (!file) return;
@@ -2332,29 +1416,9 @@ let importedCount = 0;
 const csvFormat = detectCsvFormat(lines);
 lines.forEach(line => {
 const trimmed = line.trim();
-if (trimmed.startsWith('#INITIAL_BALANCE=')) {
-const balanceValue = parseCsvNumber(trimmed.split('=')[1]);
-if (balanceValue !== null) {
-initialBalance = balanceValue;
-const balanceInput = document.getElementById('initialBalance');
-if (balanceInput) balanceInput.value = initialBalance;
-saveInitialBalance();
-}
-}
+if (trimmed.startsWith('#INITIAL_BALANCE=')) { const balanceValue = parseCsvNumber(trimmed.split('=')[1]); if (balanceValue !== null) { initialBalance = balanceValue; const balanceInput = document.getElementById('initialBalance'); if (balanceInput) balanceInput.value = initialBalance; saveInitialBalance(); } }
 });
-const parseCsvLine = (textLine) => {
-const regex = /(?:^|;)(?:"([^"]*(?:""[^"]*)*)"|([^;]*))/g;
-const matches = [];
-let match;
-while ((match = regex.exec(textLine)) !== null) {
-if (match.index === regex.lastIndex) {
-regex.lastIndex++;
-}
-let value = match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2];
-matches.push(value ? value.trim() : '');
-}
-return matches;
-};
+const parseCsvLine = (textLine) => { const regex = /(?:^|;)(?:"([^"]*(?:""[^"]*)*)"|([^;]*))/g; const matches = []; let match; while ((match = regex.exec(textLine)) !== null) { if (match.index === regex.lastIndex) { regex.lastIndex++; } let value = match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2]; matches.push(value ? value.trim() : ''); } return matches; };
 for (let i = 0; i < lines.length; i++) {
 const line = lines[i].trim();
 if (!line || line.startsWith('#') || isCsvHeaderLine(line)) continue;
@@ -2365,30 +1429,8 @@ const asset = cols[1] ? cols[1].toUpperCase() : '';
 const direction = cols[2] ? cols[2].toUpperCase() : 'LONG';
 const { entry, stop, take, exitPrice, pnl, notes, partialClose } = parseCsvTradeColumns(cols, csvFormat);
 if (!date || !asset) continue;
-const exists = trades.some(t =>
-t.date === date &&
-t.asset === asset &&
-t.entry === entry &&
-t.stop === stop &&
-t.pnl === pnl
-);
-if (!exists) {
-trades.push(normalizeTrade({
-id: Date.now() + Math.random(),
-date,
-asset,
-direction,
-entry,
-stop,
-take,
-exitPrice,
-pnl,
-notes,
-partialClose: partialClose || 0,
-partialCloses: []
-}));
-importedCount++;
-}
+const exists = trades.some(t => t.date === date && t.asset === asset && t.entry === entry && t.stop === stop && t.pnl === pnl);
+if (!exists) { trades.push(normalizeTrade({ id: Date.now() + Math.random(), date, asset, direction, entry, stop, take, exitPrice, pnl, notes, partialClose: partialClose || 0, partialCloses: [] })); importedCount++; }
 }
 trades.sort((a, b) => new Date(b.date) - new Date(a.date));
 saveTrades();
@@ -2397,100 +1439,25 @@ event.target.value = '';
 };
 reader.readAsText(file, 'UTF-8');
 }
+
 const MONTH_NAMES = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-function openReportModal() {
-lockScroll(true);
-const now = new Date();
-const monthSelect = document.getElementById('reportMonth');
-const yearSelect = document.getElementById('reportYear');
-monthSelect.value = now.getMonth();
-const yearsSet = new Set();
-yearsSet.add(now.getFullYear());
-trades.forEach(t => {
-if (t.date) {
-const d = new Date(t.date);
-if (!isNaN(d.getTime())) {
-yearsSet.add(d.getFullYear());
-}
-}
-});
-const years = Array.from(yearsSet).sort((a, b) => b - a);
-yearSelect.innerHTML = '';
-years.forEach(y => {
-const opt = document.createElement('option');
-opt.value = y;
-opt.textContent = y;
-if (y === now.getFullYear()) opt.selected = true;
-yearSelect.appendChild(opt);
-});
-renderReport();
-document.getElementById('reportModal').classList.add('active');
-}
-function closeReportModal() {
-lockScroll(false);
-document.getElementById('reportModal').classList.remove('active');
-}
-function handleReportOverlayClick(e) {
-if (e.target === document.getElementById('reportModal')) {
-closeReportModal();
-}
-}
-function getTradesForMonth(month, year) {
-return trades.filter(t => {
-if (!t.date) return false;
-const d = new Date(t.date);
-if (isNaN(d.getTime())) return false;
-return d.getMonth() === month && d.getFullYear() === year;
-});
-}
+function openReportModal() { lockScroll(true); const now = new Date(); const monthSelect = document.getElementById('reportMonth'); const yearSelect = document.getElementById('reportYear'); monthSelect.value = now.getMonth(); const yearsSet = new Set(); yearsSet.add(now.getFullYear()); trades.forEach(t => { if (t.date) { const d = new Date(t.date); if (!isNaN(d.getTime())) { yearsSet.add(d.getFullYear()); } } }); const years = Array.from(yearsSet).sort((a, b) => b - a); yearSelect.innerHTML = ''; years.forEach(y => { const opt = document.createElement('option'); opt.value = y; opt.textContent = y; if (y === now.getFullYear()) opt.selected = true; yearSelect.appendChild(opt); }); renderReport(); document.getElementById('reportModal').classList.add('active'); }
+function closeReportModal() { lockScroll(false); document.getElementById('reportModal').classList.remove('active'); }
+function handleReportOverlayClick(e) { if (e.target === document.getElementById('reportModal')) { closeReportModal(); } }
+function getTradesForMonth(month, year) { return trades.filter(t => { if (!t.date) return false; const d = new Date(t.date); if (isNaN(d.getTime())) return false; return d.getMonth() === month && d.getFullYear() === year; }); }
+
 function renderReport() {
 const month = parseInt(document.getElementById('reportMonth').value);
 const year = parseInt(document.getElementById('reportYear').value);
 const content = document.getElementById('reportContent');
 const monthTrades = getTradesForMonth(month, year);
-if (monthTrades.length === 0) {
-content.innerHTML = `
-<div class="report-empty">
-<span class="icon">inbox</span>
-Нет сделок за ${MONTH_NAMES[month]} ${year}
-</div>
-`;
-return;
-}
-let totalPnL = 0;
-let wins = 0;
-let losses = 0;
-let breakEvens = 0;
-let openCount = 0;
-let longCount = 0;
-let shortCount = 0;
-let bestTrade = null;
-let worstTrade = null;
-let totalWinAmount = 0;
-let totalLossAmount = 0;
-let rrValues = [];
+if (monthTrades.length === 0) { content.innerHTML = `<div class="report-empty"><span class="icon">inbox</span>Нет сделок за ${MONTH_NAMES[month]} ${year}</div>`; return; }
+let totalPnL = 0, wins = 0, losses = 0, breakEvens = 0, openCount = 0, longCount = 0, shortCount = 0, bestTrade = null, worstTrade = null, totalWinAmount = 0, totalLossAmount = 0, rrValues = [];
 monthTrades.forEach(t => {
 const isOpen = t.pnl === null || t.pnl === undefined || isNaN(t.pnl);
-if (isOpen) {
-openCount++;
-} else {
-totalPnL += t.pnl;
-if (t.pnl > 0) {
-wins++;
-totalWinAmount += t.pnl;
-} else if (t.pnl < 0) {
-losses++;
-totalLossAmount += Math.abs(t.pnl);
-} else {
-breakEvens++;
-}
-if (bestTrade === null || t.pnl > bestTrade.pnl) bestTrade = t;
-if (worstTrade === null || t.pnl < worstTrade.pnl) worstTrade = t;
-}
-if (t.direction === 'LONG') longCount++;
-else shortCount++;
-const rr = calculateRR(t);
-if (rr !== null) rrValues.push(rr);
+if (isOpen) { openCount++; } else { totalPnL += t.pnl; if (t.pnl > 0) { wins++; totalWinAmount += t.pnl; } else if (t.pnl < 0) { losses++; totalLossAmount += Math.abs(t.pnl); } else { breakEvens++; } if (bestTrade === null || t.pnl > bestTrade.pnl) bestTrade = t; if (worstTrade === null || t.pnl < worstTrade.pnl) worstTrade = t; }
+if (t.direction === 'LONG') longCount++; else shortCount++;
+const rr = calculateRR(t); if (rr !== null) rrValues.push(rr);
 });
 const decisiveTrades = wins + losses;
 const winRate = decisiveTrades > 0 ? ((wins / decisiveTrades) * 100).toFixed(1) : '0.0';
@@ -2500,227 +1467,29 @@ const profitFactor = totalLossAmount > 0 ? (totalWinAmount / totalLossAmount) : 
 const avgRR = rrValues.length > 0 ? (rrValues.reduce((a, b) => a + b, 0) / rrValues.length) : 0;
 const pnlClass = totalPnL > 0 ? 'pnl-positive' : (totalPnL < 0 ? 'pnl-negative' : 'pnl-zero');
 const pnlPrefix = totalPnL > 0 ? '+' : '';
-let html = `
-<div class="report-stats-grid">
-<div class="report-stat-card">
-<div class="label">Всего сделок</div>
-<div class="value">${monthTrades.length}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">PnL за месяц</div>
-<div class="value ${pnlClass}">${pnlPrefix}$${totalPnL.toFixed(2)}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Винрейт</div>
-<div class="value">${winRate}%</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Прибыль / БУ / Убыток</div>
-<div class="value">
-<span style="color:var(--success)">${wins}</span> /
-<span style="color:var(--breakeven)">${breakEvens}</span> /
-<span style="color:var(--danger)">${losses}</span>
-</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Лучшая сделка</div>
-<div class="value pnl-positive">${bestTrade ? '+$' + bestTrade.pnl.toFixed(2) : '—'}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Худшая сделка</div>
-<div class="value pnl-negative">${worstTrade ? '-$' + Math.abs(worstTrade.pnl).toFixed(2) : '—'}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Средний выигрыш</div>
-<div class="value pnl-positive">$${avgWin.toFixed(2)}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Средний убыток</div>
-<div class="value pnl-negative">$${avgLoss.toFixed(2)}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Profit Factor</div>
-<div class="value" style="color: ${profitFactor >= 1.5 ? 'var(--success)' : profitFactor >= 1 ? 'var(--warning)' : 'var(--danger)'}">${profitFactor === Infinity ? '' : profitFactor.toFixed(2)}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Средний RR</div>
-<div class="value" style="color: var(--md-primary)">1:${avgRR.toFixed(2)}</div>
-</div>
-<div class="report-stat-card">
-<div class="label">Long / Short</div>
-<div class="value">
-<span style="color:var(--success)">${longCount}</span> /
-<span style="color:var(--danger)">${shortCount}</span>
-</div>
-</div>
-<div class="report-stat-card">
-<div class="label">В работе</div>
-<div class="value" style="color: var(--warning)">${openCount}</div>
-</div>
-</div>
-<div class="report-table-container">
-<table>
-<thead>
-<tr>
-<th>Дата</th>
-<th>Актив</th>
-<th>Тип</th>
-<th>Enter($)</th>
-<th>Stop($)</th>
-<th>Take($)</th>
-<th>Exit($)</th>
-<th>RR</th>
-<th>Фикс.</th>
-<th>Profit($)</th>
-</tr>
-</thead>
-<tbody>
-`;
-const sorted = monthTrades.slice().sort((a, b) => {
-const d = new Date(a.date) - new Date(b.date);
-if (d !== 0) return d;
-return (a.id || 0) - (b.id || 0);
-});
+let html = `<div class="report-stats-grid"><div class="report-stat-card"><div class="label">Всего сделок</div><div class="value">${monthTrades.length}</div></div><div class="report-stat-card"><div class="label">PnL за месяц</div><div class="value ${pnlClass}">${pnlPrefix}$${totalPnL.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Винрейт</div><div class="value">${winRate}%</div></div><div class="report-stat-card"><div class="label">Прибыль / БУ / Убыток</div><div class="value"><span style="color:var(--success)">${wins}</span> / <span style="color:var(--breakeven)">${breakEvens}</span> / <span style="color:var(--danger)">${losses}</span></div></div><div class="report-stat-card"><div class="label">Лучшая сделка</div><div class="value pnl-positive">${bestTrade ? '+$' + bestTrade.pnl.toFixed(2) : '—'}</div></div><div class="report-stat-card"><div class="label">Худшая сделка</div><div class="value pnl-negative">${worstTrade ? '-$' + Math.abs(worstTrade.pnl).toFixed(2) : '—'}</div></div><div class="report-stat-card"><div class="label">Средний выигрыш</div><div class="value pnl-positive">$${avgWin.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Средний убыток</div><div class="value pnl-negative">$${avgLoss.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Profit Factor</div><div class="value" style="color: ${profitFactor >= 1.5 ? 'var(--success)' : profitFactor >= 1 ? 'var(--warning)' : 'var(--danger)'}">${profitFactor === Infinity ? '' : profitFactor.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Средний RR</div><div class="value" style="color: var(--md-primary)">1:${avgRR.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Long / Short</div><div class="value"><span style="color:var(--success)">${longCount}</span> / <span style="color:var(--danger)">${shortCount}</span></div></div><div class="report-stat-card"><div class="label">В работе</div><div class="value" style="color: var(--warning)">${openCount}</div></div></div><div class="report-table-container"><table><thead><tr><th>Дата</th><th>Актив</th><th>Тип</th><th>Enter($)</th><th>Stop($)</th><th>Take($)</th><th>Exit($)</th><th>RR</th><th>Фикс.</th><th>Profit($)</th></tr></thead><tbody>`;
+const sorted = monthTrades.slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); });
 sorted.forEach(trade => {
-let pnlClass = 'pnl-zero';
-let pnlText = '-';
+let pnlClass = 'pnl-zero'; let pnlText = '-';
 const isOpen = trade.pnl === null || trade.pnl === undefined || isNaN(trade.pnl);
-if (isOpen) {
-pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>';
-} else {
-if (trade.pnl > 0) {
-pnlClass = 'pnl-positive';
-pnlText = '+$' + trade.pnl.toFixed(2);
-} else if (trade.pnl < 0) {
-pnlClass = 'pnl-negative';
-pnlText = '-$' + Math.abs(trade.pnl).toFixed(2);
-} else {
-pnlText = '$0.00 <span class="tag-be">БУ</span>';
-}
-}
+if (isOpen) { pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>'; }
+else { if (trade.pnl > 0) { pnlClass = 'pnl-positive'; pnlText = '+$' + trade.pnl.toFixed(2); } else if (trade.pnl < 0) { pnlClass = 'pnl-negative'; pnlText = '-$' + Math.abs(trade.pnl).toFixed(2); } else { pnlText = '$0.00 <span class="tag-be">БУ</span>'; } }
 const entryText = (trade.entry !== null && trade.entry !== undefined && !isNaN(trade.entry)) ? '$' + trade.entry : '-';
 const stopText = (trade.stop !== null && trade.stop !== undefined && !isNaN(trade.stop)) ? '$' + trade.stop : '-';
 const takeText = (trade.take !== null && trade.take !== undefined && !isNaN(trade.take)) ? '$' + trade.take : '-';
 const exitPriceText = (trade.exitPrice !== null && trade.exitPrice !== undefined && !isNaN(trade.exitPrice)) ? '$' + trade.exitPrice : '-';
-const partialCloseText = (trade.partialClose > 0)
-? `<span class="tag" style="background: var(--md-tertiary-container); color: var(--md-tertiary); font-size: 0.7rem;">${trade.partialClose}%</span>`
-: '<span style="color: var(--md-on-surface-variant);">—</span>';
-html += `
-<tr>
-<td>${trade.date}</td>
-<td><b>${trade.asset}</b></td>
-<td><span class="tag ${trade.direction.toLowerCase()}">${trade.direction}</span></td>
-<td>${entryText}</td>
-<td>${stopText}</td>
-<td>${takeText}</td>
-<td>${exitPriceText}</td>
-<td>${renderRRCell(trade)}</td>
-<td>${partialCloseText}</td>
-<td class="${isOpen ? '' : pnlClass}">${pnlText}</td>
-</tr>
-`;
+const partialCloseText = (trade.partialClose > 0) ? `<span class="tag" style="background: var(--md-tertiary-container); color: var(--md-tertiary); font-size: 0.7rem;">${trade.partialClose.toFixed(1)}%</span>` : '<span style="color: var(--md-on-surface-variant);">—</span>';
+html += `<tr><td>${trade.date}</td><td><b>${trade.asset}</b></td><td><span class="tag ${trade.direction.toLowerCase()}">${trade.direction}</span></td><td>${entryText}</td><td>${stopText}</td><td>${takeText}</td><td>${exitPriceText}</td><td>${renderRRCell(trade)}</td><td>${partialCloseText}</td><td class="${isOpen ? '' : pnlClass}">${pnlText}</td></tr>`;
 });
-html += `
-</tbody>
-</table>
-</div>
-`;
+html += `</tbody></table></div>`;
 content.innerHTML = html;
 }
-function exportReportJSON() {
-const month = parseInt(document.getElementById('reportMonth').value);
-const year = parseInt(document.getElementById('reportYear').value);
-const monthTrades = getTradesForMonth(month, year);
-if (monthTrades.length === 0) {
-alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`);
-return;
-}
-const payload = {
-reportPeriod: {
-month: month,
-monthName: MONTH_NAMES[month],
-year: year
-},
-initialBalance: initialBalance,
-tradesCount: monthTrades.length,
-exportedAt: new Date().toISOString(),
-trades: normalizeTrades(monthTrades)
-};
-const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-const url = URL.createObjectURL(blob);
-const link = document.createElement('a');
-link.href = url;
-const monthStr = String(month + 1).padStart(2, '0');
-link.download = `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.json`;
-document.body.appendChild(link);
-link.click();
-document.body.removeChild(link);
-URL.revokeObjectURL(url);
-}
-function exportReportCSV() {
-const month = parseInt(document.getElementById('reportMonth').value);
-const year = parseInt(document.getElementById('reportYear').value);
-const monthTrades = getTradesForMonth(month, year);
-if (monthTrades.length === 0) {
-alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`);
-return;
-}
-const sorted = monthTrades.slice().sort((a, b) => {
-const d = new Date(a.date) - new Date(b.date);
-if (d !== 0) return d;
-return (a.id || 0) - (b.id || 0);
-});
-let csvLines = [];
-csvLines.push(`#REPORT_PERIOD=${MONTH_NAMES[month]} ${year}`);
-csvLines.push(`#INITIAL_BALANCE=${initialBalance}`);
-csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Фиксация(%);Profit");
-sorted.forEach(t => {
-const entry = (t.entry !== null && t.entry !== undefined) ? t.entry : '';
-const stop = (t.stop !== null && t.stop !== undefined) ? t.stop : '';
-const take = (t.take !== null && t.take !== undefined) ? t.take : '';
-const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : '';
-const rr = calculateRR(t);
-const rrStr = rr !== null ? rr.toFixed(2) : '';
-const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : '';
-const partialClose = (t.partialClose !== null && t.partialClose !== undefined) ? t.partialClose : 0;
-const row = [
-t.date,
-t.asset,
-t.direction,
-entry,
-stop,
-take,
-exitPrice,
-rrStr,
-partialClose,
-pnl
-].join(";");
-csvLines.push(row);
-});
-const csvString = "\uFEFF" + csvLines.join("\r\n");
-const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-const url = URL.createObjectURL(blob);
-const link = document.createElement("a");
-link.setAttribute("href", url);
-const monthStr = String(month + 1).padStart(2, '0');
-link.setAttribute("download", `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.csv`);
-document.body.appendChild(link);
-link.click();
-document.body.removeChild(link);
-URL.revokeObjectURL(url);
-}
-function toggleCalculator(show) {
-const modal = document.getElementById('calcModal');
-if (show) {
-lockScroll(true);
-syncCalculatorFromForm();
-modal.classList.add('active');
-calculate();
-} else {
-lockScroll(false);
-modal.classList.remove('active');
-}
-}
+
+function exportReportJSON() { const month = parseInt(document.getElementById('reportMonth').value); const year = parseInt(document.getElementById('reportYear').value); const monthTrades = getTradesForMonth(month, year); if (monthTrades.length === 0) { alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`); return; } const payload = { reportPeriod: { month: month, monthName: MONTH_NAMES[month], year: year }, initialBalance: initialBalance, tradesCount: monthTrades.length, exportedAt: new Date().toISOString(), trades: normalizeTrades(monthTrades) }; const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; const monthStr = String(month + 1).padStart(2, '0'); link.download = `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.json`; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); }
+function exportReportCSV() { const month = parseInt(document.getElementById('reportMonth').value); const year = parseInt(document.getElementById('reportYear').value); const monthTrades = getTradesForMonth(month, year); if (monthTrades.length === 0) { alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`); return; } const sorted = monthTrades.slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); }); let csvLines = []; csvLines.push(`#REPORT_PERIOD=${MONTH_NAMES[month]} ${year}`); csvLines.push(`#INITIAL_BALANCE=${initialBalance}`); csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Фиксация(%);Profit"); sorted.forEach(t => { const entry = (t.entry !== null && t.entry !== undefined) ? t.entry : ''; const stop = (t.stop !== null && t.stop !== undefined) ? t.stop : ''; const take = (t.take !== null && t.take !== undefined) ? t.take : ''; const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : ''; const rr = calculateRR(t); const rrStr = rr !== null ? rr.toFixed(2) : ''; const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : ''; const partialClose = t.partialClose > 0 ? t.partialClose.toFixed(1) : 0; const row = [t.date, t.asset, t.direction, entry, stop, take, exitPrice, rrStr, partialClose, pnl].join(";"); csvLines.push(row); }); const csvString = "\uFEFF" + csvLines.join("\r\n"); const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.setAttribute("href", url); const monthStr = String(month + 1).padStart(2, '0'); link.setAttribute("download", `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); }
+
+function toggleCalculator(show) { const modal = document.getElementById('calcModal'); if (show) { lockScroll(true); syncCalculatorFromForm(); modal.classList.add('active'); calculate(); } else { lockScroll(false); modal.classList.remove('active'); } }
+
 function syncCalculatorFromForm() {
 const direction = document.getElementById('direction').value;
 const entryVal = document.getElementById('entryPrice').value;
@@ -2728,6 +1497,7 @@ const stopVal = document.getElementById('stopPrice').value;
 const takeVal = document.getElementById('takePrice').value;
 const exitVal = document.getElementById('exitPrice').value;
 const isEditing = document.getElementById('editingTradeId').value !== '';
+userModifiedSize = false;
 setType(direction === 'SHORT' ? 'SHORT' : 'LONG');
 if (entryVal !== '') document.getElementById('calcEntry').value = entryVal;
 if (stopVal !== '') document.getElementById('calcStop').value = stopVal;
@@ -2741,34 +1511,30 @@ const balanceLabel = document.getElementById('calcBalanceLabel');
 if (isEditing) {
 balanceLabel.innerText = 'Текущий Депозит ($)';
 document.getElementById('calcBalance').value = currentBalanceValue.toFixed(2);
+const trade = trades.find(t => t.id == isEditing);
+if (trade) {
+recalculateTradeState(trade);
+document.getElementById('calcRemainingSize').value = (trade.remainingSize || 0).toFixed(2);
+const posSize = trade.positionSize || 0;
+renderPositionJournal(trade.partialCloses || [], 'calcPositionJournalList', posSize);
+updateTotalFixedBadge('calcTotalFixedPercent', trade.partialClose || 0);
+document.getElementById('calcPositionJournal').style.display = 'block';
+}
 } else {
 balanceLabel.innerText = 'Депозит ($)';
+document.getElementById('calcRemainingSize').value = '0';
+document.getElementById('calcPositionJournal').style.display = 'none';
 }
 }
+
 let overlayMouseDownOnBackdrop = false;
-function handleOverlayMouseDown(e) {
-overlayMouseDownOnBackdrop = e.target.classList.contains('modal-overlay');
-}
-function handleOverlayClick(e) {
-if (overlayMouseDownOnBackdrop && e.target.classList.contains('modal-overlay')) {
-toggleCalculator(false);
-}
-overlayMouseDownOnBackdrop = false;
-}
-function setType(type) {
-positionType = type;
-document.getElementById('btnLong').className = `type-btn ${type === 'LONG' ? 'active long' : ''}`;
-document.getElementById('btnShort').className = `type-btn ${type === 'SHORT' ? 'active short' : ''}`;
-calculate();
-}
-function adjustLeverage(delta) {
-const input = document.getElementById('calcLeverage');
-let val = parseInt(input.value, 10);
-if (isNaN(val)) val = 1;
-val = Math.min(125, Math.max(1, val + delta));
-input.value = val;
-calculate();
-}
+function handleOverlayMouseDown(e) { overlayMouseDownOnBackdrop = e.target.classList.contains('modal-overlay'); }
+function handleOverlayClick(e) { if (overlayMouseDownOnBackdrop && e.target.classList.contains('modal-overlay')) { toggleCalculator(false); } overlayMouseDownOnBackdrop = false; }
+function setType(type) { positionType = type; document.getElementById('btnLong').className = `type-btn ${type === 'LONG' ? 'active long' : ''}`; document.getElementById('btnShort').className = `type-btn ${type === 'SHORT' ? 'active short' : ''}`; calculate(); }
+function adjustLeverage(delta) { const input = document.getElementById('calcLeverage'); let val = parseInt(input.value, 10); if (isNaN(val)) val = 1; val = Math.min(125, Math.max(1, val + delta)); input.value = val; calculate(); }
+
+function onRemainingSizeChange() { userModifiedSize = true; calculate(); }
+
 function calculate() {
 const balance = parseFloat(document.getElementById('calcBalance').value) || 0;
 const riskPercent = parseFloat(document.getElementById('calcRisk').value) || 0;
@@ -2783,62 +1549,85 @@ const warning = document.getElementById('warningMsg');
 const partialPercent = parseFloat(document.getElementById('calcPartialPercent').value) || 0;
 const partialPriceRaw = document.getElementById('calcPartialPrice').value;
 const partialPrice = partialPriceRaw !== '' ? parseFloat(partialPriceRaw) : null;
+const remainingSizeInput = document.getElementById('calcRemainingSize');
+let remainingSize = parseFloat(remainingSizeInput.value) || 0;
 warning.innerHTML = '';
-calcState = { units: 0, entry: entry, feePercent: feePercent, positionType: positionType, exit: exit, profit: null, partialPrice: partialPrice, partialPercent: partialPercent };
+calcState = { units: 0, entry: entry, feePercent: feePercent, positionType: positionType, exit: exit, profit: null, partialPrice: partialPrice, partialPercent: partialPercent, remainingSize: remainingSize, positionSize: 0 };
 const breakdown = document.getElementById('partialBreakdown');
 breakdown.style.display = 'none';
-if (positionType === 'LONG' && stop >= entry) {
-warning.innerHTML = '<span class="icon sm">warning</span> Для LONG стоп-лосс должен быть ниже цены входа';
-return;
+if (positionType === 'LONG' && stop >= entry) { warning.innerHTML = '<span class="icon sm">warning</span> Для LONG стоп-лосс должен быть ниже цены входа'; return; }
+if (positionType === 'SHORT' && stop <= entry) { warning.innerHTML = '<span class="icon sm">warning</span> Для SHORT стоп-лосс должен быть выше цены входа'; return; }
+let units = 0;
+let positionSizeUSD = 0;
+
+const editingId = document.getElementById('editingTradeId').value;
+let trade = null;
+if (editingId) { trade = trades.find(t => t.id == editingId); }
+
+if (!userModifiedSize && trade && trade.remainingSize > 0) {
+remainingSize = trade.remainingSize;
+remainingSizeInput.value = remainingSize.toFixed(2);
 }
-if (positionType === 'SHORT' && stop <= entry) {
-warning.innerHTML = '<span class="icon sm">warning</span> Для SHORT стоп-лосс должен быть выше цены входа';
-return;
-}
+
+if (remainingSize > 0 && entry > 0) {
+positionSizeUSD = remainingSize;
+units = remainingSize / entry;
+} else {
 const riskAmount = balance * (riskPercent / 100);
 const priceDiffSL = Math.abs(entry - stop);
 if (priceDiffSL <= 0) return;
-const units = riskAmount / priceDiffSL;
-const positionSizeUSD = units * entry;
+units = riskAmount / priceDiffSL;
+positionSizeUSD = units * entry;
+if (!userModifiedSize) { remainingSizeInput.value = positionSizeUSD.toFixed(2); }
+}
 calcState.units = units;
 const entryFee = positionSizeUSD * feePercent;
 const exitFeeSL = (units * stop) * feePercent;
 const exitFeeTP = (units * target) * feePercent;
-const totalRiskWithFee = riskAmount + entryFee + exitFeeSL;
+const totalRiskWithFee = (balance * (riskPercent / 100)) + entryFee + exitFeeSL;
 const grossProfit = units * Math.abs(target - entry);
 const netProfit = grossProfit - entryFee - exitFeeTP;
 const rr = netProfit / totalRiskWithFee;
 const requiredMargin = positionSizeUSD / leverage;
 document.getElementById('requiredMargin').innerText = '$' + requiredMargin.toFixed(2);
 document.getElementById('marginRow').classList.toggle('margin-insufficient', requiredMargin > balance);
-document.getElementById('pureRisk').innerText = '$' + riskAmount.toFixed(2);
+document.getElementById('pureRisk').innerText = '$' + (balance * (riskPercent / 100)).toFixed(2);
 document.getElementById('totalFee').innerText = '$' + (entryFee + exitFeeSL).toFixed(2);
 document.getElementById('totalRisk').innerText = '$' + totalRiskWithFee.toFixed(2);
 document.getElementById('rrRatio').innerText = rr > 0 ? `1 : ${rr.toFixed(2)}` : 'N/A';
 if (units > 0 && entry > 0) {
 breakdown.style.display = 'grid';
-const totalUnits = units;
-const totalUSD = positionSizeUSD;
-const fixedUnits = totalUnits * (partialPercent / 100);
-const fixedUSD = fixedUnits * (partialPrice && !isNaN(partialPrice) ? partialPrice : entry);
-const remainUnits = totalUnits - fixedUnits;
-const remainUSD = remainUnits * entry;
-document.getElementById('pbTotalUnits').innerText = totalUnits.toFixed(4);
-document.getElementById('pbTotalUSD').innerText = '$' + totalUSD.toFixed(2);
-document.getElementById('pbFixedPercent').innerText = partialPercent.toFixed(0) + '%';
-document.getElementById('pbFixedUnits').innerText = fixedUnits.toFixed(4);
-document.getElementById('pbFixedUSD').innerText = '$' + fixedUSD.toFixed(2);
-document.getElementById('pbRemainPercent').innerText = (100 - partialPercent).toFixed(0) + '%';
-document.getElementById('pbRemainUnits').innerText = remainUnits.toFixed(4);
+let tradePositionSize = trade && trade.positionSize > 0 ? trade.positionSize : positionSizeUSD;
+
+let alreadyFixedPercent = 0;
+if (trade && trade.partialCloses && trade.partialCloses.length > 0) {
+for (const close of trade.partialCloses) {
+if (close.fullClose) { alreadyFixedPercent = 100; break; }
+alreadyFixedPercent += close.percent;
+}
+}
+
+const nowFixingPercent = partialPercent;
+const nowFixingUSD = tradePositionSize * (nowFixingPercent / 100);
+const remainPercent = Math.max(0, 100 - alreadyFixedPercent - nowFixingPercent);
+const remainUSD = tradePositionSize * (remainPercent / 100);
+const alreadyFixedUSD = tradePositionSize * (alreadyFixedPercent / 100);
+
+document.getElementById('pbTotalPercent').innerText = '100%';
+document.getElementById('pbTotalUSD').innerText = '$' + tradePositionSize.toFixed(2);
+document.getElementById('pbAlreadyFixedPercent').innerText = alreadyFixedPercent.toFixed(1) + '%';
+document.getElementById('pbAlreadyFixedUSD').innerText = '$' + alreadyFixedUSD.toFixed(2);
+document.getElementById('pbRemainPercent').innerText = remainPercent.toFixed(1) + '%';
 document.getElementById('pbRemainUSD').innerText = '$' + remainUSD.toFixed(2);
+document.getElementById('pbNowFixingPercent').innerText = nowFixingPercent.toFixed(0) + '%';
+document.getElementById('pbNowFixingUSD').innerText = '$' + nowFixingUSD.toFixed(2);
+calcState.positionSize = tradePositionSize;
 }
 const partialProfitRow = document.getElementById('partialProfitRow');
 const partialProfitEl = document.getElementById('partialProfit');
 if (partialPercent > 0 && partialPrice !== null && !isNaN(partialPrice)) {
 const pUnits = units * (partialPercent / 100);
-const pGross = positionType === 'SHORT'
-? pUnits * (entry - partialPrice)
-: pUnits * (partialPrice - entry);
+const pGross = positionType === 'SHORT' ? pUnits * (entry - partialPrice) : pUnits * (partialPrice - entry);
 const pEntryFee = pUnits * entry * feePercent;
 const pExitFee = pUnits * partialPrice * feePercent;
 const pNetProfit = pGross - pEntryFee - pExitFee;
@@ -2846,16 +1635,12 @@ partialProfitRow.style.display = 'flex';
 partialProfitEl.innerText = '$' + pNetProfit.toFixed(2);
 partialProfitEl.style.color = pNetProfit >= 0 ? 'var(--success)' : 'var(--danger)';
 calcState.profit = pNetProfit;
-} else {
-partialProfitRow.style.display = 'none';
-}
+} else { partialProfitRow.style.display = 'none'; }
 const netProfitLabel = document.getElementById('netProfitLabel');
 const netProfitEl = document.getElementById('netProfit');
 if (exit !== null && !isNaN(exit) && exit > 0) {
 const exitFeeActual = (units * exit) * feePercent;
-const grossProfitActual = positionType === 'SHORT'
-? units * (entry - exit)
-: units * (exit - entry);
+const grossProfitActual = positionType === 'SHORT' ? units * (entry - exit) : units * (exit - entry);
 const netProfitActual = grossProfitActual - entryFee - exitFeeActual;
 netProfitLabel.innerText = 'Profit при полном выходе ($):';
 netProfitEl.innerText = '$' + netProfitActual.toFixed(2);
@@ -2867,149 +1652,79 @@ netProfitLabel.innerText = 'Чистая прибыль по TP ($):';
 netProfitEl.innerText = '$' + (netProfit > 0 ? netProfit.toFixed(2) : '0.00');
 netProfitEl.style.color = 'var(--success)';
 }
-if (requiredMargin > balance) {
-warning.innerHTML += (warning.innerHTML ? '<br>' : '') + '<span class="icon sm">warning</span> Требуемой маржи не хватает на балансе — увеличьте плечо или уменьшите риск';
+if (requiredMargin > balance) { warning.innerHTML += (warning.innerHTML ? '<br>' : '') + '<span class="icon sm">warning</span> Требуемой маржи не хватает на балансе — увеличьте плечо или уменьшите риск'; }
 }
-}
+
 function addProfitFromCalculator() {
-const { partialPrice, partialPercent, units, entry, feePercent, positionType: calcDirection } = calcState;
+const { partialPrice, partialPercent, units, entry, feePercent, positionType: calcDirection, remainingSize, positionSize } = calcState;
 const editingId = document.getElementById('editingTradeId').value;
-if (!editingId) {
-alert('Сначала выберите сделку для редактирования');
-return;
-}
+if (!editingId) { alert('Сначала выберите сделку для редактирования'); return; }
 const tradeIndex = trades.findIndex(t => t.id == editingId);
-if (tradeIndex === -1) {
-alert('Сделка не найдена');
-return;
-}
+if (tradeIndex === -1) { alert('Сделка не найдена'); return; }
 const trade = trades[tradeIndex];
-if (!trade.partialCloses) {
-trade.partialCloses = [];
-}
+if (!trade.partialCloses) { trade.partialCloses = []; }
 const exitValRaw = document.getElementById('calcExit').value;
 const exitVal = exitValRaw !== '' ? parseFloat(exitValRaw) : null;
 if (closeType === 'full') {
-if (exitVal === null || isNaN(exitVal) || exitVal <= 0) {
-alert('Для полного закрытия укажите цену в поле Exit($)');
-return;
-}
+if (exitVal === null || isNaN(exitVal) || exitVal <= 0) { alert('Для полной фиксации укажите цену в поле Exit($)'); return; }
 const exitFee = units * exitVal * feePercent;
-const grossProfit = calcDirection === 'SHORT'
-? units * (entry - exitVal)
-: units * (exitVal - entry);
+const grossProfit = calcDirection === 'SHORT' ? units * (entry - exitVal) : units * (exitVal - entry);
 const netProfit = grossProfit - (units * entry * feePercent) - exitFee;
-trade.partialCloses.push({
-time: new Date().toISOString(),
-percent: 100,
-price: exitVal,
-pnl: netProfit,
-units: units,
-fullClose: true
-});
+trade.partialCloses.push({ time: new Date().toISOString(), percent: 100, price: exitVal, pnl: netProfit, units: units, fullClose: true });
 document.getElementById('exitPrice').value = exitVal;
 document.getElementById('pnl').value = netProfit.toFixed(2);
-trade.partialClose = 100;
 } else {
 if (partialPercent > 0 && partialPrice !== null && !isNaN(partialPrice)) {
 const pUnits = units * (partialPercent / 100);
-const pGross = calcDirection === 'SHORT'
-? pUnits * (entry - partialPrice)
-: pUnits * (partialPrice - entry);
+const pGross = calcDirection === 'SHORT' ? pUnits * (entry - partialPrice) : pUnits * (partialPrice - entry);
 const pEntryFee = pUnits * entry * feePercent;
 const pExitFee = pUnits * partialPrice * feePercent;
 const pNetProfit = pGross - pEntryFee - pExitFee;
-trade.partialCloses.push({
-time: new Date().toISOString(),
-percent: partialPercent,
-price: partialPrice,
-pnl: pNetProfit,
-units: pUnits,
-fullClose: false
-});
+trade.partialCloses.push({ time: new Date().toISOString(), percent: partialPercent, price: partialPrice, pnl: pNetProfit, units: pUnits, fullClose: false });
 document.getElementById('exitPrice').value = partialPrice;
 document.getElementById('pnl').value = pNetProfit.toFixed(2);
-trade.partialClose = partialPercent;
 } else {
-alert('Для частичной фиксации укажите процент и цену фиксации');
-return;
+const exitVal2 = document.getElementById('calcExit').value;
+if (exitVal2 === '' || exitVal2 === null || exitVal2 === undefined) { alert('Укажите цену выхода (Exit) или заполните фиксацию (процент + цена) в калькуляторе.'); return; }
+const exitPriceVal = parseFloat(exitVal2);
+if (isNaN(exitPriceVal)) { alert('Некорректное значение цены в калькуляторе.'); return; }
+if (!calcState.units || calcState.units <= 0) { alert('Сначала заполните калькулятор корректными значениями.'); return; }
+const exitFee = units * exitPriceVal * feePercent;
+const grossProfit = calcDirection === 'SHORT' ? units * (entry - exitPriceVal) : units * (exitPriceVal - entry);
+const netProfit = grossProfit - (units * entry * feePercent) - exitFee;
+document.getElementById('exitPrice').value = exitPriceVal;
+document.getElementById('pnl').value = netProfit.toFixed(2);
 }
 }
-renderCloseJournal(trade.partialCloses);
-document.getElementById('closeJournalSection').style.display = 'block';
+recalculateTradeState(trade);
+const posSize = trade.positionSize || 0;
+renderPositionJournal(trade.partialCloses, 'calcPositionJournalList', posSize);
+updateTotalFixedBadge('calcTotalFixedPercent', trade.partialClose || 0);
+renderPositionJournal(trade.partialCloses, 'formPositionJournalList', posSize);
+updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
+document.getElementById('calcPositionJournal').style.display = 'block';
+document.getElementById('formPositionJournal').style.display = 'block';
+document.getElementById('calcRemainingSize').value = (trade.remainingSize || 0).toFixed(2);
 saveTrades();
 toggleCalculator(false);
 }
+
 render();
-function showApp() {
-document.getElementById('appRoot').style.display = '';
-}
-function openLoginModal() {
-lockScroll(true);
-document.getElementById('loginModal').classList.add('active');
-const errorEl = document.getElementById('loginError');
-errorEl.style.display = 'none';
-const btn = document.getElementById('loginSubmitBtn');
-if (btn) { btn.disabled = false; btn.textContent = 'Войти'; }
-}
-function closeLoginModal() {
-lockScroll(false);
-document.getElementById('loginModal').classList.remove('active');
-}
-function handleLoginSubmit(event) {
-event.preventDefault();
-const email = document.getElementById('loginEmail').value.trim();
-const password = document.getElementById('loginPassword').value;
-const errorEl = document.getElementById('loginError');
-const btn = document.getElementById('loginSubmitBtn');
-errorEl.style.display = 'none';
-if (!window.__signIn) {
-errorEl.textContent = 'Firebase ещё не загрузился, подождите и попробуйте снова.';
-errorEl.style.display = 'block';
-return;
-}
-btn.disabled = true;
-btn.textContent = 'Вход...';
-window.__signIn(email, password)
-.then(() => {
-closeLoginModal();
-})
-.catch((err) => {
-console.error('Ошибка входа:', err);
-const messages = {
-'auth/invalid-email': 'Некорректный email.',
-'auth/invalid-credential': 'Неверный email или пароль.',
-'auth/wrong-password': 'Неверный email или пароль.',
-'auth/user-not-found': 'Неверный email или пароль.',
-'auth/too-many-requests': 'Слишком много попыток. Попробуйте позже.'
-};
-errorEl.textContent = messages[err.code] || ('Ошибка входа: ' + err.message);
-errorEl.style.display = 'block';
-btn.disabled = false;
-btn.textContent = 'Войти';
+
+function showApp() { document.getElementById('appRoot').style.display = ''; }
+function openLoginModal() { lockScroll(true); document.getElementById('loginModal').classList.add('active'); const errorEl = document.getElementById('loginError'); errorEl.style.display = 'none'; const btn = document.getElementById('loginSubmitBtn'); if (btn) { btn.disabled = false; btn.textContent = 'Войти'; } }
+function closeLoginModal() { lockScroll(false); document.getElementById('loginModal').classList.remove('active'); }
+function handleLoginSubmit(event) { event.preventDefault(); const email = document.getElementById('loginEmail').value.trim(); const password = document.getElementById('loginPassword').value; const errorEl = document.getElementById('loginError'); const btn = document.getElementById('loginSubmitBtn'); errorEl.style.display = 'none'; if (!window.__signIn) { errorEl.textContent = 'Firebase ещё не загрузился, подождите и попробуйте снова.'; errorEl.style.display = 'block'; return; } btn.disabled = true; btn.textContent = 'Вход...'; window.__signIn(email, password).then(() => { closeLoginModal(); }).catch((err) => { console.error('Ошибка входа:', err); const messages = { 'auth/invalid-email': 'Некорректный email.', 'auth/invalid-credential': 'Неверный email или пароль.', 'auth/wrong-password': 'Неверный email или пароль.', 'auth/user-not-found': 'Неверный email или пароль.', 'auth/too-many-requests': 'Слишком много попыток. Попробуйте позже.' }; errorEl.textContent = messages[err.code] || ('Ошибка входа: ' + err.message); errorEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Войти'; }); }
+function handleLogout() { if (confirm('Выйти из аккаунта? Синхронизация будет отключена.') && window.__signOut) { window.__signOut(); } }
+window.addEventListener('authStateChanged', (e) => { const user = e.detail.user; if (user) { isLoggedIn = true; document.getElementById('loginBtn').style.display = 'none'; document.getElementById('logoutBtn').style.display = ''; serverAvailable = true; loadFromServer(); } else { isLoggedIn = false; serverAvailable = false; document.getElementById('loginBtn').style.display = ''; document.getElementById('logoutBtn').style.display = 'none'; setFileStatus('off', 'Данные сохраняются только в этом браузере. Войдите для синхронизации.'); } });
+
+window.addEventListener('load', () => {
+setTimeout(() => {
+const loader = document.getElementById('pageLoader');
+if (loader) loader.classList.add('hidden');
+}, 300);
 });
-}
-function handleLogout() {
-if (confirm('Выйти из аккаунта? Синхронизация будет отключена.') && window.__signOut) {
-window.__signOut();
-}
-}
-window.addEventListener('authStateChanged', (e) => {
-const user = e.detail.user;
-if (user) {
-isLoggedIn = true;
-document.getElementById('loginBtn').style.display = 'none';
-document.getElementById('logoutBtn').style.display = '';
-serverAvailable = true;
-loadFromServer();
-} else {
-isLoggedIn = false;
-serverAvailable = false;
-document.getElementById('loginBtn').style.display = '';
-document.getElementById('logoutBtn').style.display = 'none';
-setFileStatus('off', 'Данные сохраняются только в этом браузере. Войдите для синхронизации.');
-}
-});
+
 showApp();
 </script>
 </body>
