@@ -155,6 +155,7 @@ text-transform: uppercase;
 line-height: 1;
 transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
 user-select: none;
+letter-spacing: 0.03em;
 }
 .btn-action:hover { border-color: var(--md-outline); color: var(--md-on-surface); background: var(--md-surface-container-highest); }
 .btn-action:active { transform: translateY(1px); }
@@ -246,8 +247,7 @@ font-size: 0.74rem;
 color: var(--md-on-surface-variant);
 margin-bottom: 6px;
 font-weight: 500;
-text-transform: uppercase;
-letter-spacing: 0.04em;
+letter-spacing: 0.02em;
 line-height: 1.3;
 white-space: nowrap;
 overflow: hidden;
@@ -310,13 +310,15 @@ padding: 0 24px;
 height: 42px;
 font-weight: 600;
 font-family: var(--font-body);
-font-size: 0.88rem;
+font-size: 0.82rem;
 border-radius: 10px;
 cursor: pointer;
 transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 display: inline-flex;
 align-items: center;
 gap: 8px;
+text-transform: uppercase;
+letter-spacing: 0.04em;
 }
 .btn:hover { filter: brightness(1.07); box-shadow: var(--shadow-glow); }
 .btn:active { transform: translateY(1px); }
@@ -366,6 +368,9 @@ cursor: pointer;
 margin-left: 10px;
 display: none;
 transition: all 0.15s ease;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+font-size: 0.82rem;
 }
 .btn-cancel:hover { background: var(--md-surface-container-high); border-color: var(--md-outline); color: var(--md-on-surface); }
 .table-container {
@@ -427,6 +432,9 @@ display: inline-flex;
 align-items: center;
 justify-content: center;
 gap: 6px;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+font-size: 0.82rem;
 }
 .type-btn.active.long { background: var(--success-container); color: var(--success); border-color: rgba(52,220,140,0.3); }
 .type-btn.active.short { background: var(--danger-container); color: var(--md-on-error-container); border-color: rgba(255,107,107,0.3); }
@@ -453,17 +461,26 @@ user-select: none;
 }
 .lev-btn:hover { background: var(--md-primary-container); color: var(--md-primary); }
 .lev-btn:active { filter: brightness(0.95); }
-.results { margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--md-outline-variant); }
-.margin-highlight-row { display: flex; justify-content: space-between; align-items: center; background: var(--md-primary-container); border: 1px solid rgba(255,171,61,0.3); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; }
-.margin-highlight-row .res-label { font-size: 0.78rem; font-weight: 600; color: var(--md-on-primary-container); text-transform: uppercase; letter-spacing: 0.03em; display: flex; align-items: center; gap: 6px; }
-.margin-highlight-row .res-value { font-size: 1.05rem; font-weight: 700; color: var(--md-primary); }
-.margin-highlight-row.margin-insufficient { background: var(--danger-container); border-color: rgba(255,107,107,0.35); }
-.margin-highlight-row.margin-insufficient .res-label { color: var(--md-on-error-container); }
-.margin-highlight-row.margin-insufficient .res-value { color: var(--md-error); }
-.res-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.86rem; color: var(--md-on-surface-variant); }
+.results { margin-top: 10px; }
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+@media (max-width: 800px) { .results-grid { grid-template-columns: 1fr; } }
+.results-col { display: flex; flex-direction: column; gap: 0; }
+.results-col + .results-col { border-left: 1px solid var(--md-outline-variant); padding-left: 24px; }
+@media (max-width: 800px) { .results-col + .results-col { border-left: none; padding-left: 0; } }
+.margin-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+.margin-row .res-label { font-size: 0.86rem; font-weight: 500; color: var(--md-on-surface-variant); display: flex; align-items: center; gap: 6px; }
+.margin-row .res-value { font-size: 0.86rem; font-weight: 500; color: var(--md-primary); font-family: var(--font-mono); }
+.res-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 0.86rem; color: var(--md-on-surface-variant);}
+.res-row .res-label-text { flex: 1; font-weight: 500; }
 .res-value { font-weight: 700; font-family: var(--font-mono); color: var(--md-on-surface); }
-.highlight { font-size: 1.08rem; color: var(--md-primary); }
+.highlight { color: var(--md-primary); }
 .warning { color: var(--md-error); font-size: 0.8rem; margin-top: 10px; text-align: center; }
+.form-divider {
+height: 1px;
+background: linear-gradient(90deg, transparent 0%, var(--md-outline) 15%, var(--md-outline) 85%, transparent 100%);
+margin: 20px 0;
+opacity: 0.5;
+}
 .position-journal {
 margin-top: 16px;
 padding: 14px;
@@ -681,12 +698,21 @@ gap: 6px;
 .partial-fix-row { margin-bottom: 16px; }
 .partial-fix-row label { margin-bottom: 8px; }
 .partial-fix-row input[type="range"] { width: 100%; margin: 4px 0; }
+.form-actions-bar {
+display: flex;
+align-items: center;
+margin-top: 20px;
+padding-top: 18px;
+border-top: 1px solid var(--md-outline-variant);
+flex-wrap: wrap;
+gap: 10px;
+}
 @media (max-width: 500px) {
 body { padding: 16px 10px 40px; }
 .form-card { padding: 14px; }
 .form-grid { gap: 10px 12px; }
 input, select, textarea { padding: 8px 10px; font-size: 0.82rem; }
-.btn { padding: 0 16px; height: 38px; font-size: 0.82rem; }
+.btn { padding: 0 16px; height: 38px; font-size: 0.78rem; }
 .btn-cancel { padding: 0 14px; height: 38px; }
 .header-bar { gap: 6px; }
 .action-buttons { gap: 4px; }
@@ -799,17 +825,23 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div><label>Комиссия (%)</label><input type="number" id="calcFee" value="0.05" step="0.01" oninput="calculate()"></div>
 </div>
 
+<div class="form-divider"></div>
+
 <div class="form-section-title"><span class="icon sm">swap_vert</span>Направление</div>
 <div class="type-toggle">
 <button type="button" class="type-btn active long" id="btnLong" onclick="setType('LONG')"><span class="icon sm">trending_up</span>LONG</button>
 <button type="button" class="type-btn short" id="btnShort" onclick="setType('SHORT')"><span class="icon sm">trending_down</span>SHORT</button>
 </div>
 
+<div class="form-divider"></div>
+
 <div class="form-section-title"><span class="icon sm">edit_note</span>Детали сделки</div>
 <div class="form-grid">
 <div><label>Дата</label><input type="date" id="tradeDate" required></div>
 <div><label>Монета / Актив</label><input type="text" id="asset" placeholder="BTCUSDT" required style="text-transform:uppercase"></div>
 </div>
+
+<div class="form-divider"></div>
 
 <div class="form-section-title"><span class="icon sm">price_change</span>Уровни</div>
 <div class="form-grid">
@@ -819,21 +851,28 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div><label>Текущий сайз ($) <small>(авто/редактируемый)</small></label><input type="number" id="calcRemainingSize" value="0" step="any" oninput="onRemainingSizeChange()"></div>
 </div>
 
+<div class="form-divider"></div>
+
 <div class="form-section-title"><span class="icon sm">analytics</span>Результаты расчёта</div>
 <div class="results">
-<div class="margin-highlight-row" id="marginRow"><span class="res-label"><span class="icon sm">account_balance_wallet</span>Требуемая маржа ($)</span><span class="res-value" id="requiredMargin">$0</span></div>
-<div class="res-row"><span>Чистый риск по графику ($):</span><span class="res-value" id="pureRisk">$0</span></div>
-<div class="res-row"><span>Комиссия (вход + выход) ($):</span><span class="res-value" id="totalFee" style="color: var(--danger)">$0</span></div>
-<div class="res-row"><span>Итоговый риск с комиссией ($):</span><span class="res-value" id="totalRisk" style="color: var(--danger)">$0</span></div>
-<div class="res-row" id="partialProfitRow" style="display:none;"><span>Прибыль с фиксации ($):</span><span class="res-value" id="partialProfit" style="color: var(--success)">$0</span></div>
-<div class="res-row" id="fullProfitRow" style="display:none;"><span id="netProfitLabel">Profit при полном выходе ($):</span><span class="res-value" id="netProfit" style="color: var(--success)">$0</span></div>
-<div class="res-row" id="statusRow"><span>Статус:</span><span class="res-value" id="statusText" style="color: var(--warning)">В работе</span></div>
-<div class="res-row" style="margin-top: 10px; font-weight: bold;"><span>Соотношение Risk / Reward:</span><span class="res-value highlight" id="rrRatio">0 : 1</span></div>
+<div class="results-grid">
+<div class="results-col">
+<div class="margin-row"><span class="res-label">Требуемая маржа ($)</span><span class="res-value" id="requiredMargin">$0</span></div>
+<div class="res-row"><span class="res-label-text">Чистый риск по графику ($):</span><span class="res-value" id="pureRisk">$0</span></div>
+<div class="res-row" id="feeRow"><span class="res-label-text">Комиссия (вход + выход) ($):</span><span class="res-value" id="totalFee" style="color: var(--danger)">$0</span></div>
+<div class="res-row" id="partialProfitRow" style="display:none;"><span class="res-label-text">Прибыль с фиксации ($):</span><span class="res-value" id="partialProfit" style="color: var(--success)">$0</span></div>
+</div>
+<div class="results-col">
+<div class="res-row"><span class="res-label-text">Итоговый риск с комиссией ($):</span><span class="res-value" id="totalRisk" style="color: var(--danger)">$0</span></div>
+<div class="res-row" id="fullProfitRow" style="display:none;"><span class="res-label-text" id="netProfitLabel">Profit при полном выходе ($):</span><span class="res-value" id="netProfit" style="color: var(--success)">$0</span></div>
+<div class="res-row"><span class="res-label-text">Статус:</span><span class="res-value" id="statusText" style="color: var(--warning)">В работе</span></div>
+<div class="res-row" style="border-bottom: none; font-weight: bold;"><span class="res-label-text">Соотношение Risk / Reward:</span><span class="res-value highlight" id="rrRatio">0 : 1</span></div>
+</div>
+</div>
 </div>
 <div id="warningMsg" class="warning"></div>
 
-<div class="form-section-title"><span class="icon sm">notes</span>Причина входа / Заметки</div>
-<div style="margin-bottom: 16px;"><label style="display:none;">Заметки <span id="notesConfirmBadge" class="confirm-badge" style="display:none;"></span></label><textarea id="notes" rows="2" placeholder="Пробой уровня сопротивления, открыл позицию..." oninput="updateNotesConfirmBadge()"></textarea></div>
+<div class="form-divider"></div>
 
 <div class="form-section-title"><span class="icon sm">pie_chart</span>Фиксация позиции</div>
 <div class="close-type-toggle">
@@ -868,7 +907,12 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div class="position-journal-list" id="formPositionJournalList"></div>
 </div>
 
-<div style="display: flex; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+<div class="form-divider"></div>
+
+<div class="form-section-title"><span class="icon sm">notes</span>Причина входа / Заметки</div>
+<div style="margin-bottom: 16px;"><label style="display:none;">Заметки <span id="notesConfirmBadge" class="confirm-badge" style="display:none;"></span></label><textarea id="notes" rows="2" placeholder="Пробой уровня сопротивления, открыл позицию..." oninput="updateNotesConfirmBadge()"></textarea></div>
+
+<div class="form-actions-bar">
 <button type="submit" class="btn" id="submitBtn">Добавить сделку</button>
 <button type="button" class="btn-cancel" id="cancelBtn" onclick="resetForm()">Отмена</button>
 </div>
@@ -1562,7 +1606,6 @@ const rewardDist = entry > 0 && target > 0 ? Math.abs(target - entry) : 0;
 const classicRR = riskDist > 0 ? rewardDist / riskDist : 0;
 
 document.getElementById('requiredMargin').innerText = '$' + requiredMargin.toFixed(2);
-document.getElementById('marginRow').classList.toggle('margin-insufficient', requiredMargin > balance && balance > 0);
 document.getElementById('pureRisk').innerText = '$' + (balance * (riskPercent / 100)).toFixed(2);
 document.getElementById('totalFee').innerText = '$' + (entryFee + exitFeeSL).toFixed(2);
 document.getElementById('totalRisk').innerText = '$' + totalRiskWithFee.toFixed(2);
@@ -1575,12 +1618,11 @@ const partialProfitEl = document.getElementById('partialProfit');
 const fullProfitRow = document.getElementById('fullProfitRow');
 const netProfitLabel = document.getElementById('netProfitLabel');
 const netProfitEl = document.getElementById('netProfit');
-const statusRow = document.getElementById('statusRow');
 const statusText = document.getElementById('statusText');
+const feeRow = document.getElementById('feeRow');
 
 if (closeType === 'partial') {
 fullProfitRow.style.display = 'none';
-statusRow.style.display = 'none';
 if (partialPercent > 0 && partialPrice !== null && !isNaN(partialPrice) && entry > 0 && units > 0) {
 const pUnits = units * (partialPercent / 100);
 const pGross = positionType === 'SHORT' ? pUnits * (entry - partialPrice) : pUnits * (partialPrice - entry);
@@ -1591,21 +1633,28 @@ partialProfitRow.style.display = 'flex';
 partialProfitEl.innerText = '$' + pNetProfit.toFixed(2);
 partialProfitEl.style.color = pNetProfit >= 0 ? 'var(--success)' : 'var(--danger)';
 calcState.profit = pNetProfit;
+feeRow.style.borderBottom = 'none';
+statusText.innerText = `Частичная фиксация: ${partialPercent}%`;
+statusText.style.color = 'var(--success)';
 } else {
 partialProfitRow.style.display = 'none';
 calcState.profit = null;
+feeRow.style.borderBottom = '1px solid var(--md-outline-variant)';
+statusText.innerText = 'В работе (частичная)';
+statusText.style.color = 'var(--warning)';
 }
 } else {
 partialProfitRow.style.display = 'none';
 calcState.profit = null;
+feeRow.style.borderBottom = '1px solid var(--md-outline-variant)';
 
 if (exit === 0) {
 fullProfitRow.style.display = 'none';
-statusRow.style.display = 'flex';
 statusText.innerText = 'Безубыток (Б/У)';
 statusText.style.color = 'var(--breakeven)';
 } else if (exit !== null && !isNaN(exit) && exit > 0 && entry > 0 && units > 0) {
-statusRow.style.display = 'none';
+statusText.style.color = 'var(--warning)';
+statusText.innerText = 'В работе';
 const exitFeeActual = (units * exit) * feePercent;
 const grossProfitActual = positionType === 'SHORT' ? units * (entry - exit) : units * (exit - entry);
 const netProfitActual = grossProfitActual - entryFee - exitFeeActual;
@@ -1615,7 +1664,6 @@ netProfitEl.innerText = '$' + netProfitActual.toFixed(2);
 netProfitEl.style.color = netProfitActual >= 0 ? 'var(--success)' : 'var(--danger)';
 } else {
 fullProfitRow.style.display = 'none';
-statusRow.style.display = 'flex';
 statusText.innerText = 'В работе';
 statusText.style.color = 'var(--warning)';
 }
@@ -1630,7 +1678,6 @@ function addProfitFromCalculator() {
 const { partialPrice, partialPercent, units, entry, feePercent, positionType: calcDirection, remainingSize, positionSize } = calcState;
 let editingId = document.getElementById('editingTradeId').value;
 
-// ИСПРАВЛЕНИЕ: если нет редактируемой сделки — создаём новую из текущих полей формы
 if (!editingId) {
 const assetVal = document.getElementById('asset').value;
 const dateVal = document.getElementById('tradeDate').value;
@@ -1642,7 +1689,6 @@ const posSizeVal = document.getElementById('calcRemainingSize').value;
 if (!assetVal) { alert('Укажите монету/актив перед фиксацией'); return; }
 if (!entryVal || !stopVal) { alert('Укажите Enter и Stop перед фиксацией'); return; }
 
-// Создаём сделку
 const tradeData = {
 date: dateVal || new Date().toISOString().split('T')[0],
 asset: assetVal.toUpperCase(),
