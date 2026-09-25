@@ -850,14 +850,14 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 </div>
 <div class="form-grid">
 <div><label>Цена фиксации ($) <small>(0 = Б/У)</small></label><input type="number" id="calcPartialPrice" value="" step="any" placeholder="0 = безубыток, пусто = не задана" oninput="calculate()"></div>
-<div><label>&nbsp;</label><button type="button" class="btn" id="addProfitBtnPartial" style="width:100%; justify-content:center; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать</button></div>
+<div><label>&nbsp;</label><button type="button" class="btn" id="addProfitBtnPartial" style="width:100%; justify-content:center;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать</button></div>
 </div>
 </div>
 
 <!-- Полная фиксация -->
 <div class="form-grid" id="exitField">
 <div><label>Exit($) <small>(0 = Б/У, пусто = в работе)</small></label><input type="number" id="calcExit" value="" step="any" placeholder="0 = безубыток, пусто = в работе" oninput="calculate()"></div>
-<div><label>&nbsp;</label><button type="button" class="btn" id="addProfitBtnFull" style="width:100%; justify-content:center; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать</button></div>
+<div><label>&nbsp;</label><button type="button" class="btn" id="addProfitBtnFull" style="width:100%; justify-content:center;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать</button></div>
 </div>
 
 <div class="position-journal" id="formPositionJournal" style="display: none;">
@@ -1080,8 +1080,6 @@ recalculateTradeState(trade);
 renderPositionJournal(trade.partialCloses || [], 'formPositionJournalList', posSize);
 updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
 document.getElementById('formPositionJournal').style.display = 'block';
-document.getElementById('addProfitBtnPartial').style.display = 'flex';
-document.getElementById('addProfitBtnFull').style.display = 'flex';
 calculate();
 render();
 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1106,8 +1104,6 @@ document.getElementById('submitBtn').innerText = 'Добавить сделку'
 document.getElementById('cancelBtn').style.display = 'none';
 document.getElementById('formCard').classList.remove('editing');
 document.getElementById('formPositionJournal').style.display = 'none';
-document.getElementById('addProfitBtnPartial').style.display = 'none';
-document.getElementById('addProfitBtnFull').style.display = 'none';
 setType('LONG');
 setCloseType('full');
 render();
@@ -1632,8 +1628,44 @@ warning.innerHTML += (warning.innerHTML ? '<br>' : '') + '<span class="icon sm">
 
 function addProfitFromCalculator() {
 const { partialPrice, partialPercent, units, entry, feePercent, positionType: calcDirection, remainingSize, positionSize } = calcState;
-const editingId = document.getElementById('editingTradeId').value;
-if (!editingId) { alert('Сначала выберите сделку для редактирования'); return; }
+let editingId = document.getElementById('editingTradeId').value;
+
+// ИСПРАВЛЕНИЕ: если нет редактируемой сделки — создаём новую из текущих полей формы
+if (!editingId) {
+const assetVal = document.getElementById('asset').value;
+const dateVal = document.getElementById('tradeDate').value;
+const entryVal = document.getElementById('calcEntry').value;
+const stopVal = document.getElementById('calcStop').value;
+const takeVal = document.getElementById('calcTarget').value;
+const posSizeVal = document.getElementById('calcRemainingSize').value;
+
+if (!assetVal) { alert('Укажите монету/актив перед фиксацией'); return; }
+if (!entryVal || !stopVal) { alert('Укажите Enter и Stop перед фиксацией'); return; }
+
+// Создаём сделку
+const tradeData = {
+date: dateVal || new Date().toISOString().split('T')[0],
+asset: assetVal.toUpperCase(),
+direction: positionType,
+entry: parseFloat(entryVal),
+stop: parseFloat(stopVal),
+take: takeVal !== '' ? parseFloat(takeVal) : null,
+exitPrice: null,
+pnl: null,
+notes: document.getElementById('notes').value,
+positionSize: posSizeVal !== '' ? parseFloat(posSizeVal) : 0
+};
+const newTrade = { id: Date.now(), partialClose: 0, partialCloses: [], remainingSize: tradeData.positionSize || 0, ...tradeData };
+trades.unshift(newTrade);
+editingId = newTrade.id;
+document.getElementById('editingTradeId').value = editingId;
+document.getElementById('formTitle').innerText = 'Редактировать сделку';
+document.getElementById('submitBtn').innerText = 'Сохранить изменения';
+document.getElementById('cancelBtn').style.display = 'inline-block';
+document.getElementById('formCard').classList.add('editing');
+document.getElementById('formPositionJournal').style.display = 'block';
+}
+
 const tradeIndex = trades.findIndex(t => t.id == editingId);
 if (tradeIndex === -1) { alert('Сделка не найдена'); return; }
 const trade = trades[tradeIndex];
