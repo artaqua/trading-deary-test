@@ -128,10 +128,10 @@ vertical-align: middle;
 .icon.lg { font-size: 28px; }
 .container { max-width: 2560px; width: 100%; margin: 0 auto; box-sizing: border-box; }
 .content-narrow { max-width: 1000px; width: 100%; margin: 0 auto; box-sizing: border-box; }
-.header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 10px; }
+.header-bar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; flex-wrap: wrap; gap: 10px; }
 h1 { color: var(--md-on-surface); margin: 0; font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; display: flex; align-items: center; gap: 10px; letter-spacing: -0.01em; }
 h1 .icon { color: var(--md-primary); font-size: 24px; background: var(--md-primary-container); border-radius: 10px; padding: 6px; box-shadow: var(--shadow-glow); }
-.action-buttons { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 15px; width: 100%;}
+.action-buttons { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-left: auto; }
 .btn-action {
 background: var(--md-surface-container-high);
 color: var(--md-on-surface-variant);
@@ -678,6 +678,9 @@ gap: 6px;
 }
 .form-section-title .icon { font-size: 16px; color: var(--md-primary); }
 .row-editing { outline: 1px solid var(--md-primary); outline-offset: -2px; background: rgba(255,171,61,0.06) !important; }
+.partial-fix-row { margin-bottom: 16px; }
+.partial-fix-row label { margin-bottom: 8px; }
+.partial-fix-row input[type="range"] { width: 100%; margin: 4px 0; }
 @media (max-width: 500px) {
 body { padding: 16px 10px 40px; }
 .form-card { padding: 14px; }
@@ -752,7 +755,8 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div class="container" id="appRoot" style="display:none;">
 <div class="content-narrow">
 <div class="header-bar">
-<h1><span class="icon lg">candlestick_chart</span>Trading Deary</h1><div id="fileStatus" class="sync-status status-off"></div>
+<h1><span class="icon lg">candlestick_chart</span>Trading Deary</h1>
+<div id="fileStatus" class="sync-status status-off"></div>
 <div class="action-buttons">
 <button type="button" class="btn-action btn-report" onclick="openReportModal()"><span class="icon">analytics</span>Отчёт</button>
 <button type="button" class="btn-action" onclick="exportToJSON()"><span class="icon">download</span>Export JSON</button>
@@ -785,22 +789,7 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <form id="tradeForm" onsubmit="handleFormSubmit(event)">
 <input type="hidden" id="editingTradeId" value="">
 <input type="hidden" id="pnl" value="">
-<div class="form-section-title"><span class="icon sm">analytics</span>Результаты расчёта</div>
-<div class="results">
-<div class="margin-highlight-row" id="marginRow"><span class="res-label"><span class="icon sm">account_balance_wallet</span>Требуемая маржа ($)</span><span class="res-value" id="requiredMargin">$0</span></div>
-<div class="res-row"><span>Чистый риск по графику ($):</span><span class="res-value" id="pureRisk">$0</span></div>
-<div class="res-row"><span>Комиссия (вход + выход) ($):</span><span class="res-value" id="totalFee" style="color: var(--danger)">$0</span></div>
-<div class="res-row"><span>Итоговый риск с комиссией ($):</span><span class="res-value" id="totalRisk" style="color: var(--danger)">$0</span></div>
-<div class="res-row" id="partialProfitRow" style="display:none;"><span>Прибыль с фиксации ($):</span><span class="res-value" id="partialProfit" style="color: var(--success)">$0</span></div>
-<div class="res-row"><span id="netProfitLabel">Чистая прибыль по TP ($):</span><span class="res-value" id="netProfit" style="color: var(--success)">$0</span></div>
-<div class="res-row" style="margin-top: 10px; font-weight: bold;"><span>Соотношение Risk / Reward:</span><span class="res-value highlight" id="rrRatio">0 : 1</span></div>
-</div>
-<div id="warningMsg" class="warning"></div>
-<div class="form-section-title"><span class="icon sm">swap_vert</span>Направление</div>
-<div class="type-toggle">
-<button type="button" class="type-btn active long" id="btnLong" onclick="setType('LONG')"><span class="icon sm">trending_up</span>LONG</button>
-<button type="button" class="type-btn short" id="btnShort" onclick="setType('SHORT')"><span class="icon sm">trending_down</span>SHORT</button>
-</div>
+
 <div class="form-section-title"><span class="icon sm">tune</span>Параметры позиции</div>
 <div class="form-grid">
 <div><label>Начальный депозит ($) <small>(редактируемый)</small></label><input type="number" id="initialBalanceInput" value="10000" step="any" oninput="updateInitialBalanceFromInput()"></div>
@@ -809,11 +798,19 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div><label>Риск (%)</label><input type="number" id="calcRisk" value="1" step="0.1" oninput="calculate()"></div>
 <div><label>Комиссия (%)</label><input type="number" id="calcFee" value="0.05" step="0.01" oninput="calculate()"></div>
 </div>
+
+<div class="form-section-title"><span class="icon sm">swap_vert</span>Направление</div>
+<div class="type-toggle">
+<button type="button" class="type-btn active long" id="btnLong" onclick="setType('LONG')"><span class="icon sm">trending_up</span>LONG</button>
+<button type="button" class="type-btn short" id="btnShort" onclick="setType('SHORT')"><span class="icon sm">trending_down</span>SHORT</button>
+</div>
+
 <div class="form-section-title"><span class="icon sm">edit_note</span>Детали сделки</div>
 <div class="form-grid">
 <div><label>Дата</label><input type="date" id="tradeDate" required></div>
 <div><label>Монета / Актив</label><input type="text" id="asset" placeholder="BTCUSDT" required style="text-transform:uppercase"></div>
 </div>
+
 <div class="form-section-title"><span class="icon sm">price_change</span>Уровни</div>
 <div class="form-grid">
 <div><label>Enter($)</label><input type="number" id="calcEntry" value="" step="any" placeholder="Цена входа" oninput="calculate()"></div>
@@ -821,21 +818,48 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 <div><label>Take($)</label><input type="number" id="calcTarget" value="" step="any" placeholder="Тейк-профит" oninput="calculate()"></div>
 <div><label>Текущий сайз ($) <small>(авто/редактируемый)</small></label><input type="number" id="calcRemainingSize" value="0" step="any" oninput="onRemainingSizeChange()"></div>
 </div>
+
+<div class="form-section-title"><span class="icon sm">analytics</span>Результаты расчёта</div>
+<div class="results">
+<div class="margin-highlight-row" id="marginRow"><span class="res-label"><span class="icon sm">account_balance_wallet</span>Требуемая маржа ($)</span><span class="res-value" id="requiredMargin">$0</span></div>
+<div class="res-row"><span>Чистый риск по графику ($):</span><span class="res-value" id="pureRisk">$0</span></div>
+<div class="res-row"><span>Комиссия (вход + выход) ($):</span><span class="res-value" id="totalFee" style="color: var(--danger)">$0</span></div>
+<div class="res-row"><span>Итоговый риск с комиссией ($):</span><span class="res-value" id="totalRisk" style="color: var(--danger)">$0</span></div>
+<div class="res-row" id="partialProfitRow" style="display:none;"><span>Прибыль с фиксации ($):</span><span class="res-value" id="partialProfit" style="color: var(--success)">$0</span></div>
+<div class="res-row" id="fullProfitRow" style="display:none;"><span id="netProfitLabel">Profit при полном выходе ($):</span><span class="res-value" id="netProfit" style="color: var(--success)">$0</span></div>
+<div class="res-row" id="statusRow"><span>Статус:</span><span class="res-value" id="statusText" style="color: var(--warning)">В работе</span></div>
+<div class="res-row" style="margin-top: 10px; font-weight: bold;"><span>Соотношение Risk / Reward:</span><span class="res-value highlight" id="rrRatio">0 : 1</span></div>
+</div>
+<div id="warningMsg" class="warning"></div>
+
+<div class="form-section-title"><span class="icon sm">notes</span>Причина входа / Заметки</div>
+<div style="margin-bottom: 16px;"><label style="display:none;">Заметки <span id="notesConfirmBadge" class="confirm-badge" style="display:none;"></span></label><textarea id="notes" rows="2" placeholder="Пробой уровня сопротивления, открыл позицию..." oninput="updateNotesConfirmBadge()"></textarea></div>
+
 <div class="form-section-title"><span class="icon sm">pie_chart</span>Фиксация позиции</div>
 <div class="close-type-toggle">
 <button type="button" class="close-type-btn partial" id="btnPartialClose" onclick="setCloseType('partial')"><span class="icon sm">pie_chart</span>Частичная фиксация</button>
 <button type="button" class="close-type-btn full active" id="btnFullClose" onclick="setCloseType('full')"><span class="icon sm">check_circle</span>Полная фиксация</button>
 </div>
-<div class="form-grid" id="partialFields" style="display: none;">
-<div><label>Фиксация части (%) <small>(от общего сайза)</small></label><input type="range" id="calcPartialPercent" min="0" max="100" value="0" oninput="updateCalcPartialDisplay(); calculate();" style="width: 100%; accent-color: var(--plus-highlight); cursor: pointer;"><div id="calcPartialDisplay" style="font-size: 0.72rem; color: var(--md-on-surface-variant); margin-top: 4px; font-family: var(--font-mono);"><span style="color: var(--success); font-weight: 600;">0%</span> фикс | <span style="color: var(--md-primary); font-weight: 600;">100%</span> осталось</div></div>
-<div><label>Цена фиксации ($)</label><input type="number" id="calcPartialPrice" value="" step="any" placeholder="По какой цене фикс" oninput="calculate()"></div>
+
+<!-- Частичная фиксация -->
+<div id="partialFields" style="display: none;">
+<div class="partial-fix-row">
+<label>Фиксация части (%) <small>(от общего сайза)</small></label>
+<input type="range" id="calcPartialPercent" min="0" max="100" value="0" oninput="updateCalcPartialDisplay(); calculate();" style="width: 100%; accent-color: var(--plus-highlight); cursor: pointer;">
+<div id="calcPartialDisplay" style="font-size: 0.72rem; color: var(--md-on-surface-variant); margin-top: 4px; font-family: var(--font-mono);"><span style="color: var(--success); font-weight: 600;">0%</span> фикс | <span style="color: var(--md-primary); font-weight: 600;">100%</span> осталось</div>
 </div>
-<div class="form-grid full-width" id="exitField">
+<div class="form-grid">
+<div><label>Цена фиксации ($) <small>(0 = Б/У)</small></label><input type="number" id="calcPartialPrice" value="" step="any" placeholder="0 = безубыток, пусто = не задана" oninput="calculate()"></div>
+<div><label>&nbsp;</label><button type="button" class="btn" id="addProfitBtnPartial" style="width:100%; justify-content:center; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать</button></div>
+</div>
+</div>
+
+<!-- Полная фиксация -->
+<div class="form-grid" id="exitField">
 <div><label>Exit($) <small>(0 = Б/У, пусто = в работе)</small></label><input type="number" id="calcExit" value="" step="any" placeholder="0 = безубыток, пусто = в работе" oninput="calculate()"></div>
+<div><label>&nbsp;</label><button type="button" class="btn" id="addProfitBtnFull" style="width:100%; justify-content:center; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать</button></div>
 </div>
-<button type="button" class="btn" id="addProfitBtn" style="width:100%; justify-content:center; margin-top: 10px; margin-bottom: 10px; display:none;" onclick="addProfitFromCalculator()"><span class="icon sm">post_add</span>Зафиксировать позицию</button>
-<div class="form-section-title"><span class="icon sm">notes</span>Причина входа / Заметки</div>
-<div style="margin-bottom: 16px;"><label style="display:none;">Заметки <span id="notesConfirmBadge" class="confirm-badge" style="display:none;"></span></label><textarea id="notes" rows="2" placeholder="Пробой уровня сопротивления, открыл позицию..." oninput="updateNotesConfirmBadge()"></textarea></div>
+
 <div class="position-journal" id="formPositionJournal" style="display: none;">
 <div class="position-journal-header">
 <div class="position-journal-title" style="margin-bottom: 0;"><span class="icon sm">history_edu</span>Журнал фиксации по позиции</div>
@@ -843,6 +867,7 @@ window.dispatchEvent(new CustomEvent('firebaseReady'));
 </div>
 <div class="position-journal-list" id="formPositionJournalList"></div>
 </div>
+
 <div style="display: flex; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
 <button type="submit" class="btn" id="submitBtn">Добавить сделку</button>
 <button type="button" class="btn-cancel" id="cancelBtn" onclick="resetForm()">Отмена</button>
@@ -891,6 +916,11 @@ return t;
 }
 function normalizeTrades(list) { return Array.isArray(list) ? list.map(normalizeTrade) : []; }
 (function migrateLocalStorage() { const raw = JSON.parse(localStorage.getItem('trading_journal_trades')) || []; if (raw.some(t => t.exit !== undefined)) { localStorage.setItem('trading_journal_trades', JSON.stringify(trades)); } })();
+
+function getTotalPnLFromJournal(trade) {
+if (!trade || !trade.partialCloses || trade.partialCloses.length === 0) return null;
+return trade.partialCloses.reduce((sum, c) => sum + (c.pnl || 0), 0);
+}
 
 function setFileStatus(state, detail) {
 const el = document.getElementById('fileStatus');
@@ -1004,6 +1034,7 @@ pnl: pnl,
 notes: document.getElementById('notes').value,
 positionSize: posSizeVal !== '' ? parseFloat(posSizeVal) : 0
 };
+
 if (editingId) {
 const index = trades.findIndex(t => t.id == editingId);
 if (index !== -1) {
@@ -1012,6 +1043,10 @@ trades[index] = { ...trades[index], ...tradeData };
 trades[index].partialCloses = existingCloses;
 trades[index].partialClose = 0;
 recalculateTradeState(trades[index]);
+const journalPnl = getTotalPnLFromJournal(trades[index]);
+if (journalPnl !== null) {
+trades[index].pnl = journalPnl;
+}
 }
 } else {
 trades.unshift({ id: Date.now(), partialClose: 0, partialCloses: [], remainingSize: tradeData.positionSize || 0, ...tradeData });
@@ -1030,7 +1065,8 @@ document.getElementById('calcEntry').value = trade.entry !== null && trade.entry
 document.getElementById('calcStop').value = trade.stop !== null && trade.stop !== undefined ? trade.stop : '';
 document.getElementById('calcTarget').value = trade.take !== null && trade.take !== undefined ? trade.take : '';
 document.getElementById('calcExit').value = trade.exitPrice !== null && trade.exitPrice !== undefined ? trade.exitPrice : '';
-document.getElementById('pnl').value = trade.pnl !== null && trade.pnl !== undefined ? trade.pnl : '';
+const journalPnl = getTotalPnLFromJournal(trade);
+document.getElementById('pnl').value = journalPnl !== null ? journalPnl.toFixed(2) : (trade.pnl !== null && trade.pnl !== undefined ? trade.pnl : '');
 document.getElementById('notes').value = trade.notes || '';
 document.getElementById('calcRemainingSize').value = trade.positionSize || '';
 updateNotesConfirmBadge();
@@ -1044,7 +1080,8 @@ recalculateTradeState(trade);
 renderPositionJournal(trade.partialCloses || [], 'formPositionJournalList', posSize);
 updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
 document.getElementById('formPositionJournal').style.display = 'block';
-document.getElementById('addProfitBtn').style.display = 'flex';
+document.getElementById('addProfitBtnPartial').style.display = 'flex';
+document.getElementById('addProfitBtnFull').style.display = 'flex';
 calculate();
 render();
 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1057,6 +1094,7 @@ document.getElementById('calcEntry').value = '';
 document.getElementById('calcStop').value = '';
 document.getElementById('calcTarget').value = '';
 document.getElementById('calcExit').value = '';
+document.getElementById('calcPartialPrice').value = '';
 document.getElementById('pnl').value = '';
 document.getElementById('notes').value = '';
 document.getElementById('calcRemainingSize').value = '0';
@@ -1068,7 +1106,8 @@ document.getElementById('submitBtn').innerText = 'Добавить сделку'
 document.getElementById('cancelBtn').style.display = 'none';
 document.getElementById('formCard').classList.remove('editing');
 document.getElementById('formPositionJournal').style.display = 'none';
-document.getElementById('addProfitBtn').style.display = 'none';
+document.getElementById('addProfitBtnPartial').style.display = 'none';
+document.getElementById('addProfitBtnFull').style.display = 'none';
 setType('LONG');
 setCloseType('full');
 render();
@@ -1091,7 +1130,7 @@ const exitField = document.getElementById('exitField');
 if (type === 'partial') {
 btnPartial.classList.add('active');
 btnFull.classList.remove('active');
-partialFields.style.display = 'grid';
+partialFields.style.display = 'block';
 exitField.style.display = 'none';
 } else {
 btnPartial.classList.remove('active');
@@ -1145,10 +1184,17 @@ if (confirm('Удалить эту запись из журнала?')) {
 trade.partialCloses.splice(index, 1);
 trade.partialClose = 0;
 recalculateTradeState(trade);
+const newJournalPnl = getTotalPnLFromJournal(trade);
+if (newJournalPnl !== null) {
+trade.pnl = newJournalPnl;
+} else {
+trade.pnl = null;
+}
 saveTrades();
 const posSize = trade.positionSize || 0;
 renderPositionJournal(trade.partialCloses, 'formPositionJournalList', posSize);
 updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
+document.getElementById('pnl').value = newJournalPnl !== null ? newJournalPnl.toFixed(2) : '';
 calculate();
 }
 }
@@ -1208,14 +1254,21 @@ trades.forEach(trade => {
 trade.partialClose = 0;
 recalculateTradeState(trade);
 
+let displayPnl = trade.pnl;
+const journalPnl = getTotalPnLFromJournal(trade);
+if (journalPnl !== null) {
+displayPnl = journalPnl;
+trade.pnl = journalPnl;
+}
+
 let pnlClass = 'pnl-zero';
 let pnlText = '-';
-const isOpen = trade.pnl === null || trade.pnl === undefined || isNaN(trade.pnl);
+const isOpen = displayPnl === null || displayPnl === undefined || isNaN(displayPnl);
 if (isOpen) { openTrades++; pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>'; }
 else {
-totalPnL += trade.pnl;
-if (trade.pnl > 0) { wins++; pnlClass = 'pnl-positive'; pnlText = '+' + '$' + trade.pnl.toFixed(2); }
-else if (trade.pnl < 0) { losses++; pnlClass = 'pnl-negative'; pnlText = '-$' + Math.abs(trade.pnl).toFixed(2); }
+totalPnL += displayPnl;
+if (displayPnl > 0) { wins++; pnlClass = 'pnl-positive'; pnlText = '+' + '$' + displayPnl.toFixed(2); }
+else if (displayPnl < 0) { losses++; pnlClass = 'pnl-negative'; pnlText = '-$' + Math.abs(displayPnl).toFixed(2); }
 else { breakEvens++; pnlText = '$0.00 <span class="tag-be">БУ</span>'; }
 }
 const entryText = (trade.entry !== null && trade.entry !== undefined && !isNaN(trade.entry)) ? '$' + trade.entry : '-';
@@ -1263,13 +1316,21 @@ function renderPnlChart() {
 const svg = document.getElementById('pnlChartSvg');
 const emptyEl = document.getElementById('pnlChartEmpty');
 if (!svg || !emptyEl) return;
-const closed = trades.filter(t => t.pnl !== null && t.pnl !== undefined && !isNaN(t.pnl)).slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); });
+const closed = trades.filter(t => {
+const jp = getTotalPnLFromJournal(t);
+const pnl = jp !== null ? jp : t.pnl;
+return pnl !== null && pnl !== undefined && !isNaN(pnl);
+}).slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); });
 if (closed.length === 0) { svg.innerHTML = ''; svg.style.display = 'none'; emptyEl.style.display = 'block'; return; }
 svg.style.display = 'block';
 emptyEl.style.display = 'none';
 let cum = 0;
 const points = [0];
-closed.forEach(t => { cum += t.pnl; points.push(cum); });
+closed.forEach(t => {
+const jp = getTotalPnLFromJournal(t);
+const pnl = jp !== null ? jp : t.pnl;
+cum += pnl; points.push(cum);
+});
 const width = 300, height = 140, padding = 6;
 const minV = Math.min(0, ...points);
 const maxV = Math.max(0, ...points);
@@ -1300,7 +1361,8 @@ const take = (t.take !== null && t.take !== undefined) ? t.take : '';
 const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : '';
 const rr = calculateRR(t);
 const rrStr = rr !== null ? rr.toFixed(2) : '';
-const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : '';
+const jp = getTotalPnLFromJournal(t);
+const pnl = jp !== null ? jp : (t.pnl !== null && t.pnl !== undefined ? t.pnl : '');
 const partialClose = t.partialClose > 0 ? t.partialClose.toFixed(1) : 0;
 const cleanNotes = (t.notes || '').replace(/"/g, '""');
 const row = [t.date, t.asset, t.direction, entry, stop, take, exitPrice, rrStr, partialClose, pnl, `"${cleanNotes}"`].join(";");
@@ -1378,8 +1440,10 @@ const monthTrades = getTradesForMonth(month, year);
 if (monthTrades.length === 0) { content.innerHTML = `<div class="report-empty"><span class="icon">inbox</span>Нет сделок за ${MONTH_NAMES[month]} ${year}</div>`; return; }
 let totalPnL = 0, wins = 0, losses = 0, breakEvens = 0, openCount = 0, longCount = 0, shortCount = 0, bestTrade = null, worstTrade = null, totalWinAmount = 0, totalLossAmount = 0, rrValues = [];
 monthTrades.forEach(t => {
-const isOpen = t.pnl === null || t.pnl === undefined || isNaN(t.pnl);
-if (isOpen) { openCount++; } else { totalPnL += t.pnl; if (t.pnl > 0) { wins++; totalWinAmount += t.pnl; } else if (t.pnl < 0) { losses++; totalLossAmount += Math.abs(t.pnl); } else { breakEvens++; } if (bestTrade === null || t.pnl > bestTrade.pnl) bestTrade = t; if (worstTrade === null || t.pnl < worstTrade.pnl) worstTrade = t; }
+const jp = getTotalPnLFromJournal(t);
+const pnl = jp !== null ? jp : t.pnl;
+const isOpen = pnl === null || pnl === undefined || isNaN(pnl);
+if (isOpen) { openCount++; } else { totalPnL += pnl; if (pnl > 0) { wins++; totalWinAmount += pnl; } else if (pnl < 0) { losses++; totalLossAmount += Math.abs(pnl); } else { breakEvens++; } if (bestTrade === null || pnl > (bestTrade.pnl !== null && bestTrade.pnl !== undefined ? bestTrade.pnl : -Infinity)) bestTrade = { ...t, pnl }; if (worstTrade === null || pnl < (worstTrade.pnl !== null && worstTrade.pnl !== undefined ? worstTrade.pnl : Infinity)) worstTrade = { ...t, pnl }; }
 if (t.direction === 'LONG') longCount++; else shortCount++;
 const rr = calculateRR(t); if (rr !== null) rrValues.push(rr);
 });
@@ -1392,12 +1456,18 @@ const avgRR = rrValues.length > 0 ? (rrValues.reduce((a, b) => a + b, 0) / rrVal
 const pnlClass = totalPnL > 0 ? 'pnl-positive' : (totalPnL < 0 ? 'pnl-negative' : 'pnl-zero');
 const pnlPrefix = totalPnL > 0 ? '+' : '';
 let html = `<div class="report-stats-grid"><div class="report-stat-card"><div class="label">Всего сделок</div><div class="value">${monthTrades.length}</div></div><div class="report-stat-card"><div class="label">PnL за месяц</div><div class="value ${pnlClass}">${pnlPrefix}$${totalPnL.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Винрейт</div><div class="value">${winRate}%</div></div><div class="report-stat-card"><div class="label">Прибыль / БУ / Убыток</div><div class="value"><span style="color:var(--success)">${wins}</span> / <span style="color:var(--breakeven)">${breakEvens}</span> / <span style="color:var(--danger)">${losses}</span></div></div><div class="report-stat-card"><div class="label">Лучшая сделка</div><div class="value pnl-positive">${bestTrade ? '+$' + bestTrade.pnl.toFixed(2) : '—'}</div></div><div class="report-stat-card"><div class="label">Худшая сделка</div><div class="value pnl-negative">${worstTrade ? '-$' + Math.abs(worstTrade.pnl).toFixed(2) : '—'}</div></div><div class="report-stat-card"><div class="label">Средний выигрыш</div><div class="value pnl-positive">$${avgWin.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Средний убыток</div><div class="value pnl-negative">$${avgLoss.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Profit Factor</div><div class="value" style="color: ${profitFactor >= 1.5 ? 'var(--success)' : profitFactor >= 1 ? 'var(--warning)' : 'var(--danger)'}">${profitFactor === Infinity ? '' : profitFactor.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Средний RR</div><div class="value" style="color: var(--md-primary)">1:${avgRR.toFixed(2)}</div></div><div class="report-stat-card"><div class="label">Long / Short</div><div class="value"><span style="color:var(--success)">${longCount}</span> / <span style="color:var(--danger)">${shortCount}</span></div></div><div class="report-stat-card"><div class="label">В работе</div><div class="value" style="color: var(--warning)">${openCount}</div></div></div><div class="report-table-container"><table><thead><tr><th>Дата</th><th>Актив</th><th>Тип</th><th>Enter($)</th><th>Stop($)</th><th>Take($)</th><th>Exit($)</th><th>RR</th><th>Фикс.</th><th>Profit($)</th></tr></thead><tbody>`;
-const sorted = monthTrades.slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); });
+const sorted = monthTrades.slice().sort((a, b) => {
+const d = new Date(b.date) - new Date(a.date);
+if (d !== 0) return d;
+return (b.id || 0) - (a.id || 0);
+});
 sorted.forEach(trade => {
+const jp = getTotalPnLFromJournal(trade);
+const pnl = jp !== null ? jp : trade.pnl;
 let pnlClass = 'pnl-zero'; let pnlText = '-';
-const isOpen = trade.pnl === null || trade.pnl === undefined || isNaN(trade.pnl);
+const isOpen = pnl === null || pnl === undefined || isNaN(pnl);
 if (isOpen) { pnlText = '<span class="tag open"><span class="icon sm">hourglass_top</span>В работе</span>'; }
-else { if (trade.pnl > 0) { pnlClass = 'pnl-positive'; pnlText = '+$' + trade.pnl.toFixed(2); } else if (trade.pnl < 0) { pnlClass = 'pnl-negative'; pnlText = '-$' + Math.abs(trade.pnl).toFixed(2); } else { pnlText = '$0.00 <span class="tag-be">БУ</span>'; } }
+else { if (pnl > 0) { pnlClass = 'pnl-positive'; pnlText = '+$' + pnl.toFixed(2); } else if (pnl < 0) { pnlClass = 'pnl-negative'; pnlText = '-$' + Math.abs(pnl).toFixed(2); } else { pnlText = '$0.00 <span class="tag-be">БУ</span>'; } }
 const entryText = (trade.entry !== null && trade.entry !== undefined && !isNaN(trade.entry)) ? '$' + trade.entry : '-';
 const stopText = (trade.stop !== null && trade.stop !== undefined && !isNaN(trade.stop)) ? '$' + trade.stop : '-';
 const takeText = (trade.take !== null && trade.take !== undefined && !isNaN(trade.take)) ? '$' + trade.take : '-';
@@ -1414,7 +1484,7 @@ content.innerHTML = html;
 }
 
 function exportReportJSON() { const month = parseInt(document.getElementById('reportMonth').value); const year = parseInt(document.getElementById('reportYear').value); const monthTrades = getTradesForMonth(month, year); if (monthTrades.length === 0) { alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`); return; } const payload = { reportPeriod: { month: month, monthName: MONTH_NAMES[month], year: year }, initialBalance: initialBalance, tradesCount: monthTrades.length, exportedAt: new Date().toISOString(), trades: normalizeTrades(monthTrades) }; const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; const monthStr = String(month + 1).padStart(2, '0'); link.download = `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.json`; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); }
-function exportReportCSV() { const month = parseInt(document.getElementById('reportMonth').value); const year = parseInt(document.getElementById('reportYear').value); const monthTrades = getTradesForMonth(month, year); if (monthTrades.length === 0) { alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`); return; } const sorted = monthTrades.slice().sort((a, b) => { const d = new Date(a.date) - new Date(b.date); if (d !== 0) return d; return (a.id || 0) - (b.id || 0); }); let csvLines = []; csvLines.push(`#REPORT_PERIOD=${MONTH_NAMES[month]} ${year}`); csvLines.push(`#INITIAL_BALANCE=${initialBalance}`); csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Фиксация(%);Profit"); sorted.forEach(t => { const entry = (t.entry !== null && t.entry !== undefined) ? t.entry : ''; const stop = (t.stop !== null && t.stop !== undefined) ? t.stop : ''; const take = (t.take !== null && t.take !== undefined) ? t.take : ''; const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : ''; const rr = calculateRR(t); const rrStr = rr !== null ? rr.toFixed(2) : ''; const pnl = (t.pnl !== null && t.pnl !== undefined) ? t.pnl : ''; const partialClose = t.partialClose > 0 ? t.partialClose.toFixed(1) : 0; const row = [t.date, t.asset, t.direction, entry, stop, take, exitPrice, rrStr, partialClose, pnl].join(";"); csvLines.push(row); }); const csvString = "\uFEFF" + csvLines.join("\r\n"); const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.setAttribute("href", url); const monthStr = String(month + 1).padStart(2, '0'); link.setAttribute("download", `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); }
+function exportReportCSV() { const month = parseInt(document.getElementById('reportMonth').value); const year = parseInt(document.getElementById('reportYear').value); const monthTrades = getTradesForMonth(month, year); if (monthTrades.length === 0) { alert(`Нет сделок за ${MONTH_NAMES[month]} ${year} — нечего экспортировать.`); return; } const sorted = monthTrades.slice().sort((a, b) => { const d = new Date(b.date) - new Date(a.date); if (d !== 0) return d; return (b.id || 0) - (a.id || 0); }); let csvLines = []; csvLines.push(`#REPORT_PERIOD=${MONTH_NAMES[month]} ${year}`); csvLines.push(`#INITIAL_BALANCE=${initialBalance}`); csvLines.push("Дата;Монета;Тип;Enter;Stop;Take;Exit;RR;Фиксация(%);Profit"); sorted.forEach(t => { const entry = (t.entry !== null && t.entry !== undefined) ? t.entry : ''; const stop = (t.stop !== null && t.stop !== undefined) ? t.stop : ''; const take = (t.take !== null && t.take !== undefined) ? t.take : ''; const exitPrice = (t.exitPrice !== null && t.exitPrice !== undefined) ? t.exitPrice : ''; const rr = calculateRR(t); const rrStr = rr !== null ? rr.toFixed(2) : ''; const jp = getTotalPnLFromJournal(t); const pnl = jp !== null ? jp : (t.pnl !== null && t.pnl !== undefined ? t.pnl : ''); const partialClose = t.partialClose > 0 ? t.partialClose.toFixed(1) : 0; const row = [t.date, t.asset, t.direction, entry, stop, take, exitPrice, rrStr, partialClose, pnl].join(";"); csvLines.push(row); }); const csvString = "\uFEFF" + csvLines.join("\r\n"); const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.setAttribute("href", url); const monthStr = String(month + 1).padStart(2, '0'); link.setAttribute("download", `report_${MONTH_NAMES[month]}_${year}_${year}-${monthStr}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); }
 
 function setType(type) { positionType = type; document.getElementById('btnLong').className = `type-btn ${type === 'LONG' ? 'active long' : ''}`; document.getElementById('btnShort').className = `type-btn ${type === 'SHORT' ? 'active short' : ''}`; calculate(); }
 function adjustLeverage(delta) { const input = document.getElementById('calcLeverage'); let val = parseInt(input.value, 10); if (isNaN(val)) val = 1; val = Math.min(125, Math.max(1, val + delta)); input.value = val; calculate(); }
@@ -1506,7 +1576,16 @@ calcState.positionSize = trade && trade.positionSize > 0 ? trade.positionSize : 
 
 const partialProfitRow = document.getElementById('partialProfitRow');
 const partialProfitEl = document.getElementById('partialProfit');
-if (partialPercent > 0 && partialPrice !== null && !isNaN(partialPrice) && entry > 0) {
+const fullProfitRow = document.getElementById('fullProfitRow');
+const netProfitLabel = document.getElementById('netProfitLabel');
+const netProfitEl = document.getElementById('netProfit');
+const statusRow = document.getElementById('statusRow');
+const statusText = document.getElementById('statusText');
+
+if (closeType === 'partial') {
+fullProfitRow.style.display = 'none';
+statusRow.style.display = 'none';
+if (partialPercent > 0 && partialPrice !== null && !isNaN(partialPrice) && entry > 0 && units > 0) {
 const pUnits = units * (partialPercent / 100);
 const pGross = positionType === 'SHORT' ? pUnits * (entry - partialPrice) : pUnits * (partialPrice - entry);
 const pEntryFee = pUnits * entry * feePercent;
@@ -1516,26 +1595,34 @@ partialProfitRow.style.display = 'flex';
 partialProfitEl.innerText = '$' + pNetProfit.toFixed(2);
 partialProfitEl.style.color = pNetProfit >= 0 ? 'var(--success)' : 'var(--danger)';
 calcState.profit = pNetProfit;
-} else { partialProfitRow.style.display = 'none'; }
-
-const netProfitLabel = document.getElementById('netProfitLabel');
-const netProfitEl = document.getElementById('netProfit');
+} else {
+partialProfitRow.style.display = 'none';
+calcState.profit = null;
+}
+} else {
+partialProfitRow.style.display = 'none';
+calcState.profit = null;
 
 if (exit === 0) {
-netProfitLabel.innerText = 'Статус выхода:';
-netProfitEl.innerText = 'Безубыток (Б/У)';
-netProfitEl.style.color = 'var(--breakeven)';
-} else if (exit !== null && !isNaN(exit) && exit > 0 && entry > 0) {
+fullProfitRow.style.display = 'none';
+statusRow.style.display = 'flex';
+statusText.innerText = 'Безубыток (Б/У)';
+statusText.style.color = 'var(--breakeven)';
+} else if (exit !== null && !isNaN(exit) && exit > 0 && entry > 0 && units > 0) {
+statusRow.style.display = 'none';
 const exitFeeActual = (units * exit) * feePercent;
 const grossProfitActual = positionType === 'SHORT' ? units * (entry - exit) : units * (exit - entry);
 const netProfitActual = grossProfitActual - entryFee - exitFeeActual;
+fullProfitRow.style.display = 'flex';
 netProfitLabel.innerText = 'Profit при полном выходе ($):';
 netProfitEl.innerText = '$' + netProfitActual.toFixed(2);
 netProfitEl.style.color = netProfitActual >= 0 ? 'var(--success)' : 'var(--danger)';
 } else {
-netProfitLabel.innerText = 'Статус:';
-netProfitEl.innerText = 'В работе';
-netProfitEl.style.color = 'var(--warning)';
+fullProfitRow.style.display = 'none';
+statusRow.style.display = 'flex';
+statusText.innerText = 'В работе';
+statusText.style.color = 'var(--warning)';
+}
 }
 
 if (requiredMargin > balance && balance > 0) {
@@ -1551,14 +1638,24 @@ const tradeIndex = trades.findIndex(t => t.id == editingId);
 if (tradeIndex === -1) { alert('Сделка не найдена'); return; }
 const trade = trades[tradeIndex];
 if (!trade.partialCloses) { trade.partialCloses = []; }
+
+if (closeType === 'partial') {
+if (partialPercent <= 0) { alert('Укажите процент фиксации'); return; }
+if (partialPrice === null || isNaN(partialPrice)) { alert('Укажите цену фиксации (0 = Б/У)'); return; }
+const pUnits = units * (partialPercent / 100);
+const pGross = calcDirection === 'SHORT' ? pUnits * (entry - partialPrice) : pUnits * (partialPrice - entry);
+const pEntryFee = pUnits * entry * feePercent;
+const pExitFee = pUnits * partialPrice * feePercent;
+const pNetProfit = pGross - pEntryFee - pExitFee;
+trade.partialCloses.push({ time: new Date().toISOString(), percent: partialPercent, price: partialPrice, pnl: pNetProfit, units: pUnits, fullClose: false });
+document.getElementById('pnl').value = pNetProfit.toFixed(2);
+} else {
 const exitValRaw = document.getElementById('calcExit').value;
 let exitVal = null;
 if (exitValRaw !== '') {
 const parsed = parseFloat(exitValRaw);
 if (!isNaN(parsed)) exitVal = parsed;
 }
-
-if (closeType === 'full') {
 if (exitVal === null || isNaN(exitVal)) { alert('Для полной фиксации укажите цену в поле Exit($) (0 = Б/У)'); return; }
 if (exitVal === 0) {
 trade.partialCloses.push({ time: new Date().toISOString(), percent: 100, price: 0, pnl: 0, units: units, fullClose: true });
@@ -1572,36 +1669,17 @@ trade.partialCloses.push({ time: new Date().toISOString(), percent: 100, price: 
 document.getElementById('calcExit').value = exitVal;
 document.getElementById('pnl').value = netProfit.toFixed(2);
 }
-} else {
-if (partialPercent > 0 && partialPrice !== null && !isNaN(partialPrice)) {
-const pUnits = units * (partialPercent / 100);
-const pGross = calcDirection === 'SHORT' ? pUnits * (entry - partialPrice) : pUnits * (partialPrice - entry);
-const pEntryFee = pUnits * entry * feePercent;
-const pExitFee = pUnits * partialPrice * feePercent;
-const pNetProfit = pGross - pEntryFee - pExitFee;
-trade.partialCloses.push({ time: new Date().toISOString(), percent: partialPercent, price: partialPrice, pnl: pNetProfit, units: pUnits, fullClose: false });
-document.getElementById('calcExit').value = partialPrice;
-document.getElementById('pnl').value = pNetProfit.toFixed(2);
-} else {
-if (exitValRaw === '' || exitVal === null || exitVal === undefined) { alert('Укажите цену выхода (Exit) или заполните фиксацию (процент + цена). 0 = Б/У'); return; }
-if (exitVal === 0) {
-trade.partialCloses.push({ time: new Date().toISOString(), percent: 100, price: 0, pnl: 0, units: units, fullClose: true });
-document.getElementById('calcExit').value = '0';
-document.getElementById('pnl').value = '0';
-} else {
-const exitFee = units * exitVal * feePercent;
-const grossProfit = calcDirection === 'SHORT' ? units * (entry - exitVal) : units * (exitVal - entry);
-const netProfit = grossProfit - (units * entry * feePercent) - exitFee;
-document.getElementById('calcExit').value = exitVal;
-document.getElementById('pnl').value = netProfit.toFixed(2);
-}
-}
 }
 recalculateTradeState(trade);
 const posSize = trade.positionSize || 0;
 renderPositionJournal(trade.partialCloses, 'formPositionJournalList', posSize);
 updateTotalFixedBadge('formTotalFixedPercent', trade.partialClose || 0);
 document.getElementById('calcRemainingSize').value = (trade.remainingSize || 0).toFixed(2);
+const newJournalPnl = getTotalPnLFromJournal(trade);
+if (newJournalPnl !== null) {
+trade.pnl = newJournalPnl;
+document.getElementById('pnl').value = newJournalPnl.toFixed(2);
+}
 saveTrades();
 }
 
